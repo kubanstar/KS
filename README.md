@@ -202,272 +202,36 @@
             opacity: 0.5;
         }
         
-        /* Модальное окно сканирования */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 1000;
-        }
-        
-        .modal-content {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        .scanner-container {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #000;
-        }
-        
-        /* Видео элемент */
-        #cameraVideo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transform: scaleX(1);
-            -webkit-transform: scaleX(1);
-            background: #000;
-        }
-        
-        /* Canvas для анализа */
-        #scanCanvas {
-            display: none;
+        .hidden-input {
             position: absolute;
-            top: 0;
-            left: 0;
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
         
-        .scan-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 350px;
-            height: 200px;
-            border: 4px solid rgba(38, 208, 206, 0.9);
-            border-radius: 20px;
-            pointer-events: none;
-            z-index: 10;
-            box-shadow: 
-                0 0 0 1000px rgba(0, 0, 0, 0.8),
-                inset 0 0 20px rgba(38, 208, 206, 0.3);
-        }
-        
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                transparent, 
-                #26d0ce, 
-                transparent);
-            animation: scan 2.5s ease-in-out infinite;
-            box-shadow: 0 0 15px #26d0ce;
-        }
-        
-        @keyframes scan {
-            0% {
-                top: 0;
-                opacity: 1;
-            }
-            50% {
-                top: 100%;
-                opacity: 1;
-            }
-            51% {
-                opacity: 0;
-            }
-            100% {
-                top: 0;
-                opacity: 0;
-            }
-        }
-        
-        .scanner-info {
-            position: absolute;
-            top: calc(50% + 120px);
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-size: 18px;
-            padding: 0 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            z-index: 10;
-            font-weight: 500;
-        }
-        
-        .modal-controls {
-            padding: 25px 20px;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            gap: 15px;
-            z-index: 20;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .modal-btn {
-            flex: 1;
-            padding: 18px;
-            border: none;
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            -webkit-tap-highlight-color: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .modal-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .modal-btn-primary {
-            background: rgba(38, 208, 206, 0.9);
+            padding: 20px;
+            margin-top: 20px;
             color: white;
-            box-shadow: 0 4px 15px rgba(38, 208, 206, 0.3);
-        }
-        
-        .modal-btn-primary:active {
-            background: rgba(38, 208, 206, 1);
-        }
-        
-        .modal-btn-danger {
-            background: rgba(255, 65, 108, 0.9);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
-        }
-        
-        .modal-btn-danger:active {
-            background: rgba(255, 65, 108, 1);
-        }
-        
-        .status-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 22px;
-            font-weight: 600;
-            padding: 25px 35px;
-            background: rgba(0, 0, 0, 0.85);
-            border-radius: 20px;
             text-align: center;
-            z-index: 15;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            max-width: 90%;
         }
         
-        .scanned-badge {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #26d0ce 0%, #1a2980 100%);
-            color: white;
-            padding: 25px 45px;
-            border-radius: 20px;
-            font-size: 26px;
-            font-weight: bold;
-            display: none;
-            z-index: 100;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            animation: badgeAppear 0.6s ease-out;
-            text-align: center;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+        .instructions h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
         }
         
-        @keyframes badgeAppear {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            70% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        .instructions ol {
+            text-align: left;
+            margin: 15px auto;
+            max-width: 400px;
         }
         
-        .loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
-            border: 5px solid rgba(38, 208, 206, 0.3);
-            border-radius: 50%;
-            border-top-color: #26d0ce;
-            animation: spin 1.2s linear infinite;
-            z-index: 15;
-            display: none;
-        }
-        
-        @keyframes spin {
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        /* Индикатор распознавания */
-        .scan-indicator {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 14px;
-            z-index: 10;
-        }
-        
-        /* Адаптивность */
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: 26px;
-            }
-            
-            .btn {
-                padding: 18px;
-                font-size: 16px;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-            
-            .scan-overlay {
-                width: 85%;
-                height: 180px;
-            }
-            
-            .modal-controls {
-                padding: 20px 15px;
-            }
-            
-            .modal-btn {
-                padding: 16px;
-                font-size: 16px;
-            }
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -475,7 +239,7 @@
     <div class="container">
         <div class="header">
             <h1>📦 Сканирование штрихкодов</h1>
-            <p>Простой сканер для iOS</p>
+            <p>Используем нативный сканер iOS</p>
         </div>
         
         <div class="card search-section">
@@ -495,63 +259,40 @@
                     <span>📷</span> Сканировать
                 </button>
             </div>
+            
+            <!-- Скрытое поле для сканирования iOS -->
+            <input type="file" 
+                   id="iosScanner" 
+                   class="hidden-input"
+                   accept="image/*" 
+                   capture="environment">
         </div>
         
         <div class="card results-container" id="resultsContainer">
             <div class="results-title">Результаты поиска</div>
             <div id="productsList"></div>
         </div>
-    </div>
-    
-    <!-- Модальное окно сканирования -->
-    <div class="modal" id="scannerModal">
-        <div class="modal-content">
-            <div class="scanner-container">
-                <div class="loader" id="scannerLoader"></div>
-                
-                <!-- Видео элемент для камеры -->
-                <video id="cameraVideo" playsinline autoplay muted></video>
-                
-                <!-- Canvas для анализа -->
-                <canvas id="scanCanvas"></canvas>
-                
-                <div class="scan-overlay">
-                    <div class="scan-line"></div>
-                </div>
-                
-                <div class="scan-indicator" id="scanIndicator">
-                    Сканирование...
-                </div>
-                
-                <div class="scanner-info">
-                    Наведите камеру на штрихкод в рамке
-                </div>
-                
-                <div class="status-message" id="scannerStatus"></div>
-                <div class="scanned-badge" id="scannedBadge">✓ Найдено!</div>
-            </div>
-            
-            <div class="modal-controls">
-                <button class="modal-btn modal-btn-primary" id="takePhoto">
-                    <span>📸</span> Сделать фото
-                </button>
-                <button class="modal-btn modal-btn-danger" id="closeScanner">
-                    <span>✕</span> Закрыть
-                </button>
-            </div>
+        
+        <div class="instructions">
+            <h3>📱 Как сканировать на iOS:</h3>
+            <ol>
+                <li>Нажмите кнопку "Сканировать"</li>
+                <li>Разрешите доступ к камере</li>
+                <li>Наведите камеру на штрихкод</li>
+                <li>Камера iOS автоматически распознает штрихкод</li>
+                <li>Нажмите кнопку фото для сканирования</li>
+            </ol>
+            <p><em>На iOS используется встроенный сканер штрихкодов</em></p>
         </div>
     </div>
 
+    <!-- Подключаем библиотеку для распознавания штрихкодов из изображений -->
+    <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js"></script>
+    
     <script>
         // Глобальные переменные
-        let isScanning = false;
-        let videoStream = null;
-        let scanInterval = null;
-        let lastScanTime = 0;
-        let scanCooldown = 2000;
-        let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        let scanAttempts = 0;
-        let lastBrightness = 0;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isAndroid = /android/i.test(navigator.userAgent);
         
         // Тестовые данные товаров
         const productsData = {
@@ -579,18 +320,34 @@
                 article: "ФЗ-407057",
                 name: "Фреска с блестками Морской конек",
                 price: "204,00"
+            },
+            "1234567890128": {
+                article: "TEST-001",
+                name: "Тестовый товар 1",
+                price: "100,00"
+            },
+            "9876543210128": {
+                article: "TEST-002",
+                name: "Тестовый товар 2",
+                price: "200,00"
+            },
+            "5901234123457": {
+                article: "TEST-EAN",
+                name: "Тестовый EAN-13",
+                price: "150,00"
             }
         };
         
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Устройство iOS:', isIOS);
+            console.log('Устройство Android:', isAndroid);
+            console.log('ZXing доступен:', typeof ZXing !== 'undefined');
             
             // Установка обработчиков событий
             document.getElementById('searchButton').addEventListener('click', performSearch);
             document.getElementById('scanButton').addEventListener('click', startScanner);
-            document.getElementById('closeScanner').addEventListener('click', stopScanner);
-            document.getElementById('takePhoto').addEventListener('click', takePhotoAndAnalyze);
+            document.getElementById('iosScanner').addEventListener('change', handleImageUpload);
             
             document.getElementById('searchInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') performSearch();
@@ -600,414 +357,392 @@
             setTimeout(() => {
                 document.getElementById('searchInput').focus();
             }, 500);
+            
+            // Показать инструкции для iOS
+            if (isIOS) {
+                document.querySelector('.instructions').style.display = 'block';
+            }
         });
         
         // Запуск сканера
-        async function startScanner() {
+        function startScanner() {
+            if (isIOS) {
+                // На iOS используем нативный сканер через input file
+                console.log('Запуск нативного сканера iOS...');
+                document.getElementById('iosScanner').click();
+            } else {
+                // На Android/Desktop пытаемся использовать камеру
+                startCameraScanner();
+            }
+        }
+        
+        // Обработка загруженного изображения (для iOS)
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            console.log('Изображение загружено:', file.name, file.type, file.size);
+            
+            // Показываем статус
+            showNotification('Анализируем изображение...');
+            
             try {
-                console.log('Запуск сканера...');
+                // Создаем URL для изображения
+                const imageUrl = URL.createObjectURL(file);
                 
-                // Останавливаем предыдущий поток
-                await stopScanner();
+                // Создаем элемент изображения
+                const img = new Image();
+                img.src = imageUrl;
                 
-                // Скрываем результаты поиска
-                document.getElementById('resultsContainer').style.display = 'none';
+                img.onload = async function() {
+                    try {
+                        // Пытаемся распознать штрихкод из изображения
+                        const barcode = await scanBarcodeFromImage(img);
+                        
+                        if (barcode) {
+                            console.log('Найден штрихкод:', barcode);
+                            processScannedCode(barcode);
+                        } else {
+                            console.log('Штрихкод не найден на изображении');
+                            showNotification('Штрихкод не найден. Попробуйте еще раз.');
+                            
+                            // Через 2 секунды снова предлагаем сканировать
+                            setTimeout(() => {
+                                if (confirm('Штрихкод не найден. Хотите попробовать еще раз?')) {
+                                    document.getElementById('iosScanner').click();
+                                }
+                            }, 2000);
+                        }
+                        
+                        // Очищаем URL
+                        URL.revokeObjectURL(imageUrl);
+                        
+                        // Очищаем input
+                        event.target.value = '';
+                        
+                    } catch (error) {
+                        console.error('Ошибка обработки изображения:', error);
+                        showNotification('Ошибка обработки изображения');
+                        event.target.value = '';
+                    }
+                };
                 
-                // Показываем модальное окно
-                document.getElementById('scannerModal').style.display = 'block';
-                document.getElementById('scannerLoader').style.display = 'block';
-                showStatus('Запуск камеры...');
-                
-                // Получаем доступ к камере
-                await initCamera();
-                
-                // Инициализируем canvas
-                initCanvas();
-                
-                isScanning = true;
-                scanAttempts = 0;
-                
-                // Скрываем лоадер
-                document.getElementById('scannerLoader').style.display = 'none';
-                hideStatus();
-                
-                // Запускаем сканирование
-                startScanning();
-                
-                console.log('Сканер запущен');
+                img.onerror = function() {
+                    console.error('Ошибка загрузки изображения');
+                    showNotification('Ошибка загрузки изображения');
+                    event.target.value = '';
+                    URL.revokeObjectURL(imageUrl);
+                };
                 
             } catch (error) {
-                console.error('Ошибка запуска сканера:', error);
-                showStatus('Ошибка: ' + getErrorMessage(error));
+                console.error('Ошибка обработки файла:', error);
+                showNotification('Ошибка обработки файла');
+                event.target.value = '';
             }
         }
         
-        // Инициализация камеры
-        async function initCamera() {
-            const video = document.getElementById('cameraVideo');
-            
-            // Очищаем предыдущий поток
-            if (videoStream) {
-                videoStream.getTracks().forEach(track => track.stop());
-            }
-            
-            // Для iOS используем тыловую камеру
-            const constraints = {
-                video: {
-                    facingMode: 'environment',
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 },
-                    frameRate: { ideal: 24 }
-                },
-                audio: false
-            };
-            
-            // Получаем доступ к камере
-            videoStream = await navigator.mediaDevices.getUserMedia(constraints);
-            
-            // Подключаем поток к видео элементу
-            video.srcObject = videoStream;
-            
-            // Ждем пока видео будет готово
-            await new Promise((resolve) => {
-                video.onloadedmetadata = () => {
-                    video.play()
-                        .then(() => {
-                            console.log('Видео запущено');
-                            resolve();
-                        })
-                        .catch(err => {
-                            console.error('Ошибка воспроизведения видео:', err);
-                            throw err;
-                        });
-                };
-            });
-            
-            // Для iOS убираем трансформацию
-            if (isIOS) {
-                video.style.transform = 'scaleX(1)';
-                video.style.webkitTransform = 'scaleX(1)';
-            }
-        }
-        
-        // Инициализация canvas
-        function initCanvas() {
-            const canvas = document.getElementById('scanCanvas');
-            const video = document.getElementById('cameraVideo');
-            
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-        }
-        
-        // Запуск сканирования
-        function startScanning() {
-            if (scanInterval) {
-                clearInterval(scanInterval);
-            }
-            
-            // Сканируем каждые 500мс
-            scanInterval = setInterval(() => {
-                if (!isScanning) return;
+        // Сканирование штрихкода из изображения с помощью ZXing
+        async function scanBarcodeFromImage(imageElement) {
+            try {
+                console.log('Начинаем сканирование изображения...');
                 
-                try {
-                    analyzeFrame();
-                } catch (error) {
-                    console.warn('Ошибка анализа кадра:', error);
+                // Создаем canvas для анализа
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Устанавливаем размеры canvas как у изображения
+                canvas.width = imageElement.naturalWidth || imageElement.width;
+                canvas.height = imageElement.naturalHeight || imageElement.height;
+                
+                console.log('Размер изображения:', canvas.width, 'x', canvas.height);
+                
+                // Рисуем изображение на canvas
+                ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+                
+                // Получаем данные изображения
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                
+                // Пробуем разные библиотеки для распознавания
+                
+                // 1. Попробуем ZXing.js (библиотека от Google)
+                if (typeof ZXing !== 'undefined') {
+                    console.log('Используем ZXing для распознавания...');
+                    try {
+                        const barcodeReader = new ZXing.BrowserMultiFormatReader();
+                        
+                        // Создаем временный canvas для ZXing
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = canvas.width;
+                        tempCanvas.height = canvas.height;
+                        const tempCtx = tempCanvas.getContext('2d');
+                        tempCtx.drawImage(imageElement, 0, 0);
+                        
+                        const result = await barcodeReader.decodeFromCanvas(tempCanvas);
+                        if (result && result.text) {
+                            console.log('ZXing нашел штрихкод:', result.text);
+                            return result.text;
+                        }
+                    } catch (zxingError) {
+                        console.log('ZXing не нашел штрихкод:', zxingError.message);
+                    }
                 }
-            }, 500);
+                
+                // 2. Попробуем простой анализ изображения
+                console.log('Пробуем простой анализ изображения...');
+                
+                // Преобразуем в черно-белое и ищем паттерны штрихкода
+                const simpleResult = await simpleBarcodeAnalysis(imageData);
+                if (simpleResult) {
+                    console.log('Простой анализ нашел штрихкод:', simpleResult);
+                    return simpleResult;
+                }
+                
+                // 3. Если ничего не помогло, пробуем вырезать центральную часть
+                console.log('Пробуем анализ центральной части...');
+                const centerResult = await analyzeCenterOfImage(canvas, ctx);
+                if (centerResult) {
+                    console.log('Анализ центра нашел штрихкод:', centerResult);
+                    return centerResult;
+                }
+                
+                return null;
+                
+            } catch (error) {
+                console.error('Ошибка сканирования:', error);
+                return null;
+            }
         }
         
-        // Анализ кадра
-        function analyzeFrame() {
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.getElementById('scanCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Проверяем готовность видео
-            if (video.readyState !== video.HAVE_ENOUGH_DATA) {
-                return;
-            }
-            
-            // Проверяем кд
-            if (Date.now() - lastScanTime < 1000) {
-                return;
-            }
-            
-            // Обновляем индикатор
-            scanAttempts++;
-            document.getElementById('scanIndicator').textContent = 
-                `Попытка: ${scanAttempts}`;
-            
-            // Рисуем видео на canvas
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Получаем область сканирования (рамка)
-            const scanArea = {
-                x: canvas.width * 0.25,
-                y: canvas.height * 0.35,
-                width: canvas.width * 0.5,
-                height: canvas.height * 0.3
-            };
-            
-            // Получаем данные изображения
-            const imageData = ctx.getImageData(
-                scanArea.x, scanArea.y, scanArea.width, scanArea.height
-            );
-            
-            // Анализируем изображение
-            analyzeImageForBarcode(imageData, scanArea);
-        }
-        
-        // Анализ изображения на наличие штрихкодов
-        function analyzeImageForBarcode(imageData, scanArea) {
+        // Простой анализ изображения для поиска штрихкодов
+        async function simpleBarcodeAnalysis(imageData) {
             const data = imageData.data;
             const width = imageData.width;
             const height = imageData.height;
             
-            // Преобразуем в черно-белое и ищем контрастные линии
-            let barcodeLines = [];
+            console.log('Простой анализ: размер', width, 'x', height);
             
-            // Сканируем по горизонтали в центре рамки
-            const centerY = Math.floor(height / 2);
+            // Анализируем несколько горизонтальных линий
+            const linesToCheck = [
+                Math.floor(height * 0.3), // 30% от верха
+                Math.floor(height * 0.5), // центр
+                Math.floor(height * 0.7)  // 70% от верха
+            ];
             
-            // Получаем строку пикселей в центре
-            let lineData = [];
-            for (let x = 0; x < width; x++) {
-                const index = (centerY * width + x) * 4;
-                const r = data[index];
-                const g = data[index + 1];
-                const b = data[index + 2];
-                const brightness = (r + g + b) / 3;
-                lineData.push(brightness);
-            }
-            
-            // Анализируем яркость для поиска полос
-            const threshold = 128;
-            let currentState = lineData[0] > threshold ? 'light' : 'dark';
-            let currentLength = 1;
-            let bars = [];
-            
-            for (let i = 1; i < lineData.length; i++) {
-                const state = lineData[i] > threshold ? 'light' : 'dark';
-                
-                if (state === currentState) {
-                    currentLength++;
-                } else {
-                    bars.push({
-                        type: currentState,
-                        length: currentLength
-                    });
-                    currentState = state;
-                    currentLength = 1;
+            for (const lineY of linesToCheck) {
+                // Получаем строку пикселей
+                const lineData = [];
+                for (let x = 0; x < width; x++) {
+                    const index = (lineY * width + x) * 4;
+                    const r = data[index];
+                    const g = data[index + 1];
+                    const b = data[index + 2];
+                    // Преобразуем в яркость
+                    const brightness = (r + g + b) / 3;
+                    lineData.push(brightness);
                 }
-            }
-            bars.push({
-                type: currentState,
-                length: currentLength
-            });
-            
-            // Проверяем если это похоже на штрихкод
-            // У штрихкода должно быть много чередующихся полос
-            if (bars.length > 20) {
-                // Пробуем декодировать как EAN-13
-                const barcode = tryDecodeEAN13(bars);
                 
-                if (barcode) {
-                    console.log('Найден возможный штрихкод:', barcode);
-                    handleScannedCode(barcode);
-                    return;
+                // Ищем паттерны штрихкода
+                const barcode = findBarcodeInLine(lineData);
+                if (barcode && isValidBarcode(barcode)) {
+                    console.log('Найден штрихкод в строке', lineY, ':', barcode);
+                    return barcode;
                 }
-            }
-            
-            // Если не нашли EAN-13, пробуем другие методы
-            tryOtherDecodingMethods(lineData, width);
-        }
-        
-        // Попытка декодирования EAN-13
-        function tryDecodeEAN13(bars) {
-            // Упрощенная логика для демонстрации
-            // В реальном приложении здесь была бы полная логика декодирования
-            
-            // Для начала просто возвращаем тестовый штрихкод после 5 попыток
-            if (scanAttempts >= 5) {
-                // Можно раскомментировать для тестирования:
-                // return "6080010075148";
             }
             
             return null;
         }
         
-        // Другие методы декодирования
-        function tryOtherDecodingMethods(lineData, width) {
-            // Простой алгоритм поиска паттернов
-            const threshold = 128;
-            let binaryLine = lineData.map(b => b > threshold ? '1' : '0').join('');
+        // Поиск штрихкода в строке пикселей
+        function findBarcodeInLine(lineData) {
+            // Находим среднюю яркость
+            const sum = lineData.reduce((a, b) => a + b, 0);
+            const average = sum / lineData.length;
             
-            // Ищем паттерны начала/конца штрихкода
-            const startPatterns = ['101', '1101', '11101'];
-            const endPatterns = ['101', '1101', '11101'];
+            // Бинаризуем линию
+            const binaryLine = lineData.map(brightness => brightness < average ? '0' : '1');
+            const binaryString = binaryLine.join('');
             
-            for (const pattern of startPatterns) {
-                const startIndex = binaryLine.indexOf(pattern);
-                if (startIndex !== -1) {
-                    console.log('Найден стартовый паттерн:', pattern, 'в позиции', startIndex);
+            console.log('Бинарная строка (первые 100 символов):', binaryString.substring(0, 100));
+            
+            // Ищем паттерны EAN-13
+            // EAN-13 имеет 95 модулей (черных и белых полос)
+            if (binaryString.length >= 95) {
+                // Пробуем разные стартовые позиции
+                for (let i = 0; i < binaryString.length - 95; i += 5) {
+                    const segment = binaryString.substring(i, i + 95);
                     
-                    // Пробуем извлечь данные
-                    const possibleBarcode = extractPossibleBarcode(binaryLine, startIndex);
-                    if (possibleBarcode && possibleBarcode.length >= 8) {
-                        console.log('Возможный штрихкод:', possibleBarcode);
-                        // Можно добавить валидацию и обработку
+                    // Проверяем паттерны начала
+                    if (segment.startsWith('101')) {
+                        // Пробуем декодировать
+                        const decoded = tryDecodeEAN13Segment(segment);
+                        if (decoded) {
+                            return decoded;
+                        }
                     }
                 }
             }
+            
+            return null;
         }
         
-        // Извлечение возможного штрихкода
-        function extractPossibleBarcode(binaryLine, startIndex) {
-            // Извлекаем 95 бит (стандарт для EAN-13)
-            const endIndex = Math.min(startIndex + 95, binaryLine.length);
-            return binaryLine.substring(startIndex, endIndex);
-        }
-        
-        // Сделать фото и проанализировать
-        async function takePhotoAndAnalyze() {
-            if (!isScanning) return;
+        // Попытка декодирования сегмента как EAN-13
+        function tryDecodeEAN13Segment(segment) {
+            // Упрощенная логика - ищем группы из 7 бит (каждая цифра в EAN-13)
+            const digits = [];
             
-            const video = document.getElementById('cameraVideo');
-            const canvas = document.getElementById('scanCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Останавливаем сканирование
-            isScanning = false;
-            if (scanInterval) {
-                clearInterval(scanInterval);
-            }
-            
-            showStatus('Анализ фото...');
-            
-            // Делаем фото
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Получаем все изображение
-            const fullImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            
-            // Пробуем разные методы анализа
-            
-            // 1. Анализ по горизонтальным линиям
-            const possibleCodes = [];
-            
-            for (let y = 0; y < canvas.height; y += 10) {
-                const lineData = [];
-                for (let x = 0; x < canvas.width; x++) {
-                    const index = (y * canvas.width + x) * 4;
-                    const r = fullImageData.data[index];
-                    const g = fullImageData.data[index + 1];
-                    const b = fullImageData.data[index + 2];
-                    const brightness = (r + g + b) / 3;
-                    lineData.push(brightness > 128 ? 1 : 0);
-                }
+            for (let i = 3; i < 87; i += 7) { // Пропускаем первые 3 бита (стартовый паттерн)
+                const digitBits = segment.substring(i, i + 7);
                 
-                const binary = lineData.join('');
-                // Простая проверка на наличие паттернов
-                if (binary.includes('101') && binary.includes('010')) {
-                    possibleCodes.push(binary.substring(0, 100));
+                // Простая проверка на валидность
+                if (digitBits.length === 7) {
+                    // Преобразуем в десятичное (очень упрощенно)
+                    const digit = parseInt(digitBits, 2) % 10;
+                    digits.push(digit);
                 }
             }
             
-            console.log('Найдено возможных кодов:', possibleCodes.length);
-            
-            // Если нашли что-то похожее
-            if (possibleCodes.length > 0) {
-                // Для тестирования используем ручной ввод
-                showStatus('Сфотографировано! Введите код вручную');
+            if (digits.length === 12) {
+                // Добавляем контрольную сумму
+                let sum = 0;
+                for (let i = 0; i < 12; i++) {
+                    sum += digits[i] * (i % 2 === 0 ? 1 : 3);
+                }
+                const checksum = (10 - (sum % 10)) % 10;
+                digits.push(checksum);
                 
-                // Запрашиваем у пользователя ввод
-                setTimeout(() => {
-                    const userCode = prompt('Введите штрихкод вручную:', '');
-                    if (userCode) {
-                        handleScannedCode(userCode);
-                    } else {
-                        // Продолжаем сканирование
-                        isScanning = true;
-                        startScanning();
-                        hideStatus();
-                    }
-                }, 1000);
-            } else {
-                showStatus('Штрихкод не найден');
-                setTimeout(() => {
-                    isScanning = true;
-                    startScanning();
-                    hideStatus();
-                }, 2000);
+                const barcode = digits.join('');
+                
+                // Проверяем валидность
+                if (isValidEAN13(barcode)) {
+                    return barcode;
+                }
+            }
+            
+            return null;
+        }
+        
+        // Проверка валидности EAN-13
+        function isValidEAN13(barcode) {
+            if (barcode.length !== 13) return false;
+            if (!/^\d+$/.test(barcode)) return false;
+            
+            // Проверка контрольной суммы
+            let sum = 0;
+            for (let i = 0; i < 12; i++) {
+                sum += parseInt(barcode[i]) * (i % 2 === 0 ? 1 : 3);
+            }
+            const checksum = (10 - (sum % 10)) % 10;
+            
+            return checksum === parseInt(barcode[12]);
+        }
+        
+        // Анализ центральной части изображения
+        async function analyzeCenterOfImage(canvas, ctx) {
+            // Вырезаем центральную часть (где скорее всего находится штрихкод)
+            const centerWidth = Math.floor(canvas.width * 0.8);
+            const centerHeight = Math.floor(canvas.height * 0.3);
+            const centerX = Math.floor((canvas.width - centerWidth) / 2);
+            const centerY = Math.floor((canvas.height - centerHeight) / 2);
+            
+            console.log('Анализ центра:', centerX, centerY, centerWidth, centerHeight);
+            
+            const centerData = ctx.getImageData(centerX, centerY, centerWidth, centerHeight);
+            
+            // Пробуем анализ центральной части
+            return simpleBarcodeAnalysis(centerData);
+        }
+        
+        // Проверка валидности штрихкода
+        function isValidBarcode(barcode) {
+            // Проверяем длину EAN-13
+            if (barcode.length === 13 && /^\d+$/.test(barcode)) {
+                return isValidEAN13(barcode);
+            }
+            
+            // Проверяем другие форматы
+            if (barcode.length >= 8 && barcode.length <= 14) {
+                return true; // Принимаем любые цифровые коды разумной длины
+            }
+            
+            return false;
+        }
+        
+        // Запуск сканера камеры (для Android/Desktop)
+        async function startCameraScanner() {
+            showNotification('Запускаем камеру...');
+            
+            try {
+                // Проверяем поддержку BarcodeDetector API
+                if ('BarcodeDetector' in window) {
+                    const barcodeDetector = new BarcodeDetector();
+                    
+                    // Запрашиваем доступ к камере
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment' }
+                    });
+                    
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+                    
+                    video.onloadeddata = async () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Сканируем каждые 500мс
+                        const interval = setInterval(async () => {
+                            ctx.drawImage(video, 0, 0);
+                            const barcodes = await barcodeDetector.detect(canvas);
+                            
+                            if (barcodes.length > 0) {
+                                clearInterval(interval);
+                                stream.getTracks().forEach(track => track.stop());
+                                processScannedCode(barcodes[0].rawValue);
+                            }
+                        }, 500);
+                        
+                        // Остановить через 30 секунд
+                        setTimeout(() => {
+                            clearInterval(interval);
+                            stream.getTracks().forEach(track => track.stop());
+                            showNotification('Сканирование остановлено');
+                        }, 30000);
+                    };
+                } else {
+                    showNotification('Ваш браузер не поддерживает прямое сканирование');
+                }
+            } catch (error) {
+                console.error('Ошибка камеры:', error);
+                showNotification('Ошибка доступа к камере');
             }
         }
         
-        // Обработка найденного кода
-        function handleScannedCode(code) {
-            const now = Date.now();
+        // Обработка найденного штрихкода
+        function processScannedCode(code) {
+            console.log('Обработка штрихкода:', code);
             
-            // Проверяем кд
-            if (now - lastScanTime < scanCooldown) {
-                return;
-            }
+            // Очищаем поле ввода
+            document.getElementById('searchInput').value = '';
             
-            lastScanTime = now;
+            // Показываем уведомление
+            showNotification(`Найден штрихкод: ${code}`);
             
-            console.log('Обработка кода:', code);
-            
-            // Визуальная обратная связь
-            showScannedBadge(code);
-            
-            // Останавливаем сканирование
-            isScanning = false;
-            if (scanInterval) {
-                clearInterval(scanInterval);
-                scanInterval = null;
-            }
-            
-            // Через 1.5 секунды закрываем сканер
+            // Заполняем поле ввода
             setTimeout(() => {
-                stopScanner();
-                
-                // Заполняем поле ввода
                 document.getElementById('searchInput').value = code;
                 
                 // Выполняем поиск
-                setTimeout(() => performSearch(), 300);
-            }, 1500);
-        }
-        
-        // Остановка сканера
-        async function stopScanner() {
-            isScanning = false;
-            
-            if (scanInterval) {
-                clearInterval(scanInterval);
-                scanInterval = null;
-            }
-            
-            if (videoStream) {
-                videoStream.getTracks().forEach(track => {
-                    track.stop();
-                });
-                videoStream = null;
-            }
-            
-            const video = document.getElementById('cameraVideo');
-            video.srcObject = null;
-            
-            document.getElementById('scannerModal').style.display = 'none';
-            hideStatus();
-            document.getElementById('scannedBadge').style.display = 'none';
-            document.getElementById('scannerLoader').style.display = 'none';
+                performSearch();
+            }, 500);
         }
         
         // Поиск товара
         function performSearch() {
             const searchValue = document.getElementById('searchInput').value.trim();
             if (!searchValue) {
-                alert('Введите штрихкод для поиска');
+                showNotification('Введите штрихкод для поиска');
                 return;
             }
             
@@ -1019,13 +754,16 @@
             
             let found = false;
             
+            // Сначала проверяем точное совпадение
             if (productsData[searchValue]) {
                 const product = productsData[searchValue];
                 displayProduct(product, searchValue);
                 found = true;
             } else {
+                // Ищем похожие
                 for (const [barcode, product] of Object.entries(productsData)) {
-                    if (product.article.toLowerCase().includes(searchValue.toLowerCase())) {
+                    if (barcode.includes(searchValue) || 
+                        product.article.toLowerCase().includes(searchValue.toLowerCase())) {
                         displayProduct(product, barcode);
                         found = true;
                     }
@@ -1041,6 +779,9 @@
                         </div>
                         <div style="font-size: 15px; color: #666;">
                             Штрихкод/артикул: <strong>${searchValue}</strong>
+                        </div>
+                        <div style="margin-top: 20px; font-size: 14px; color: #888;">
+                            Этот штрихкод отсутствует в базе данных
                         </div>
                     </div>
                 `;
@@ -1067,46 +808,46 @@
             `;
             
             productsList.appendChild(productCard);
+            
+            // Показываем уведомление
+            showNotification(`Найден товар: ${product.article}`);
         }
         
-        // Показать статус
-        function showStatus(message) {
-            const status = document.getElementById('scannerStatus');
-            status.textContent = message;
-            status.style.display = 'block';
-        }
-        
-        function hideStatus() {
-            document.getElementById('scannerStatus').style.display = 'none';
-        }
-        
-        // Визуальная обратная связь
-        function showScannedBadge(code) {
-            const badge = document.getElementById('scannedBadge');
-            badge.textContent = `✓ ${code}`;
-            badge.style.display = 'block';
-        }
-        
-        // Получить понятное сообщение об ошибке
-        function getErrorMessage(error) {
-            if (error.name === 'NotAllowedError') {
-                return 'Разрешите доступ к камере в настройках';
-            } else if (error.name === 'NotFoundError') {
-                return 'Камера не найдена';
-            } else if (error.name === 'NotReadableError') {
-                return 'Камера используется другим приложением';
-            } else {
-                return error.message || 'Неизвестная ошибка';
+        // Показать уведомление
+        function showNotification(message) {
+            // Создаем или находим элемент уведомления
+            let notification = document.getElementById('scanNotification');
+            
+            if (!notification) {
+                notification = document.createElement('div');
+                notification.id = 'scanNotification';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0, 0, 0, 0.9);
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 15px;
+                    z-index: 10000;
+                    font-weight: 600;
+                    text-align: center;
+                    max-width: 90%;
+                    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255,255,255,0.1);
+                `;
+                document.body.appendChild(notification);
             }
-        }
-        
-        // Функция для ручного ввода штрихкода
-        function manualBarcodeInput() {
-            const code = prompt('Введите штрихкод вручную:', '');
-            if (code) {
-                document.getElementById('searchInput').value = code;
-                performSearch();
-            }
+            
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            // Скрыть через 3 секунды
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
         }
     </script>
 </body>
