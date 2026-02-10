@@ -1,4 +1,5 @@
-﻿<html lang="ru">
+﻿<!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -6,11 +7,12 @@
     <style>
         /* Существующие стили остаются без изменений */
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
+            -webkit-text-size-adjust: 100%;
         }
         
         .search-container {
@@ -45,10 +47,11 @@
         .combined-input {
             width: 100%;
             padding: 12px;
-            font-size: 14px;
+            font-size: 16px;
             border: 2px solid #ddd;
             border-radius: 5px;
             box-sizing: border-box;
+            -webkit-appearance: none;
         }
         
         .combined-input:focus {
@@ -69,6 +72,7 @@
             border: 2px solid #ddd;
             border-radius: 5px;
             box-sizing: border-box;
+            -webkit-appearance: none;
         }
         
         .search-input:focus {
@@ -90,6 +94,7 @@
             display: none;
             transition: color 0.3s;
             line-height: 1;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .clear-search-btn:hover {
@@ -115,6 +120,7 @@
             transition: background-color 0.3s;
             flex-grow: 1;
             max-width: 200px;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .scan-button {
@@ -132,6 +138,7 @@
             gap: 8px;
             flex-grow: 1;
             max-width: 200px;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .search-button:hover {
@@ -415,6 +422,7 @@
             justify-content: center;
             font-size: 24px;
             margin-left: auto;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .print-button:hover {
@@ -436,6 +444,7 @@
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .image-button:hover {
@@ -468,6 +477,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transition: all 0.3s;
             z-index: 1000;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .scroll-to-top-btn:hover {
@@ -565,6 +575,7 @@
             margin-top: 15px;
             width: 100%;
             max-width: 250px;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .print-action-btn:hover {
@@ -681,7 +692,8 @@
             width: 100%;
             height: auto;
             border-radius: 8px;
-            transform: scaleX(-1); /* Исправление инверсии для iOS */
+            transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
         }
         
         .camera-controls {
@@ -702,6 +714,7 @@
             color: white;
             flex: 1;
             min-width: 120px;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .close-modal {
@@ -712,6 +725,7 @@
             border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .scan-box {
@@ -870,6 +884,7 @@
             flex: 1;
             min-width: 140px;
             text-align: center;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .continue-scan-btn {
@@ -998,11 +1013,11 @@
         
         /* iOS-specific стили */
         .ios-scan-button {
-            background-color: #FF9500;
+            background-color: #007AFF;
         }
         
         .ios-scan-button:hover {
-            background-color: #E58500;
+            background-color: #0056CC;
         }
         
         .ios-print-button {
@@ -1019,13 +1034,14 @@
             width: 100%;
             height: 300px;
             overflow: hidden;
+            background: #000;
+            border-radius: 8px;
         }
         
         .fixed-video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transform: scaleX(-1); /* Исправление зеркального отображения */
         }
         
         .ios-scan-instruction {
@@ -1041,6 +1057,96 @@
         .ios-scan-instruction.visible {
             display: block;
         }
+        
+        /* Для улучшения отображения на iOS */
+        input, textarea, select {
+            font-size: 16px !important; /* Предотвращает увеличение текста в iOS */
+        }
+        
+        /* Исправление для видео на iOS */
+        video {
+            object-fit: cover;
+            -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
+        }
+        
+        /* Стили для лучшего сканирования на iOS */
+        .scan-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            z-index: 2;
+            pointer-events: none;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .scan-hint.visible {
+            display: block;
+        }
+        
+        /* Стили для печати через iOS */
+        .print-instructions {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+            font-size: 14px;
+            color: #856404;
+        }
+        
+        .print-instructions h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+        
+        .print-instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .print-instructions li {
+            margin-bottom: 8px;
+        }
+        
+        /* Стили для QR-кода подключения */
+        .qrcode-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #4CAF50;
+        }
+        
+        .qrcode-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2e7d32;
+        }
+        
+        .manual-connect-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .manual-connect-btn:hover {
+            background-color: #5a6268;
+        }
     </style>
 </head>
 <body>
@@ -1053,7 +1159,7 @@
                    id="searchInput" 
                    placeholder="Введите артикул для поиска..."
                    autocomplete="off">
-            <button class="clear-search-btn" id="clearSearchBtn" title="Очистить поле поиска">&#10060;</button>
+            <button class="clear-search-btn" id="clearSearchBtn" title="Очистить поле поиска">✕</button>
         </div>
         
         <div class="combined-search-fields" id="combinedSearchFields">
@@ -1104,17 +1210,18 @@
         
         <div class="buttons-container">
             <button class="search-button" id="searchButton">Найти</button>
-            <button class="scan-button" id="scanButton">
-                <span class="scan-icon">&#128247;</span> Сканировать штрихкод
+            <button class="scan-button ios-scan-button" id="scanButton">
+                <span class="scan-icon">📷</span> Сканировать
             </button>
         </div>
 
         <!-- Инструкция для iOS сканирования -->
         <div class="ios-scan-instruction" id="iosScanInstruction">
-            <strong>📱 Для iOS устройств:</strong><br>
+            <strong>📱 Для сканирования на iOS:</strong><br>
             1. Наведите камеру на штрихкод<br>
-            2. Штрихкод должен находиться в рамке<br>
-            3. Сканирование происходит автоматически
+            2. Держите устройство ровно<br>
+            3. Штрихкод должен быть в рамке<br>
+            4. Сканирование происходит автоматически
         </div>
 
 		<div class="barcode-supported">
@@ -1129,7 +1236,7 @@
     </div>
 
     <!-- Кнопка "Наверх" -->
-    <button class="scroll-to-top-btn" id="scrollToTopBtn" title="Наверх">&#9650;</button>
+    <button class="scroll-to-top-btn" id="scrollToTopBtn" title="Наверх">↑</button>
 
     <!-- Модальное окно камеры -->
     <div class="modal-overlay" id="cameraModal">
@@ -1140,9 +1247,11 @@
                     <div class="scan-line"></div>
                 </div>
                 <div class="video-fix-container">
-                    <video id="cameraVideo" playsinline></video>
+                    <video id="cameraVideo" playsinline webkit-playsinline></video>
+                    <div class="scan-hint" id="scanHint">Наведите камеру на штрихкод</div>
                 </div>
                 <div class="camera-controls">
+                    <button class="camera-btn" id="toggleTorchBtn" style="display: none;">🔦 Вкл. вспышку</button>
                     <button class="camera-btn" id="stopCamera">Остановить</button>
                 </div>
             </div>
@@ -1161,7 +1270,7 @@
             </div>
             <div class="scan-result-actions">
                 <button class="action-btn continue-scan-btn" id="continueScanBtn">
-                    &#128247; Сканировать еще
+                    📷 Сканировать еще
                 </button>
                 <button class="action-btn close-result-btn" id="closeResultBtn">
                     Закрыть
@@ -1176,10 +1285,30 @@
             <h3>Печать ценника</h3>
             
             <div id="printerStatus" class="printer-status printer-connecting">
-                Подключаюсь к принтеру...
+                Готово к печати
             </div>
             
-            <!-- НОВЫЙ БЛОК: Выбор типа ценника -->
+            <!-- Инструкции для печати на iOS -->
+            <div class="print-instructions" id="iosPrintInstructions">
+                <h4>📋 Инструкция для печати на iOS:</h4>
+                <ol>
+                    <li>Убедитесь, что принтер Xprinter XP-P323B включен</li>
+                    <li>iPhone и принтер должны быть в одной Wi-Fi сети</li>
+                    <li>Нажмите "Печатать через AirPrint" ниже</li>
+                    <li>В диалоге печати выберите принтер "XP-P323B-6DAC"</li>
+                    <li>Если принтер не виден, проверьте подключение к Wi-Fi</li>
+                </ol>
+            </div>
+            
+            <!-- Альтернативный способ подключения через QR-код -->
+            <div class="qrcode-container" id="qrcodeContainer" style="display: none;">
+                <div class="qrcode-title">📲 Альтернативное подключение:</div>
+                <div id="qrcodeCanvas"></div>
+                <p style="font-size: 12px; margin-top: 10px; color: #666;">
+                    Отсканируйте QR-код для быстрой настройки принтера
+                </p>
+            </div>
+            
             <div class="price-tag-type-selector" id="priceTagTypeSelector">
                 <div class="price-tag-type-option selected" data-type="regular">
                     <input type="radio" id="typeRegular" name="priceTagType" class="price-tag-type-radio" value="regular" checked>
@@ -1195,8 +1324,12 @@
                 <canvas id="priceTagPreviewCanvas" class="price-tag-canvas" width="440" height="284"></canvas>
             </div>
             
-            <button class="print-action-btn" id="printActionBtn" disabled>
-                Распечатать
+            <button class="print-action-btn" id="printActionBtn">
+                Печатать через AirPrint
+            </button>
+            
+            <button class="manual-connect-btn" id="manualConnectBtn">
+                Настройка вручную
             </button>
             
             <button class="close-modal" id="closePrintModal" style="margin-top: 15px;">
@@ -1221,25 +1354,64 @@
         </div>
     </div>
 
-    <!-- Скрытое поле для iOS сканирования -->
-    <input type="file" id="iosBarcodeScanner" accept="image/*" capture="environment" style="display: none;">
+    <!-- Модальное окно инструкции по ручной настройке -->
+    <div class="modal-overlay" id="manualSetupModal">
+        <div class="modal-frame">
+            <h3>Ручная настройка принтера Xprinter</h3>
+            <div class="print-instructions">
+                <h4>🔧 Настройка подключения:</h4>
+                <ol>
+                    <li>Убедитесь, что принтер включен</li>
+                    <li>На принтере нажмите кнопку "Wi-Fi" (индикатор должен мигать)</li>
+                    <li>На iPhone откройте <strong>Настройки → Wi-Fi</strong></li>
+                    <li>Найдите сеть с названием <strong>"XP-P323B-XXXX"</strong></li>
+                    <li>Подключитесь к этой сети (пароль: 12345678 или 1234567890)</li>
+                    <li>Вернитесь в приложение и попробуйте печать снова</li>
+                </ol>
+                
+                <h4>📱 Настройка через приложение Xprinter:</h4>
+                <ol>
+                    <li>Скачайте приложение "Xprinter" из App Store</li>
+                    <li>Запустите приложение и нажмите "Add Printer"</li>
+                    <li>Выберите "XP-P323B-6DAC" из списка</li>
+                    <li>После успешного подключения вернитесь в это приложение</li>
+                </ol>
+                
+                <h4>🔄 Альтернативный способ:</h4>
+                <p>Используйте Bluetooth подключение через настройки iOS:</p>
+                <ol>
+                    <li>Откройте Настройки → Bluetooth</li>
+                    <li>Включите Bluetooth на принтере</li>
+                    <li>Найдите "XP-P323B" в списке устройств</li>
+                    <li>Подключитесь к принтеру</li>
+                </ol>
+            </div>
+            <button class="close-modal" id="closeManualSetupModal" style="margin-top: 15px;">
+                Закрыть
+            </button>
+        </div>
+    </div>
 
+    <!-- Подключаем библиотеку для QR-кода -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
     <script>
-		// ===== ДАТА =====
+        // ===== ДАТА =====
         const DATA_UPDATE_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026"
         
         // ===== ДАТЫ ИЗМЕНЕНИЯ ФАЙЛОВ =====
-        // Эти данные будут заполняться AHK скриптом
-        const URAL_OFFICE_DATE = ""; // Будет заполнена AHK скриптом: "03.02.2026 14:32"
-        const URAL_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 8:19"
-        const SHEVCHENKO_OFFICE_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 07:33"
-        const SHEVCHENKO_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 09:02"
+        const URAL_OFFICE_DATE = ""; // "03.02.2026 14:32"
+        const URAL_DATE = ""; // "04.02.2026 8:19"
+        const SHEVCHENKO_OFFICE_DATE = ""; // "04.02.2026 07:33"
+        const SHEVCHENKO_DATE = ""; // "04.02.2026 09:02"
 
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
         let stream = null;
         let barcodeDetector = null;
         let scanInterval = null;
         let lastScannedCode = '';
+        let isTorchOn = false;
+        let torchTrack = null;
         
         // Переменные для печати
         let serialPort = null;
@@ -1249,10 +1421,10 @@
         // Текущий товар для печати
         let currentProductForPrint = null;
         
-        // НОВАЯ ПЕРЕМЕННАЯ: тип ценника (по умолчанию обычный)
+        // Тип ценника (по умолчанию обычный)
         let currentPriceTagType = 'regular';
         
-        // НОВАЯ ПЕРЕМЕННАЯ: Определяем платформу
+        // Определяем платформу
         let isIOSDevice = false;
         let isAndroidDevice = false;
         
@@ -20268,65 +20440,16 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 ЦБ010008204;РК-2018;Рюкзак "РК", цв.: в ассортименте;500,00;500,00;1;;;;0,000;0,000;0,000;0,000;;;;;;Cb010008204_1;
 `;
 
-        // ===== ФУНКЦИИ ОПРЕДЕЛЕНИЯ ПЛАТФОРМЫ =====
+        // ===== ОПРЕДЕЛЕНИЕ ПЛАТФОРМЫ =====
         function detectPlatform() {
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             isIOSDevice = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
             isAndroidDevice = /android/i.test(userAgent);
             
-            console.log('Platform detected:', {
-                isIOS: isIOSDevice,
-                isAndroid: isAndroidDevice,
-                userAgent: userAgent
-            });
+            console.log('Platform detected:', { isIOS: isIOSDevice, isAndroid: isAndroidDevice, userAgent: userAgent });
         }
 
-        // ===== ОБЩИЕ ФУНКЦИИ (для обеих платформ) =====
-        function parseStockValue(value) {
-            if (!value) return 0;
-            const cleanValue = value.toString().replace(/\s/g, '').replace(/\u00A0/g, '');
-            return parseInt(cleanValue) || 0;
-        }
-
-        function parseFloatValue(value) {
-            if (!value) return 0;
-            const cleanValue = value.toString().replace(',', '.').replace(/\s/g, '');
-            return parseFloat(cleanValue) || 0;
-        }
-
-        function formatNumber(num, isPrice = false) {
-            if (num === null || num === undefined) return '0';
-            
-            let number;
-            if (typeof num === 'string') {
-                const cleanString = num.replace(',', '.').replace(/\s/g, '');
-                number = parseFloat(cleanString);
-                if (isNaN(number)) return '0';
-            } else {
-                number = num;
-            }
-            
-            if (isPrice) {
-                const rounded = Math.round(number * 100) / 100;
-                const hasKopecks = Math.abs(rounded - Math.round(rounded)) > 0.001;
-                
-                if (hasKopecks) {
-                    return rounded.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-                } else {
-                    return Math.round(rounded).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-                }
-            }
-            
-            if (number < 0) {
-                return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-            }
-            return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        }
-
-        function formatCoefficient(num) {
-            return num.toFixed(3).replace('.', ',');
-        }
-
+        // ===== ОСНОВНЫЕ ФУНКЦИИ =====
         function parseProductsData(data) {
             const lines = data.trim().split('\n');
             const products = [];
@@ -20336,33 +20459,16 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 
                 const parts = line.split(';');
                 
-                let imageCode = '';
-                if (parts.length >= 16) {
-                    imageCode = parts[14].trim();
-                } else if (parts.length === 15) {
-                    imageCode = parts[13].trim();
-                }
-                
+                let imageCode = parts.length >= 16 ? parts[14].trim() : '';
                 imageCode = imageCode.replace(/;+$/, '');
                 
-                let alternativeImageCode = '';
-                if (parts.length > 18) {
-                    alternativeImageCode = parts[parts.length - 2].trim();
-                }
+                let alternativeImageCode = parts.length > 18 ? parts[parts.length - 2].trim() : '';
                 
-                let discountPercent = '';
-                let discountPrice = '';
-                let boxQuantity = '';
-                
+                let discountPercent = '', discountPrice = '', boxQuantity = '';
                 if (parts.length >= 17) {
                     discountPercent = parts[15] || '';
                     discountPrice = parts[16] || '';
                     boxQuantity = parts[17] || '';
-                } else if (parts.length === 16) {
-                    discountPercent = parts[14] || '';
-                    discountPrice = parts[15] || '';
-                } else if (parts.length === 15) {
-                    discountPercent = parts[14] || '';
                 }
                 
                 discountPercent = discountPercent.trim();
@@ -20376,16 +20482,16 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                     wholesalePrice: parts[3] || '',
                     retailPrice: parts[4] || '',
                     stocks: {
-                        warehouse1: parseStockValue(parts[5]),
-                        warehouse2: parseStockValue(parts[6]),
-                        warehouse3: parseStockValue(parts[7]),
-                        warehouse4: parseStockValue(parts[8])
+                        warehouse1: parseInt(parts[5] || 0) || 0,
+                        warehouse2: parseInt(parts[6] || 0) || 0,
+                        warehouse3: parseInt(parts[7] || 0) || 0,
+                        warehouse4: parseInt(parts[8] || 0) || 0
                     },
                     coefficients: {
-                        warehouse1: parseFloatValue(parts[9]),
-                        warehouse2: parseFloatValue(parts[10]),
-                        warehouse3: parseFloatValue(parts[11]),
-                        warehouse4: parseFloatValue(parts[12])
+                        warehouse1: parseFloat((parts[9] || '0').replace(',', '.')) || 0,
+                        warehouse2: parseFloat((parts[10] || '0').replace(',', '.')) || 0,
+                        warehouse3: parseFloat((parts[11] || '0').replace(',', '.')) || 0,
+                        warehouse4: parseFloat((parts[12] || '0').replace(',', '.')) || 0
                     },
                     storageLocation: parts[13] || '',
                     imageCode: imageCode,
@@ -20424,164 +20530,889 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             return Object.values(groups);
         }
 
-        function formatPriceWithDiscount(product) {
-            const hasDiscount = product.discountPercent && product.discountPercent.trim() !== '';
-            
-            if (!hasDiscount) {
-                return `
-                    <div class="price-container">
-                        <span class="discount-price">Цена: ${product.wholesalePrice} руб.</span>
-                    </div>
-                `;
-            }
-            
-            const discountPercent = product.discountPercent;
-            const discountPrice = product.discountPrice || product.wholesalePrice;
-            
-            return `
-                <div class="price-container">
-                    <span class="discount-price">Цена: ${discountPrice} руб.</span>
-                    <div class="old-price-container">
-                        <span class="original-price">${product.wholesalePrice} </span>
-                        <span class="discount-percent">-${discountPercent}% &#128165;</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        function formatPriceWithDiscountModal(product) {
-            const hasDiscount = product.discountPercent && product.discountPercent.trim() !== '';
-            
-            if (!hasDiscount) {
-                return `
-                    <div class="scan-price-container">
-                        <span class="scan-discount-price">Цена: ${product.wholesalePrice} руб.</span>
-                    </div>
-                `;
-            }
-            
-            const discountPercent = product.discountPercent;
-            const discountPrice = product.discountPrice || product.wholesalePrice;
-            
-            return `
-                <div class="scan-price-container">
-                    <span class="scan-discount-price">Цена: ${discountPrice} руб.</span>
-                    <div class="scan-old-price-container">
-                        <span class="scan-original-price">${product.wholesalePrice}</span>
-                        <span class="scan-discount-percent">-${discountPercent}% &#128165;</span>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ===== ФУНКЦИИ ДЛЯ РАБОТЫ С СЕРИАЛЬНЫМ ПОРТОМ (ТОЛЬКО ДЛЯ ANDROID/DESKTOP) =====
-
-        function updatePrinterStatus(message, type = 'connecting') {
-            const statusEl = document.getElementById('printerStatus');
-            statusEl.textContent = message;
-            
-            statusEl.classList.remove('printer-connected', 'printer-disconnected', 'printer-connecting');
-            
-            switch(type) {
-                case 'connected':
-                    statusEl.classList.add('printer-connected');
-                    statusEl.innerHTML = '&#9989; ' + message;
-                    break;
-                case 'disconnected':
-                    statusEl.classList.add('printer-disconnected');
-                    statusEl.innerHTML = '&#10060; ' + message;
-                    break;
-                case 'connecting':
-                    statusEl.classList.add('printer-connecting');
-                    statusEl.innerHTML = '&#9203; ' + message;
-                    break;
-            }
-        }
-
-        async function connectToPrinter() {
-            if (isIOSDevice) {
-                // Для iOS не используем Web Serial
-                return false;
-            }
-            
+        // ===== ФУНКЦИИ СКАНИРОВАНИЯ ДЛЯ iOS (ИСПРАВЛЕННЫЕ) =====
+        async function openCameraIOS() {
             try {
-                updatePrinterStatus('Подключаюсь к принтеру...', 'connecting');
+                stopCameraStream();
                 
-                if (!navigator.serial) {
-                    throw new Error('Ваш браузер не поддерживает Web Serial. Используйте Chrome/Edge 89+');
-                }
+                // Показываем подсказку
+                const scanHint = document.getElementById('scanHint');
+                scanHint.classList.add('visible');
                 
-                const ports = await navigator.serial.getPorts();
+                // Простые настройки для iOS
+                const constraints = {
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                };
                 
-                if (ports.length > 0) {
-                    serialPort = ports[0];
-                } else {
-                    serialPort = await navigator.serial.requestPort();
-                }
+                // Запрашиваем доступ к камере
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
                 
-                await serialPort.open({
-                    baudRate: 115200,
-                    dataBits: 8,
-                    stopBits: 1,
-                    parity: 'none'
+                // Находим трек с подсветкой (вспышкой)
+                torchTrack = stream.getVideoTracks()[0];
+                
+                // Настраиваем видео
+                cameraVideo.srcObject = stream;
+                cameraModal.style.display = 'flex';
+                
+                // Для iOS: исправляем зеркальное отображение
+                cameraVideo.style.transform = 'scaleX(-1)';
+                cameraVideo.style.webkitTransform = 'scaleX(-1)';
+                
+                // Ждем загрузки метаданных
+                await new Promise((resolve) => {
+                    cameraVideo.onloadedmetadata = () => {
+                        resolve();
+                    };
+                    setTimeout(resolve, 1000);
                 });
                 
-                serialWriter = serialPort.writable.getWriter();
-                isPrinterConnected = true;
+                // Воспроизводим видео
+                try {
+                    await cameraVideo.play();
+                } catch (playError) {
+                    console.log('Play error:', playError);
+                }
                 
-                updatePrinterStatus('Принтер подключен', 'connected');
-                return true;
+                // Показываем кнопку вспышки если доступна
+                const toggleTorchBtn = document.getElementById('toggleTorchBtn');
+                if (torchTrack && 'torch' in torchTrack.getCapabilities()) {
+                    toggleTorchBtn.style.display = 'block';
+                }
+                
+                // Инициализируем детектор штрихкодов
+                if (!barcodeDetector && isBarcodeDetectorSupported()) {
+                    barcodeDetector = await initBarcodeDetector();
+                }
+                
+                if (barcodeDetector) {
+                    startBarcodeDetectionIOS();
+                } else {
+                    // Альтернативный метод для iOS без BarcodeDetector
+                    alert('Для лучшего сканирования обновите iOS до последней версии или используйте другой браузер (Chrome для iOS)');
+                    startAlternativeDetection();
+                }
                 
             } catch (error) {
-                console.error('Ошибка подключения к принтеру:', error);
-                updatePrinterStatus(`Ошибка: ${error.message}`, 'disconnected');
-                return false;
+                console.error('Camera error on iOS:', error);
+                
+                let errorMessage = 'Ошибка камеры';
+                if (error.name === 'NotAllowedError') {
+                    errorMessage = 'Разрешите доступ к камере в настройках Safari';
+                } else if (error.name === 'NotFoundError') {
+                    errorMessage = 'Камера не найдена';
+                }
+                
+                alert(`${errorMessage}: ${error.message}`);
+                
+                // Предлагаем альтернативный метод
+                setTimeout(() => {
+                    const useAlternative = confirm('Не удалось открыть камеру. Хотите ввести штрихкод вручную?');
+                    if (useAlternative) {
+                        const barcode = prompt('Введите штрихкод вручную:');
+                        if (barcode && barcode.trim()) {
+                            handleScannedCode(barcode.trim());
+                        }
+                    }
+                }, 500);
             }
         }
 
-        async function disconnectFromPrinter() {
-            if (isIOSDevice) return true;
+        // Улучшенная функция детекции для iOS
+        function startBarcodeDetectionIOS() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d', { willReadFrequently: true });
+            
+            scanInterval = setInterval(async () => {
+                try {
+                    if (!cameraVideo.videoWidth || !cameraVideo.videoHeight) return;
+                    
+                    canvas.width = cameraVideo.videoWidth;
+                    canvas.height = cameraVideo.videoHeight;
+                    
+                    // Для iOS: рисуем изображение как есть (без трансформации)
+                    context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+                    
+                    // Оптимизация для лучшего распознавания
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    enhanceImageForBarcode(imageData);
+                    context.putImageData(imageData, 0, 0);
+                    
+                    if (barcodeDetector) {
+                        const barcodes = await barcodeDetector.detect(canvas);
+                        
+                        if (barcodes && barcodes.length > 0) {
+                            const barcode = barcodes[0];
+                            console.log('Found barcode:', barcode.rawValue);
+                            handleScannedCode(barcode.rawValue);
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Detection error:', error);
+                }
+            }, 500); // Увеличен интервал для iOS
+        }
+
+        // Улучшение изображения для лучшего распознавания
+        function enhanceImageForBarcode(imageData) {
+            const data = imageData.data;
+            
+            // Преобразуем в оттенки серого и увеличиваем контраст
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                
+                // Преобразование в оттенки серого
+                const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+                
+                // Увеличение контраста
+                const contrasted = gray < 128 ? Math.max(0, gray - 50) : Math.min(255, gray + 50);
+                
+                data[i] = contrasted;     // R
+                data[i + 1] = contrasted; // G
+                data[i + 2] = contrasted; // B
+                // Альфа-канал не меняем
+            }
+        }
+
+        // Альтернативный метод детекции для старых iOS
+        function startAlternativeDetection() {
+            const scanHint = document.getElementById('scanHint');
+            scanHint.textContent = "Используется альтернативный режим сканирования\nНаведите камеру на штрихкод и нажмите кнопку ниже";
+            
+            // Создаем кнопку для ручного захвата
+            const captureBtn = document.createElement('button');
+            captureBtn.className = 'camera-btn';
+            captureBtn.innerHTML = '📸 Сканировать сейчас';
+            captureBtn.onclick = captureAndDecode;
+            
+            document.querySelector('.camera-controls').appendChild(captureBtn);
+        }
+
+        async function captureAndDecode() {
+            const canvas = document.createElement('canvas');
+            canvas.width = cameraVideo.videoWidth;
+            canvas.height = cameraVideo.videoHeight;
+            const ctx = canvas.getContext('2d');
+            
+            // Для iOS: без трансформации
+            ctx.drawImage(cameraVideo, 0, 0);
+            
+            // Пытаемся найти штрихкод
+            if (barcodeDetector) {
+                const barcodes = await barcodeDetector.detect(canvas);
+                if (barcodes.length > 0) {
+                    handleScannedCode(barcodes[0].rawValue);
+                } else {
+                    alert('Штрихкод не найден. Попробуйте еще раз.');
+                }
+            } else {
+                // Простая проверка по шаблону для цифровых штрихкодов
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const barcode = trySimpleBarcodeDetection(imageData);
+                if (barcode) {
+                    handleScannedCode(barcode);
+                } else {
+                    alert('Штрихкод не найден. Убедитесь, что штрихкод четкий и хорошо освещен.');
+                }
+            }
+        }
+
+        // Простая детекция для тестирования
+        function trySimpleBarcodeDetection(imageData) {
+            // Базовая проверка - в реальном приложении нужна более сложная логика
+            console.log('Trying simple barcode detection');
+            return null;
+        }
+
+        // Управление вспышкой
+        async function toggleTorch() {
+            if (!torchTrack) return;
             
             try {
-                if (serialWriter) {
-                    serialWriter.releaseLock();
-                    serialWriter = null;
-                }
+                await torchTrack.applyConstraints({
+                    advanced: [{ torch: !isTorchOn }]
+                });
+                isTorchOn = !isTorchOn;
                 
-                if (serialPort) {
-                    await serialPort.close();
-                    serialPort = null;
-                }
-                
-                isPrinterConnected = false;
-                updatePrinterStatus('Принтер отключен', 'disconnected');
-                return true;
-                
+                const toggleTorchBtn = document.getElementById('toggleTorchBtn');
+                toggleTorchBtn.innerHTML = isTorchOn ? '🔦 Выкл. вспышку' : '🔦 Вкл. вспышку';
             } catch (error) {
-                console.error('Ошибка отключения:', error);
-                return false;
+                console.error('Torch error:', error);
             }
         }
 
-        async function sendRawData(data) {
+        // ===== ФУНКЦИИ ПЕЧАТИ ДЛЯ iOS (ИСПРАВЛЕННЫЕ) =====
+        async function printOnIOS(product, type = 'regular') {
+            return new Promise((resolve, reject) => {
+                try {
+                    // Создаем HTML для печати с правильными размерами
+                    const printContent = createPrintContent(product, type);
+                    
+                    // Открываем новое окно для печати
+                    const printWindow = window.open('', '_blank');
+                    if (!printWindow) {
+                        reject(new Error('Не удалось открыть окно для печати. Разрешите всплывающие окна.'));
+                        return;
+                    }
+                    
+                    printWindow.document.write(printContent);
+                    printWindow.document.close();
+                    
+                    // Ждем загрузки изображения
+                    printWindow.onload = function() {
+                        setTimeout(() => {
+                            try {
+                                printWindow.print();
+                                
+                                // Закрываем окно через 3 секунды
+                                setTimeout(() => {
+                                    if (!printWindow.closed) {
+                                        printWindow.close();
+                                    }
+                                    resolve(true);
+                                }, 3000);
+                                
+                            } catch (printError) {
+                                printWindow.close();
+                                reject(new Error('Ошибка при вызове диалога печати: ' + printError.message));
+                            }
+                        }, 1000);
+                    };
+                    
+                    // Fallback таймаут
+                    setTimeout(() => {
+                        if (!printWindow.closed) {
+                            printWindow.close();
+                        }
+                        resolve(true);
+                    }, 10000);
+                    
+                } catch (error) {
+                    console.error('iOS print error:', error);
+                    reject(error);
+                }
+            });
+        }
+
+        function createPrintContent(product, type) {
+            // Создаем canvas с ценником
+            const canvas = createPriceTagImage(product, type);
+            const dataUrl = canvas.toDataURL('image/png');
+            
+            // Определяем размеры для принтера Xprinter XP-P323B (58x40mm)
+            const widthMM = 58;
+            const heightMM = 40;
+            
+            // Конвертируем мм в пиксели (1mm = 3.779527559px при 96 DPI)
+            const widthPX = Math.round(widthMM * 3.78);
+            const heightPX = Math.round(heightMM * 3.78);
+            
+            return `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Печать ценника</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        @page {
+            margin: 0;
+            size: ${widthMM}mm ${heightMM}mm;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            width: ${widthMM}mm;
+            height: ${heightMM}mm;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .print-container {
+            width: ${widthMM}mm;
+            height: ${heightMM}mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        img {
+            width: ${widthMM - 3}mm;
+            height: ${heightMM - 2}mm;
+            display: block;
+        }
+        
+        /* Стили для печати */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-container, .print-container * {
+                visibility: visible;
+            }
+            .print-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: ${widthMM}mm !important;
+                height: ${heightMM}mm !important;
+            }
+            img {
+                width: ${widthMM - 3}mm !important;
+                height: ${heightMM - 2}mm !important;
+            }
+        }
+        
+        /* Скрываем все при печати кроме ценника */
+        @media screen {
+            .no-print {
+                display: block;
+                text-align: center;
+                padding: 20px;
+                font-family: Arial, sans-serif;
+            }
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            // Даем время на загрузку изображения
+            setTimeout(function() {
+                try {
+                    window.print();
+                } catch(e) {
+                    console.error('Print error:', e);
+                }
+                
+                // Закрываем окно через 3 секунды
+                setTimeout(function() {
+                    window.close();
+                }, 3000);
+            }, 1000);
+        };
+        
+        // Обработчик после печати
+        window.onafterprint = function() {
+            setTimeout(function() {
+                window.close();
+            }, 1000);
+        };
+    <\/script>
+</head>
+<body>
+    <div class="no-print">
+        <h3>Ценник готов к печати</h3>
+        <p>Если диалог печати не открылся автоматически:</p>
+        <ol>
+            <li>Нажмите Поделиться (квадрат со стрелкой вверх)</li>
+            <li>Прокрутите вниз и нажмите "Печать"</li>
+            <li>Выберите принтер "XP-P323B-6DAC"</li>
+            <li>Настройте параметры и нажмите "Печать"</li>
+        </ol>
+    </div>
+    <div class="print-container">
+        <img src="${dataUrl}" alt="Ценник" onload="console.log('Image loaded')" onerror="console.log('Image error')">
+    </div>
+</body>
+</html>`;
+        }
+
+        // ===== ФУНКЦИИ ПОДКЛЮЧЕНИЯ ПРИНТЕРА =====
+        function setupQRCode() {
+            try {
+                // Создаем QR-код с инструкциями
+                const qrCodeData = `XPRINTER CONFIG:
+Model: XP-P323B
+SSID: XP-P323B-6DAC
+Password: 12345678
+IP: 192.168.1.100
+Port: 9100
+
+Инструкция:
+1. Подключитесь к Wi-Fi принтера
+2. Используйте AirPrint для печати
+3. Или установите приложение Xprinter`;
+
+                QRCode.toCanvas(document.getElementById('qrcodeCanvas'), qrCodeData, {
+                    width: 200,
+                    height: 200,
+                    margin: 1,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    }
+                }, function(error) {
+                    if (error) console.error('QR Code error:', error);
+                });
+            } catch (error) {
+                console.error('QR Code setup error:', error);
+            }
+        }
+
+        // ===== ОБЩИЕ ФУНКЦИИ =====
+        function stopCameraStream() {
+            if (stream) {
+                stream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                stream = null;
+            }
+            if (scanInterval) {
+                clearInterval(scanInterval);
+                scanInterval = null;
+            }
+            if (cameraVideo.srcObject) {
+                cameraVideo.srcObject = null;
+            }
+            torchTrack = null;
+            isTorchOn = false;
+        }
+
+        function handleScannedCode(code) {
+            if (!code || code.trim().length === 0) return;
+            
+            stopCameraStream();
+            cameraModal.style.display = 'none';
+            
+            const cleanCode = code.toString().trim();
+            searchInput.value = cleanCode;
+            
+            // Устанавливаем режим поиска по штрихкоду
+            document.getElementById('modeBarcode').checked = true;
+            updateSearchUI();
+            
+            // Выполняем поиск
+            const results = performSimpleSearch(cleanCode, 'barcode');
+            
+            // Показываем результаты в основном интерфейсе
+            if (results.length > 0) {
+                displayResults(results, 'barcode');
+                scrollToResults();
+                
+                // Также показываем модальное окно с результатами
+                showScanResults(cleanCode, results);
+            } else {
+                alert('Товар не найден по штрихкоду: ' + cleanCode);
+                searchInput.focus();
+            }
+        }
+
+        function showScanResults(code, results) {
+            lastScannedCode = code;
+            
+            if (results.length === 0) {
+                resultCount.textContent = 'Товары не найдены';
+                resultCount.style.color = '#f44336';
+                resultProducts.innerHTML = '<div class="scan-result-card" style="text-align: center; color: #666; font-style: italic;">По этому штрихкоду товары не найдены в базе данных</div>';
+            } else {
+                const groupedResults = groupProductsByKey(results);
+                resultCount.textContent = `Найдено товаров: ${results.length} (${groupedResults.length} уникальных)`;
+                resultCount.style.color = '#4CAF50';
+                
+                resultProducts.innerHTML = '';
+                
+                groupedResults.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'scan-result-card';
+                    
+                    const hasImage = product.imageCode && product.imageCode.trim() !== '';
+                    const printButtonHTML = `<button class="print-button" onclick="openPrintModal(${JSON.stringify(product).replace(/"/g, '&quot;')})" title="Печать ценника">🖨️</button>`;
+
+                    productCard.innerHTML = `
+                        <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
+                            <strong>Штрихкод:</strong> ${product.count > 1 ? `Несколько (${product.count})` : product.barcode}
+                        </div>
+                        <div style="font-weight: bold; color: #333; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center;" id="scanArticleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}">
+                                <strong>Артикул:</strong> ${product.article}
+                                ${hasImage ? '<button class="image-button" style="margin-left: 10px;">🖼️</button>' : '<span class="no-image-text">(без изображения)</span>'}
+                            </div>
+                            ${printButtonHTML}
+                        </div>
+                        <div style="font-size: 16px; color: #222; margin-bottom: 8px;">
+                            ${product.name}
+                        </div>
+                        ${formatPriceWithDiscountModal(product)}
+                        ${formatStockInfoModal(product)}
+                    `;
+                    
+                    if (hasImage) {
+                        setTimeout(() => {
+                            const container = productCard.querySelector(`#scanArticleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}`);
+                            if (container) {
+                                const imageButton = container.querySelector('.image-button');
+                                if (imageButton) {
+                                    imageButton.onclick = function() {
+                                        showProductImage(product);
+                                    };
+                                }
+                            }
+                        }, 0);
+                    }
+                    
+                    resultProducts.appendChild(productCard);
+                });
+            }
+            
+            resultModal.style.display = 'flex';
+        }
+
+        // ===== ИНИЦИАЛИЗАЦИЯ И ОБРАБОТЧИКИ СОБЫТИЙ =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация
+            detectPlatform();
+            
+            // Устанавливаем обработчики событий
+            setupEventHandlers();
+            
+            // Настройка интерфейса для iOS
             if (isIOSDevice) {
-                throw new Error('Web Serial не поддерживается на iOS');
+                setupForIOS();
             }
             
-            if (!isPrinterConnected || !serialWriter) {
-                throw new Error('Сначала подключите принтер');
+            // Инициализация других компонентов
+            initScrollToTopButton();
+            setupPriceTagTypeSelector();
+            setupQRCode();
+            
+            // Устанавливаем дату обновления
+            if (DATA_UPDATE_DATE && DATA_UPDATE_DATE.trim() !== "") {
+                let displayDate = DATA_UPDATE_DATE;
+                if (DATA_UPDATE_DATE.includes(" ")) {
+                    displayDate = DATA_UPDATE_DATE.split(" ")[0];
+                }
+                document.getElementById('current-date').textContent = displayDate;
+            }
+        });
+
+        function setupEventHandlers() {
+            // Поиск
+            document.getElementById('searchButton').addEventListener('click', searchProducts);
+            document.getElementById('clearSearchBtn').addEventListener('click', clearSearchFields);
+            
+            // Камера
+            document.getElementById('scanButton').addEventListener('click', openCamera);
+            document.getElementById('toggleTorchBtn').addEventListener('click', toggleTorch);
+            document.getElementById('stopCamera').addEventListener('click', stopCameraAndClose);
+            document.getElementById('closeCameraModal').addEventListener('click', stopCameraAndClose);
+            
+            // Результаты сканирования
+            document.getElementById('continueScanBtn').addEventListener('click', continueScanning);
+            document.getElementById('closeResultBtn').addEventListener('click', closeResultModal);
+            
+            // Печать
+            document.getElementById('printActionBtn').addEventListener('click', handlePrint);
+            document.getElementById('manualConnectBtn').addEventListener('click', showManualSetup);
+            document.getElementById('closePrintModal').addEventListener('click', closePrintModal);
+            
+            // Даты
+            document.getElementById('current-date').addEventListener('click', openDatesModal);
+            document.getElementById('closeDatesModal').addEventListener('click', closeDatesModal);
+            
+            // Ручная настройка
+            document.getElementById('closeManualSetupModal').addEventListener('click', closeManualSetupModal);
+            
+            // Поиск по Enter
+            document.getElementById('searchInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') searchProducts();
+            });
+            
+            // Режимы поиска
+            document.querySelectorAll('input[name="searchMode"]').forEach(radio => {
+                radio.addEventListener('change', updateSearchUI);
+            });
+        }
+
+        function setupForIOS() {
+            console.log('Setting up for iOS');
+            
+            // Настраиваем кнопку сканирования
+            const scanButton = document.getElementById('scanButton');
+            scanButton.innerHTML = '<span class="scan-icon">📷</span> Сканировать (iOS)';
+            scanButton.classList.add('ios-scan-button');
+            
+            // Показываем инструкцию
+            document.getElementById('iosScanInstruction').style.display = 'block';
+            
+            // Настройка модального окна печати для iOS
+            const iosPrintInstructions = document.getElementById('iosPrintInstructions');
+            const qrcodeContainer = document.getElementById('qrcodeContainer');
+            
+            if (iosPrintInstructions) iosPrintInstructions.style.display = 'block';
+            if (qrcodeContainer) qrcodeContainer.style.display = 'block';
+            
+            // Предварительная инициализация BarcodeDetector
+            if (isBarcodeDetectorSupported()) {
+                initBarcodeDetector().then(detector => {
+                    barcodeDetector = detector;
+                    console.log('BarcodeDetector initialized for iOS:', !!detector);
+                });
+            }
+        }
+
+        // ===== ОСНОВНЫЕ ОБРАБОТЧИКИ =====
+        function openCamera() {
+            if (isIOSDevice) {
+                openCameraIOS();
+            } else {
+                openCameraAndroid();
+            }
+        }
+
+        function stopCameraAndClose() {
+            stopCameraStream();
+            cameraModal.style.display = 'none';
+        }
+
+        function continueScanning() {
+            resultModal.style.display = 'none';
+            setTimeout(() => {
+                openCamera();
+            }, 300);
+        }
+
+        function closeResultModal() {
+            resultModal.style.display = 'none';
+        }
+
+        async function openPrintModal(product) {
+            currentProductForPrint = product;
+            const printModal = document.getElementById('printModal');
+            printModal.style.display = 'flex';
+            
+            // Сбрасываем тип ценника
+            currentPriceTagType = 'regular';
+            document.querySelectorAll('.price-tag-type-option').forEach(option => {
+                if (option.getAttribute('data-type') === 'regular') {
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+            
+            // Обновляем превью
+            updatePriceTagPreview(product, 'regular');
+            
+            // Для iOS показываем специальные инструкции
+            if (isIOSDevice) {
+                document.getElementById('printActionBtn').textContent = 'Печатать через AirPrint';
+                document.getElementById('printActionBtn').disabled = false;
+                
+                // Показываем QR-код и инструкции
+                document.getElementById('iosPrintInstructions').style.display = 'block';
+                document.getElementById('qrcodeContainer').style.display = 'block';
+            }
+        }
+
+        function closePrintModal() {
+            document.getElementById('printModal').style.display = 'none';
+        }
+
+        function showManualSetup() {
+            document.getElementById('manualSetupModal').style.display = 'flex';
+        }
+
+        function closeManualSetupModal() {
+            document.getElementById('manualSetupModal').style.display = 'none';
+        }
+
+        async function handlePrint() {
+            if (!currentProductForPrint) {
+                showPrintStatus('Товар не выбран', 'error');
+                return;
+            }
+            
+            const printBtn = document.getElementById('printActionBtn');
+            printBtn.disabled = true;
+            printBtn.textContent = isIOSDevice ? 'Подготавливаю...' : 'Печатаю...';
+            
+            try {
+                if (isIOSDevice) {
+                    // Для iOS используем AirPrint
+                    await printOnIOS(currentProductForPrint, currentPriceTagType);
+                    showPrintStatus('Открывается диалог печати...', 'info');
+                    
+                    // Закрываем модальное окно через 2 секунды
+                    setTimeout(() => {
+                        closePrintModal();
+                    }, 2000);
+                } else {
+                    // Для других платформ
+                    await printPriceTag(currentProductForPrint, currentPriceTagType);
+                    showPrintStatus('Ценник отправлен на печать!', 'success');
+                    
+                    setTimeout(() => {
+                        closePrintModal();
+                    }, 1500);
+                }
+            } catch (error) {
+                console.error('Print error:', error);
+                
+                let errorMessage = 'Ошибка печати: ' + error.message;
+                if (isIOSDevice) {
+                    errorMessage = `
+Ошибка печати на iOS:
+
+1. Убедитесь, что принтер включен
+2. iPhone и принтер должны быть в одной Wi-Fi сети
+3. Попробуйте подключиться через приложение Xprinter
+4. Проверьте настройки AirPrint в iOS
+
+Подробная ошибка: ${error.message}
+                    `;
+                }
+                
+                showPrintStatus(errorMessage, 'error');
+                printBtn.disabled = false;
+                printBtn.textContent = isIOSDevice ? 'Печатать через AirPrint' : 'Распечатать';
+            }
+        }
+
+        // ===== ОСТАЛЬНЫЕ ФУНКЦИИ =====
+        function isBarcodeDetectorSupported() {
+            return ('BarcodeDetector' in window);
+        }
+
+        async function initBarcodeDetector() {
+            if (!isBarcodeDetectorSupported()) {
+                console.warn('BarcodeDetector API не поддерживается в этом браузере');
+                return null;
             }
             
             try {
-                await serialWriter.write(data);
-                return true;
+                const formats = await BarcodeDetector.getSupportedFormats();
+                const supportedFormats = formats.filter(format => 
+                    ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_39', 'code_128', 'codabar'].includes(format)
+                );
+                
+                if (supportedFormats.length === 0) {
+                    console.warn('Нет поддержки нужных форматов штрихкодов');
+                    return null;
+                }
+                
+                return new BarcodeDetector({ formats: supportedFormats });
             } catch (error) {
-                console.error('Ошибка отправки данных:', error);
+                console.error('Ошибка инициализации BarcodeDetector:', error);
+                return null;
+            }
+        }
+
+        async function openCameraAndroid() {
+            try {
+                stopCameraStream();
+                
+                const constraints = {
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                };
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                cameraVideo.srcObject = stream;
+                cameraModal.style.display = 'flex';
+                
+                // Сбрасываем трансформацию для Android
+                cameraVideo.style.transform = 'scaleX(1)';
+                
+                await cameraVideo.play();
+                
+                if (!barcodeDetector) {
+                    barcodeDetector = await initBarcodeDetector();
+                }
+                
+                if (!barcodeDetector) {
+                    alert('Ваш браузер не поддерживает прямое сканирование штрихкодов.');
+                    stopCameraStream();
+                    return;
+                }
+                
+                startBarcodeDetectionAndroid(barcodeDetector);
+                
+            } catch (error) {
+                console.error('Ошибка доступа к камере:', error);
+                alert('Не удалось получить доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.');
+            }
+        }
+
+        function startBarcodeDetectionAndroid(detector) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d', { willReadFrequently: true });
+            
+            scanInterval = setInterval(async () => {
+                if (cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA) {
+                    canvas.width = cameraVideo.videoWidth;
+                    canvas.height = cameraVideo.videoHeight;
+                    
+                    context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+                    
+                    try {
+                        const barcodes = await detector.detect(canvas);
+                        
+                        if (barcodes && barcodes.length > 0) {
+                            const barcode = barcodes[0];
+                            handleScannedCode(barcode.rawValue);
+                            return;
+                        }
+                        
+                    } catch (error) {
+                        console.error('Ошибка детектирования штрихкода:', error);
+                    }
+                }
+            }, 300);
+        }
+
+        async function printPriceTag(product, type = 'regular') {
+            if (isIOSDevice) {
+                throw new Error('Для iOS используйте функцию printOnIOS');
+            }
+            
+            try {
+                if (!isPrinterConnected) {
+                    const connected = await connectToPrinter();
+                    if (!connected) {
+                        throw new Error('Не удалось подключиться к принтеру');
+                    }
+                }
+                
+                const canvas = createPriceTagImage(product, type);
+                const bitmap = canvasToEscPosBitmap(canvas);
+                const imageCommand = createEscPosImageCommand(bitmap);
+                
+                const leftMargin = 0;
+                const fullCommand = new Uint8Array(imageCommand.length + 10);
+                
+                fullCommand[0] = 0x1B; // ESC
+                fullCommand[1] = 0x40; // @
+                
+                fullCommand[2] = 0x1B; // ESC
+                fullCommand[3] = 0x6C; // l
+                fullCommand[4] = leftMargin;
+                
+                fullCommand.set(imageCommand, 5);
+                
+                const imageEnd = 5 + imageCommand.length;
+                fullCommand[imageEnd] = 0x0A; // LF
+                fullCommand[imageEnd + 1] = 0x0A; // LF
+                
+                await sendRawData(fullCommand);
+                return true;
+                
+            } catch (error) {
+                console.error('Ошибка печати:', error);
                 throw error;
             }
         }
-
-        // ===== ФУНКЦИИ ДЛЯ СОЗДАНИЯ И ПЕЧАТИ ЦЕННИКА =====
 
         function createPriceTagImage(product, type = 'regular') {
             const canvas = document.createElement('canvas');
@@ -20839,613 +21670,146 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             return command;
         }
 
-        async function printPriceTag(product, type = 'regular') {
+        function updatePriceTagPreview(product, type = 'regular') {
+            const canvas = document.getElementById('priceTagPreviewCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (type === 'large') {
+                canvas.width = 440;
+                canvas.height = 300;
+            } else {
+                canvas.width = 440;
+                canvas.height = 284;
+            }
+            
+            const scale = 0.7;
+            ctx.save();
+            ctx.scale(scale, scale);
+            
+            const previewCanvas = createPriceTagImage(product, type);
+            ctx.drawImage(previewCanvas, 0, 0);
+            
+            ctx.restore();
+        }
+
+        function showPrintStatus(message, type = 'info') {
+            const statusEl = document.getElementById('printStatus');
+            statusEl.textContent = message;
+            statusEl.className = 'print-status ' + type;
+            statusEl.style.display = 'block';
+            
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 5000);
+        }
+
+        async function connectToPrinter() {
             if (isIOSDevice) {
-                throw new Error('Для iOS используйте функцию printOnIOS');
+                // Для iOS не используем Web Serial
+                return false;
             }
             
             try {
-                if (!isPrinterConnected) {
-                    const connected = await connectToPrinter();
-                    if (!connected) {
-                        throw new Error('Не удалось подключиться к принтеру');
-                    }
+                updatePrinterStatus('Подключаюсь к принтеру...', 'connecting');
+                
+                if (!navigator.serial) {
+                    throw new Error('Ваш браузер не поддерживает Web Serial. Используйте Chrome/Edge 89+');
                 }
                 
-                const canvas = createPriceTagImage(product, type);
-                const bitmap = canvasToEscPosBitmap(canvas);
-                const imageCommand = createEscPosImageCommand(bitmap);
+                const ports = await navigator.serial.getPorts();
                 
-                const leftMargin = 0;
-                const fullCommand = new Uint8Array(imageCommand.length + 10);
+                if (ports.length > 0) {
+                    serialPort = ports[0];
+                } else {
+                    serialPort = await navigator.serial.requestPort();
+                }
                 
-                fullCommand[0] = 0x1B; // ESC
-                fullCommand[1] = 0x40; // @
+                await serialPort.open({
+                    baudRate: 115200,
+                    dataBits: 8,
+                    stopBits: 1,
+                    parity: 'none'
+                });
                 
-                fullCommand[2] = 0x1B; // ESC
-                fullCommand[3] = 0x6C; // l
-                fullCommand[4] = leftMargin;
+                serialWriter = serialPort.writable.getWriter();
+                isPrinterConnected = true;
                 
-                fullCommand.set(imageCommand, 5);
-                
-                const imageEnd = 5 + imageCommand.length;
-                fullCommand[imageEnd] = 0x0A; // LF
-                fullCommand[imageEnd + 1] = 0x0A; // LF
-                
-                await sendRawData(fullCommand);
+                updatePrinterStatus('Принтер подключен', 'connected');
                 return true;
                 
             } catch (error) {
-                console.error('Ошибка печати:', error);
+                console.error('Ошибка подключения к принтеру:', error);
+                updatePrinterStatus(`Ошибка: ${error.message}`, 'disconnected');
+                return false;
+            }
+        }
+
+        async function disconnectFromPrinter() {
+            if (isIOSDevice) return true;
+            
+            try {
+                if (serialWriter) {
+                    serialWriter.releaseLock();
+                    serialWriter = null;
+                }
+                
+                if (serialPort) {
+                    await serialPort.close();
+                    serialPort = null;
+                }
+                
+                isPrinterConnected = false;
+                updatePrinterStatus('Принтер отключен', 'disconnected');
+                return true;
+                
+            } catch (error) {
+                console.error('Ошибка отключения:', error);
+                return false;
+            }
+        }
+
+        async function sendRawData(data) {
+            if (isIOSDevice) {
+                throw new Error('Web Serial не поддерживается на iOS');
+            }
+            
+            if (!isPrinterConnected || !serialWriter) {
+                throw new Error('Сначала подключите принтер');
+            }
+            
+            try {
+                await serialWriter.write(data);
+                return true;
+            } catch (error) {
+                console.error('Ошибка отправки данных:', error);
                 throw error;
             }
         }
 
-        // ===== IOS-СПЕЦИФИЧНЫЕ ФУНКЦИИ =====
-
-        // Функция печати через AirPrint для iOS
-        async function printOnIOS(product, type = 'regular') {
-            return new Promise((resolve, reject) => {
-                try {
-                    // Создаем HTML для печати
-                    const printWindow = window.open('', '_blank');
-                    
-                    if (!printWindow) {
-                        reject(new Error('Не удалось открыть окно для печати'));
-                        return;
-                    }
-                    
-                    const canvas = createPriceTagImage(product, type);
-                    const dataUrl = canvas.toDataURL('image/png');
-                    
-                    printWindow.document.write(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <title>Печать ценника</title>
-                            <meta name="viewport" content="width=device-width, initial-scale=1">
-                            <style>
-                                @page {
-                                    margin: 0;
-                                    size: 58mm 40mm; /* Размер ценника для принтера Xprinter */
-                                }
-                                body {
-                                    margin: 0;
-                                    padding: 0;
-                                    width: 58mm;
-                                    height: 40mm;
-                                }
-                                .print-container {
-                                    width: 58mm;
-                                    height: 40mm;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                }
-                                img {
-                                    width: 55mm;
-                                    height: 38mm;
-                                    display: block;
-                                }
-                                @media print {
-                                    body {
-                                        width: 58mm !important;
-                                        height: 40mm !important;
-                                    }
-                                    .print-container {
-                                        width: 58mm !important;
-                                        height: 40mm !important;
-                                    }
-                                    img {
-                                        width: 55mm !important;
-                                        height: 38mm !important;
-                                    }
-                                }
-                            </style>
-                            <script>
-                                window.onload = function() {
-                                    // Даем время на загрузку изображения
-                                    setTimeout(function() {
-                                        window.print();
-                                        // Закрываем окно через 2 секунды
-                                        setTimeout(function() {
-                                            window.close();
-                                        }, 2000);
-                                    }, 1000);
-                                };
-                                window.onafterprint = function() {
-                                    setTimeout(function() {
-                                        window.close();
-                                    }, 500);
-                                };
-                            <\/script>
-                        </head>
-                        <body>
-                            <div class="print-container">
-                                <img src="${dataUrl}" alt="Ценник">
-                            </div>
-                        </body>
-                        </html>
-                    `);
-                    
-                    printWindow.document.close();
-                    
-                    // Fallback - закрываем окно через 5 секунд если печать не началась
-                    setTimeout(() => {
-                        if (!printWindow.closed) {
-                            printWindow.close();
-                            resolve(true);
-                        }
-                    }, 5000);
-                    
-                    // Следим за закрытием окна
-                    const checkClosed = setInterval(() => {
-                        if (printWindow.closed) {
-                            clearInterval(checkClosed);
-                            resolve(true);
-                        }
-                    }, 500);
-                    
-                } catch (error) {
-                    console.error('Ошибка печати на iOS:', error);
-                    reject(error);
-                }
-            });
-        }
-
-        // iOS сканирование через камеру устройства
-        function setupIOSBarcodeScanning() {
-            if (!isIOSDevice) return;
+        function updatePrinterStatus(message, type = 'connecting') {
+            const statusEl = document.getElementById('printerStatus');
+            statusEl.textContent = message;
             
-            const iosScanInput = document.getElementById('iosBarcodeScanner');
+            statusEl.classList.remove('printer-connected', 'printer-disconnected', 'printer-connecting');
             
-            // Обработка выбранного изображения
-            iosScanInput.addEventListener('change', async function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                try {
-                    // Создаем canvas для анализа изображения
-                    const img = new Image();
-                    img.src = URL.createObjectURL(file);
-                    
-                    img.onload = async function() {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        const ctx = canvas.getContext('2d');
-                        
-                        // Исправление ориентации для iOS
-                        ctx.save();
-                        
-                        // Для iOS: исправляем инверсию
-                        if (isIOSDevice) {
-                            ctx.translate(canvas.width, 0);
-                            ctx.scale(-1, 1);
-                        }
-                        
-                        ctx.drawImage(img, 0, 0);
-                        ctx.restore();
-                        
-                        // Пытаемся найти штрихкод
-                        if (!barcodeDetector && isBarcodeDetectorSupported()) {
-                            barcodeDetector = await initBarcodeDetector();
-                        }
-                        
-                        if (barcodeDetector) {
-                            const barcodes = await barcodeDetector.detect(canvas);
-                            if (barcodes.length > 0) {
-                                handleScannedCode(barcodes[0].rawValue);
-                            } else {
-                                alert('Штрихкод не найден на изображении. Попробуйте снова.');
-                            }
-                        } else {
-                            // Fallback для iOS без BarcodeDetector
-                            alert('Сканирование изображений не поддерживается в этой версии iOS');
-                        }
-                        
-                        URL.revokeObjectURL(img.src);
-                        iosScanInput.value = '';
-                    };
-                    
-                    img.onerror = function() {
-                        alert('Ошибка загрузки изображения');
-                        URL.revokeObjectURL(img.src);
-                        iosScanInput.value = '';
-                    };
-                } catch (error) {
-                    console.error('Ошибка обработки изображения:', error);
-                    alert('Ошибка обработки изображения');
-                }
-            });
-        }
-
-        // ===== ФУНКЦИИ ДЛЯ СКАНИРОВАНИЯ (ОБЩИЕ) =====
-
-        function isBarcodeDetectorSupported() {
-            return ('BarcodeDetector' in window);
-        }
-
-        async function initBarcodeDetector() {
-            if (!isBarcodeDetectorSupported()) {
-                console.warn('BarcodeDetector API не поддерживается в этом браузере');
-                return null;
-            }
-            
-            try {
-                const formats = await BarcodeDetector.getSupportedFormats();
-                const supportedFormats = formats.filter(format => 
-                    ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_39', 'code_128', 'codabar'].includes(format)
-                );
-                
-                if (supportedFormats.length === 0) {
-                    console.warn('Нет поддержки нужных форматов штрихкодов');
-                    return null;
-                }
-                
-                return new BarcodeDetector({ formats: supportedFormats });
-            } catch (error) {
-                console.error('Ошибка инициализации BarcodeDetector:', error);
-                return null;
+            switch(type) {
+                case 'connected':
+                    statusEl.classList.add('printer-connected');
+                    statusEl.innerHTML = '&#9989; ' + message;
+                    break;
+                case 'disconnected':
+                    statusEl.classList.add('printer-disconnected');
+                    statusEl.innerHTML = '&#10060; ' + message;
+                    break;
+                case 'connecting':
+                    statusEl.classList.add('printer-connecting');
+                    statusEl.innerHTML = '&#9203; ' + message;
+                    break;
             }
         }
-
-        // Исправленная функция сканирования для iOS
-        function startBarcodeDetection(detector) {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            
-            scanInterval = setInterval(async () => {
-                if (cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA) {
-                    canvas.width = cameraVideo.videoWidth;
-                    canvas.height = cameraVideo.videoHeight;
-                    
-                    // Для iOS: исправляем инверсию
-                    if (isIOSDevice) {
-                        context.save();
-                        context.translate(canvas.width, 0);
-                        context.scale(-1, 1);
-                        context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
-                        context.restore();
-                    } else {
-                        context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
-                    }
-                    
-                    try {
-                        const barcodes = await detector.detect(canvas);
-                        
-                        if (barcodes && barcodes.length > 0) {
-                            const barcode = barcodes[0];
-                            handleScannedCode(barcode.rawValue);
-                            return;
-                        }
-                        
-                    } catch (error) {
-                        console.error('Ошибка детектирования штрихкода:', error);
-                    }
-                }
-            }, 300);
-        }
-
-        function stopCameraStream() {
-            if (stream) {
-                stream.getTracks().forEach(track => {
-                    track.stop();
-                });
-                stream = null;
-            }
-            if (scanInterval) {
-                clearInterval(scanInterval);
-                scanInterval = null;
-            }
-            if (cameraVideo.srcObject) {
-                cameraVideo.srcObject = null;
-            }
-        }
-
-        // ===== ANDROID-СПЕЦИФИЧНЫЕ ФУНКЦИИ =====
-
-        // Функция открытия камеры для Android
-        async function openCameraAndroid() {
-            try {
-                stopCameraStream();
-                
-                const constraints = {
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    },
-                    audio: false
-                };
-                
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                
-                cameraVideo.srcObject = stream;
-                cameraModal.style.display = 'flex';
-                
-                // Сбрасываем трансформацию для Android
-                cameraVideo.style.transform = 'scaleX(1)';
-                
-                await cameraVideo.play();
-                
-                if (!barcodeDetector) {
-                    barcodeDetector = await initBarcodeDetector();
-                }
-                
-                if (!barcodeDetector) {
-                    alert('Ваш браузер не поддерживает прямое сканирование штрихкодов.');
-                    stopCameraStream();
-                    return;
-                }
-                
-                startBarcodeDetection(barcodeDetector);
-                
-            } catch (error) {
-                console.error('Ошибка доступа к камере:', error);
-                alert('Не удалось получить доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.');
-            }
-        }
-
-        // ===== IOS-СПЕЦИФИЧНЫЕ ФУНКЦИИ =====
-
-        // Функция открытия камеры для iOS (исправленная)
-        async function openCameraIOS() {
-            try {
-                // Скрываем инструкцию в модальном окне
-                document.getElementById('iosScanInstruction').style.display = 'none';
-                
-                stopCameraStream();
-                
-                // Для iOS используем упрощенные настройки
-                const constraints = {
-                    video: {
-                        facingMode: { exact: 'environment' },
-                        width: { min: 640, ideal: 1280, max: 1920 },
-                        height: { min: 480, ideal: 720, max: 1080 }
-                    },
-                    audio: false
-                };
-                
-                // Пробуем разные варианты для совместимости
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia(constraints);
-                } catch (firstError) {
-                    console.log('Первый запрос не удался, пробуем альтернативные настройки:', firstError);
-                    
-                    // Альтернативные настройки для iOS
-                    const altConstraints = {
-                        video: {
-                            facingMode: 'environment',
-                            width: { ideal: 1280 },
-                            height: { ideal: 720 }
-                        },
-                        audio: false
-                    };
-                    
-                    try {
-                        stream = await navigator.mediaDevices.getUserMedia(altConstraints);
-                    } catch (secondError) {
-                        console.log('Второй запрос не удался:', secondError);
-                        
-                        // Минимальные настройки
-                        const minConstraints = {
-                            video: true,
-                            audio: false
-                        };
-                        
-                        stream = await navigator.mediaDevices.getUserMedia(minConstraints);
-                    }
-                }
-                
-                if (!stream) {
-                    throw new Error('Не удалось получить доступ к камере');
-                }
-                
-                cameraVideo.srcObject = stream;
-                cameraModal.style.display = 'flex';
-                
-                // Для iOS применяем трансформацию для исправления инверсии
-                cameraVideo.style.transform = 'scaleX(-1)';
-                
-                // Ждем пока видео будет готово
-                await new Promise((resolve) => {
-                    cameraVideo.onloadedmetadata = () => {
-                        resolve();
-                    };
-                    cameraVideo.onerror = () => {
-                        resolve(); // Все равно продолжаем
-                    };
-                    setTimeout(resolve, 1000); // Таймаут на всякий случай
-                });
-                
-                try {
-                    await cameraVideo.play();
-                } catch (playError) {
-                    console.log('Ошибка воспроизведения видео:', playError);
-                    // Продолжаем даже если воспроизведение не удалось
-                }
-                
-                // Показываем инструкцию
-                document.getElementById('iosScanInstruction').style.display = 'block';
-                document.getElementById('iosScanInstruction').classList.add('visible');
-                
-                // Инициализируем детектор штрихкодов
-                if (!barcodeDetector && isBarcodeDetectorSupported()) {
-                    barcodeDetector = await initBarcodeDetector();
-                }
-                
-                if (barcodeDetector) {
-                    startBarcodeDetection(barcodeDetector);
-                } else {
-                    console.log('BarcodeDetector не поддерживается, используем альтернативный метод');
-                    // Можно добавить альтернативный метод сканирования
-                }
-                
-            } catch (error) {
-                console.error('Ошибка доступа к камере на iOS:', error);
-                
-                let errorMessage = 'Ошибка камеры: ' + error.message;
-                
-                if (error.name === 'NotAllowedError') {
-                    errorMessage = 'Разрешите доступ к камере в настройках Safari:\nНастройки > Safari > Камера';
-                } else if (error.name === 'NotFoundError') {
-                    errorMessage = 'Камера не найдена';
-                } else if (error.message.includes('aborted')) {
-                    errorMessage = 'Операция была прервана. Пожалуйста, попробуйте еще раз.';
-                }
-                
-                alert(errorMessage);
-                
-                // Показываем альтернативный метод сканирования для iOS
-                if (isIOSDevice) {
-                    setTimeout(() => {
-                        const useAlternative = confirm('Не удалось открыть камеру. Хотите использовать альтернативный метод сканирования через галерею?');
-                        if (useAlternative) {
-                            document.getElementById('iosBarcodeScanner').click();
-                        }
-                    }, 500);
-                }
-            }
-        }
-
-        // ===== ОБЩАЯ ФУНКЦИЯ ОТКРЫТИЯ КАМЕРЫ =====
-
-        async function openCamera() {
-            if (isIOSDevice) {
-                await openCameraIOS();
-            } else {
-                await openCameraAndroid();
-            }
-        }
-
-        // ===== ОБРАБОТКА ОТСКАНИРОВАННОГО КОДА =====
-
-        function handleScannedCode(code) {
-            if (!code || code.trim().length === 0) return;
-            
-            stopCameraStream();
-            document.getElementById('modeBarcode').checked = true;
-            updateSearchUI();
-            
-            const cleanCode = code.toString().trim();
-            searchInput.value = cleanCode;
-            updateClearButton();
-            
-            const results = performSimpleSearch(cleanCode, 'barcode');
-            showScanResults(cleanCode, results);
-        }
-
-        function showScanResults(code, results) {
-            lastScannedCode = code;
-            
-            if (results.length === 0) {
-                resultCount.textContent = 'Товары не найдены';
-                resultCount.style.color = '#f44336';
-                resultProducts.innerHTML = '<div class="scan-result-card" style="text-align: center; color: #666; font-style: italic;">По этому штрихкоду товары не найдены в базе данных</div>';
-            } else {
-                const groupedResults = groupProductsByKey(results);
-                resultCount.textContent = `Найдено товаров: ${results.length} (${groupedResults.length} уникальных)`;
-                resultCount.style.color = '#4CAF50';
-                
-                resultProducts.innerHTML = '';
-                
-                groupedResults.forEach(product => {
-                    const productCard = document.createElement('div');
-                    productCard.className = 'scan-result-card';
-                    
-                    const hasImage = product.imageCode && product.imageCode.trim() !== '';
-                    const printButtonHTML = `<button class="print-button" onclick="openPrintModal(${JSON.stringify(product).replace(/"/g, '&quot;')})" title="Печать ценника">&#129534;</button>`;
-
-                    productCard.innerHTML = `
-                        <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
-                            <strong>Штрихкод:</strong> ${product.count > 1 ? `Несколько (${product.count})` : product.barcode}
-                        </div>
-                        <div style="font-weight: bold; color: #333; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;">
-                            <div style="display: flex; align-items: center;" id="articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}">
-                                <strong>Артикул:</strong> ${product.article}
-                                ${hasImage ? '<button class="image-button" style="margin-left: 10px;">&#127750;</button>' : '<span class="no-image-text">(без изображения)</span>'}
-                            </div>
-                            ${printButtonHTML}
-                        </div>
-                        <div style="font-size: 16px; color: #222; margin-bottom: 8px;">
-                            ${product.name}
-                        </div>
-                        ${formatPriceWithDiscountModal(product)}
-                        ${formatStockInfoModal(product)}
-                    `;
-                    
-                    if (hasImage) {
-                        setTimeout(() => {
-                            const container = productCard.querySelector(`#articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}`);
-                            if (container) {
-                                const imageButton = container.querySelector('.image-button');
-                                if (imageButton) {
-                                    imageButton.onclick = function() {
-                                        showProductImage(product);
-                                    };
-                                }
-                            }
-                        }, 0);
-                    }
-                    
-                    resultProducts.appendChild(productCard);
-                });
-            }
-            
-            cameraModal.style.display = 'none';
-            resultModal.style.display = 'flex';
-        }
-
-        function formatStockInfoModal(product) {
-            const stocks = product.stocks;
-            const coefficients = product.coefficients;
-            const storageLocation = product.storageLocation;
-            const barcodes = product.barcodes;
-            const scannedCode = lastScannedCode;
-            const boxQuantity = product.boxQuantity || '';
-            
-            let html = '<div class="scan-result-stock">';
-            html += '<div style="font-weight: bold; color: #333; margin-bottom: 5px; font-size: 13px;">Остатки:</div>';
-            
-            [1, 2, 3, 4].forEach(i => {
-                const quantity = stocks[`warehouse${i}`];
-                const coeff = coefficients[`warehouse${i}`];
-                const color = quantity < 0 ? '#f44336' : '#2e7d32';
-                const names = ['Уральская 97:', 'ОСНОВНОЙ СКЛАД:', 'Шевченко 139:', 'МАГАЗИН 234:'];
-                
-                html += `<div style="display: flex; justify-content: space-between; padding: 2px 0; font-size: 12px;">
-                    <span style="color: #555;">${names[i-1]}</span>
-                    <span style="color: ${color}; font-weight: bold;">${formatNumber(quantity)} шт. 
-                        <span style="color: #666; font-size: 11px;">(${formatCoefficient(coeff)} кор.)</span>
-                    </span>
-                </div>`;
-            });
-            
-            html += '</div>';
-            
-            if (boxQuantity && boxQuantity.trim() !== '') {
-                html += `<div class="scan-result-storage" style="background-color: #e8f5e9; border-left-color: #4CAF50;">
-                    <div style="font-weight: bold; color: #2e7d32; margin-bottom: 3px; font-size: 12px;">Кол-во в коробке:</div>
-                    <div style="color: #333; font-weight: bold; font-size: 13px;">${boxQuantity} шт.</div>
-                </div>`;
-            }
-            
-            if (barcodes && barcodes.length > 1) {
-                html += createBarcodesListHTML(barcodes, scannedCode);
-            }
-            
-            if (storageLocation && storageLocation.trim() !== '') {
-                html += `<div class="scan-result-storage">
-                    <div style="font-weight: bold; color: #856404; margin-bottom: 3px; font-size: 12px;">Место хранения:</div>
-                    <div style="color: #333; font-weight: bold; font-size: 13px;">${storageLocation}</div>
-                </div>`;
-            }
-            
-            return html;
-        }
-
-        // ===== ОСТАЛЬНЫЕ ФУНКЦИИ =====
 
         function getCurrentSearchMode() {
             const selectedRadio = document.querySelector('input[name="searchMode"]:checked');
@@ -21512,164 +21876,252 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             });
         }
 
-        // ===== ФУНКЦИИ ДЛЯ ПЕЧАТИ =====
-
-        function updatePriceTagPreview(product, type = 'regular') {
-            const canvas = document.getElementById('priceTagPreviewCanvas');
-            const ctx = canvas.getContext('2d');
+        function searchProducts() {
+            const mode = getCurrentSearchMode();
+            let results = [];
             
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            if (type === 'large') {
-                canvas.width = 440;
-                canvas.height = 300;
-            } else {
-                canvas.width = 440;
-                canvas.height = 284;
-            }
-            
-            const scale = 0.7;
-            ctx.save();
-            ctx.scale(scale, scale);
-            
-            const previewCanvas = createPriceTagImage(product, type);
-            ctx.drawImage(previewCanvas, 0, 0);
-            
-            ctx.restore();
-        }
-
-        function showPrintStatus(message, type = 'info') {
-            const statusEl = document.getElementById('printStatus');
-            statusEl.textContent = message;
-            statusEl.className = 'print-status ' + type;
-            statusEl.style.display = 'block';
-            
-            setTimeout(() => {
-                statusEl.style.display = 'none';
-            }, 5000);
-        }
-
-        async function openPrintModal(product) {
-            currentProductForPrint = product;
-            document.getElementById('printModal').style.display = 'flex';
-            
-            currentPriceTagType = 'regular';
-            document.querySelectorAll('.price-tag-type-option').forEach(option => {
-                if (option.getAttribute('data-type') === 'regular') {
-                    option.classList.add('selected');
-                    option.querySelector('input').checked = true;
-                } else {
-                    option.classList.remove('selected');
-                }
-            });
-            
-            updatePriceTagPreview(product, 'regular');
-            
-            const printBtn = document.getElementById('printActionBtn');
-            
-            if (isIOSDevice) {
-                // Для iOS сразу показываем готовую кнопку
-                printBtn.disabled = false;
-                printBtn.textContent = 'Печатать через AirPrint';
-                updatePrinterStatus('Готово к печати', 'connected');
+            if (mode === 'combined') {
+                const articlePart = articleInput.value.trim();
+                const namePart = nameInput.value.trim();
+                const barcodePart = barcodeInput.value.trim();
                 
-                // Добавляем инструкцию для Xprinter XP-P323B
-                if (window.confirm('Для принтера Xprinter XP-P323B:\n\n1. Убедитесь, что принтер включен и подключен к той же Wi-Fi сети\n2. В диалоге печати выберите "Принтер"\n3. Найдите "Xprinter XP-P323B" в списке\n4. Если принтера нет, нажмите "Другие принтеры" и найдите его\n\nПродолжить?')) {
-                    // Продолжаем
-                } else {
-                    closePrintModal();
+                if (!articlePart && !namePart && !barcodePart) {
+                    showPrintStatus('Введите хотя бы один критерий для поиска', 'error');
                     return;
                 }
-            } else {
-                // Для Android пытаемся подключиться к принтеру
-                printBtn.disabled = true;
-                printBtn.textContent = 'Подключаюсь к принтеру...';
                 
-                try {
-                    const connected = await connectToPrinter();
-                    
-                    if (connected) {
-                        printBtn.disabled = false;
-                        printBtn.textContent = 'Распечатать';
-                    } else {
-                        printBtn.disabled = true;
-                        printBtn.textContent = 'Не удалось подключиться';
-                    }
-                } catch (error) {
-                    console.error('Ошибка при подключении:', error);
-                    printBtn.disabled = true;
-                    printBtn.textContent = 'Ошибка подключения';
+                results = performCombinedSearch(articlePart, namePart, barcodePart);
+            } else {
+                const searchTerm = searchInput.value.trim();
+                
+                if (!searchTerm) {
+                    showPrintStatus('Введите текст для поиска', 'error');
+                    return;
                 }
+                
+                results = performSimpleSearch(searchTerm, mode);
             }
-        }
-
-        function closePrintModal() {
-            document.getElementById('printModal').style.display = 'none';
             
-            if (!isIOSDevice) {
-                setTimeout(() => {
-                    disconnectFromPrinter();
-                }, 1000);
-            }
+            displayResults(results, mode);
         }
 
-        async function handlePrint() {
-            if (!currentProductForPrint) {
-                showPrintStatus('Товар не выбран', 'error');
+        function displayResults(results, mode) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        Товары не найдены
+                    </div>
+                `;
+                resultsContainer.style.display = 'block';
                 return;
             }
             
-            const printBtn = document.getElementById('printActionBtn');
-            printBtn.disabled = true;
+            const groupedResults = groupProductsByKey(results);
             
-            if (isIOSDevice) {
-                printBtn.textContent = 'Подготавливаю к печати...';
-            } else {
-                printBtn.textContent = 'Печатаю...';
-            }
+            let html = `
+                <div class="results-count">
+                    Найдено товаров: ${results.length} (${groupedResults.length} уникальных)
+                </div>
+                <div class="search-mode">
+                    Режим поиска: ${getSearchModeDisplayName(mode)}
+                </div>
+            `;
             
-            try {
-                if (isIOSDevice) {
-                    // Используем AirPrint для iOS
-                    showPrintStatus('Подготавливаю документ для печати...', 'info');
-                    await printOnIOS(currentProductForPrint, currentPriceTagType);
-                    showPrintStatus('Открывается диалог печати...', 'info');
-                    
-                    // Закрываем модальное окно через 2 секунды
+            groupedResults.forEach(product => {
+                const hasImage = product.imageCode && product.imageCode.trim() !== '';
+                const hasMultipleBarcodes = product.barcodes.length > 1;
+                const boxQuantity = product.boxQuantity || '';
+                
+                html += `
+                    <div class="product-card">
+                        <div class="product-field barcode">
+                            <strong>Штрихкод:</strong> 
+                            ${hasMultipleBarcodes ? 
+                                createMultipleBarcodesHTML(product.barcodes, mode === 'barcode' ? searchInput.value : '') : 
+                                `<span>${highlightMatch(product.barcode, mode === 'barcode' ? searchInput.value : '')}</span>`}
+                        </div>
+                        <div class="product-field article" id="articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}">
+                            <strong>Артикул:</strong> ${highlightMatch(product.article, mode === 'article' ? searchInput.value : '')}
+                            ${hasImage ? '<button class="image-button">&#127750;</button>' : '<span class="no-image-text">(без изображения)</span>'}
+                            <button class="print-button" onclick="openPrintModal(${JSON.stringify(product).replace(/"/g, '&quot;')})" title="Печать ценника">
+                                &#129534;
+                            </button>
+                        </div>
+                        <div class="product-field name">
+                            ${highlightMatch(product.name, mode === 'name' ? searchInput.value : '')}
+                        </div>
+                        ${formatPriceWithDiscount(product)}
+                        ${formatStockInfo(product)}
+                    </div>
+                `;
+            });
+            
+            resultsContainer.innerHTML = html;
+            resultsContainer.style.display = 'block';
+            
+            // Добавляем обработчики для кнопок изображений
+            groupedResults.forEach(product => {
+                const hasImage = product.imageCode && product.imageCode.trim() !== '';
+                if (hasImage) {
                     setTimeout(() => {
-                        closePrintModal();
-                    }, 2000);
-                } else {
-                    // Используем Web Serial для Android/Desktop
-                    await printPriceTag(currentProductForPrint, currentPriceTagType);
-                    showPrintStatus('Ценник успешно отправлен на печать!', 'success');
-                    
-                    setTimeout(() => {
-                        closePrintModal();
-                    }, 1500);
+                        const container = document.getElementById(`articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}`);
+                        if (container) {
+                            const imageButton = container.querySelector('.image-button');
+                            if (imageButton) {
+                                imageButton.onclick = function() {
+                                    showProductImage(product);
+                                };
+                            }
+                        }
+                    }, 0);
                 }
-                
-            } catch (error) {
-                console.error('Ошибка печати:', error);
-                
-                let errorMessage = 'Ошибка печати: ' + error.message;
-                if (isIOSDevice && error.message.includes('Xprinter')) {
-                    errorMessage = 'Для принтера Xprinter XP-P323B:\n1. Убедитесь, что принтер включен\n2. Подключен к той же Wi-Fi сети\n3. Поддерживает AirPrint';
-                }
-                
-                showPrintStatus(errorMessage, 'error');
-                printBtn.disabled = false;
-                
-                if (isIOSDevice) {
-                    printBtn.textContent = 'Печатать через AirPrint';
-                } else {
-                    printBtn.textContent = 'Распечатать';
-                }
-            }
+            });
+            
+            scrollToResults();
         }
 
-        // ===== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ =====
+        function formatPriceWithDiscount(product) {
+            const hasDiscount = product.discountPercent && product.discountPercent.trim() !== '';
+            
+            if (!hasDiscount) {
+                return `
+                    <div class="price-container">
+                        <span class="discount-price">Цена: ${product.wholesalePrice} руб.</span>
+                    </div>
+                `;
+            }
+            
+            const discountPercent = product.discountPercent;
+            const discountPrice = product.discountPrice || product.wholesalePrice;
+            
+            return `
+                <div class="price-container">
+                    <span class="discount-price">Цена: ${discountPrice} руб.</span>
+                    <div class="old-price-container">
+                        <span class="original-price">${product.wholesalePrice} </span>
+                        <span class="discount-percent">-${discountPercent}% &#128165;</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatPriceWithDiscountModal(product) {
+            const hasDiscount = product.discountPercent && product.discountPercent.trim() !== '';
+            
+            if (!hasDiscount) {
+                return `
+                    <div class="scan-price-container">
+                        <span class="scan-discount-price">Цена: ${product.wholesalePrice} руб.</span>
+                    </div>
+                `;
+            }
+            
+            const discountPercent = product.discountPercent;
+            const discountPrice = product.discountPrice || product.wholesalePrice;
+            
+            return `
+                <div class="scan-price-container">
+                    <span class="scan-discount-price">Цена: ${discountPrice} руб.</span>
+                    <div class="scan-old-price-container">
+                        <span class="scan-original-price">${product.wholesalePrice}</span>
+                        <span class="scan-discount-percent">-${discountPercent}% &#128165;</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatStockInfo(product) {
+            const stocks = product.stocks;
+            const coefficients = product.coefficients;
+            const storageLocation = product.storageLocation;
+            const boxQuantity = product.boxQuantity || '';
+            
+            let html = '<div class="stock-info">';
+            html += '<div class="stock-title">Остатки:</div>';
+            
+            [1, 2, 3, 4].forEach(i => {
+                const quantity = stocks[`warehouse${i}`];
+                const coeff = coefficients[`warehouse${i}`];
+                const quantityClass = quantity < 0 ? 'negative' : 'positive';
+                const names = ['Уральская 97', 'ОСНОВНОЙ СКЛАД', 'Шевченко 139', 'МАГАЗИН 234'];
+                
+                html += `<div class="stock-item">
+                    <div class="stock-name">${names[i-1]}:</div>
+                    <div class="stock-quantity ${quantityClass}">
+                        ${formatNumber(quantity)} шт. 
+                        <span class="box-coefficient">(${formatCoefficient(coeff)} кор.)</span>
+                    </div>
+                </div>`;
+            });
+            
+            html += '</div>';
+            
+            if (boxQuantity && boxQuantity.trim() !== '') {
+                html += `<div class="box-quantity-info">
+                    <div class="box-quantity-title">Кол-во в коробке:</div>
+                    <div class="box-quantity-value">${boxQuantity} шт.</div>
+                </div>`;
+            }
+            
+            if (storageLocation && storageLocation.trim() !== '') {
+                html += `<div class="storage-location">
+                    <div class="storage-title">Место хранения:</div>
+                    <div class="storage-value">${storageLocation}</div>
+                </div>`;
+            }
+            
+            return html;
+        }
+
+        function formatStockInfoModal(product) {
+            const stocks = product.stocks;
+            const coefficients = product.coefficients;
+            const storageLocation = product.storageLocation;
+            const barcodes = product.barcodes;
+            const scannedCode = lastScannedCode;
+            const boxQuantity = product.boxQuantity || '';
+            
+            let html = '<div class="scan-result-stock">';
+            html += '<div style="font-weight: bold; color: #333; margin-bottom: 5px; font-size: 13px;">Остатки:</div>';
+            
+            [1, 2, 3, 4].forEach(i => {
+                const quantity = stocks[`warehouse${i}`];
+                const coeff = coefficients[`warehouse${i}`];
+                const color = quantity < 0 ? '#f44336' : '#2e7d32';
+                const names = ['Уральская 97:', 'ОСНОВНОЙ СКЛАД:', 'Шевченко 139:', 'МАГАЗИН 234:'];
+                
+                html += `<div style="display: flex; justify-content: space-between; padding: 2px 0; font-size: 12px;">
+                    <span style="color: #555;">${names[i-1]}</span>
+                    <span style="color: ${color}; font-weight: bold;">${formatNumber(quantity)} шт. 
+                        <span style="color: #666; font-size: 11px;">(${formatCoefficient(coeff)} кор.)</span>
+                    </span>
+                </div>`;
+            });
+            
+            html += '</div>';
+            
+            if (boxQuantity && boxQuantity.trim() !== '') {
+                html += `<div class="scan-result-storage" style="background-color: #e8f5e9; border-left-color: #4CAF50;">
+                    <div style="font-weight: bold; color: #2e7d32; margin-bottom: 3px; font-size: 12px;">Кол-во в коробке:</div>
+                    <div style="color: #333; font-weight: bold; font-size: 13px;">${boxQuantity} шт.</div>
+                </div>`;
+            }
+            
+            if (barcodes && barcodes.length > 1) {
+                html += createBarcodesListHTML(barcodes, scannedCode);
+            }
+            
+            if (storageLocation && storageLocation.trim() !== '') {
+                html += `<div class="scan-result-storage">
+                    <div style="font-weight: bold; color: #856404; margin-bottom: 3px; font-size: 12px;">Место хранения:</div>
+                    <div style="color: #333; font-weight: bold; font-size: 13px;">${storageLocation}</div>
+                </div>`;
+            }
+            
+            return html;
+        }
 
         function createMultipleBarcodesHTML(barcodes, query) {
             const uniqueBarcodes = [...new Set(barcodes)];
@@ -22055,64 +22507,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             updateClearButton();
         }
 
-        function setupPlatformUI() {
-            // Всегда показываем кнопку сканирования (исправленная строка)
-            scanButton.style.display = 'flex';
-            
-            if (isIOSDevice) {
-                console.log('Настроен интерфейс для iOS');
-                // Для iOS добавляем альтернативный метод сканирования
-                setupIOSBarcodeScanning();
-                
-                // Показываем инструкцию для iOS
-                document.getElementById('iosScanInstruction').style.display = 'block';
-                
-                // Меняем текст кнопки для iOS
-                scanButton.innerHTML = '<span class="scan-icon">📷</span> Сканировать (iOS)';
-                scanButton.classList.add('ios-scan-button');
-                
-                // Настраиваем обработчик для iOS
-                scanButton.onclick = function(e) {
-                    e.preventDefault();
-                    openCamera();
-                };
-                
-            } else if (isAndroidDevice) {
-                console.log('Настроен интерфейс для Android');
-                // Скрываем инструкцию для Android
-                document.getElementById('iosScanInstruction').style.display = 'none';
-                
-                // Для Android используем стандартный метод
-                setTimeout(() => {
-                    initBarcodeDetector();
-                }, 1000);
-                
-                // Для Android устанавливаем стандартный обработчик
-                scanButton.onclick = function(e) {
-                    e.preventDefault();
-                    openCamera();
-                };
-                
-            } else {
-                console.log('Настроен интерфейс для Desktop');
-                // Скрываем инструкцию для Desktop
-                document.getElementById('iosScanInstruction').style.display = 'none';
-                
-                // Для Desktop также показываем кнопку сканирования
-                setTimeout(() => {
-                    initBarcodeDetector();
-                }, 1000);
-                
-                // Для Desktop устанавливаем стандартный обработчик
-                scanButton.onclick = function(e) {
-                    e.preventDefault();
-                    openCamera();
-                };
-            }
-        }
-
-        // ===== ИСПРАВЛЕННЫЕ ФУНКЦИИ ПОИСКА =====
-
         function clearSearchFields() {
             searchInput.value = '';
             articleInput.value = '';
@@ -22141,349 +22535,81 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             }
         }
 
-        function searchProducts() {
-            const mode = getCurrentSearchMode();
-            let results = [];
+        function formatNumber(num, isPrice = false) {
+            if (num === null || num === undefined) return '0';
             
-            if (mode === 'combined') {
-                const articlePart = articleInput.value.trim();
-                const namePart = nameInput.value.trim();
-                const barcodePart = barcodeInput.value.trim();
-                
-                if (!articlePart && !namePart && !barcodePart) {
-                    showPrintStatus('Введите хотя бы один критерий для поиска', 'error');
-                    return;
-                }
-                
-                results = performCombinedSearch(articlePart, namePart, barcodePart);
+            let number;
+            if (typeof num === 'string') {
+                const cleanString = num.replace(',', '.').replace(/\s/g, '');
+                number = parseFloat(cleanString);
+                if (isNaN(number)) return '0';
             } else {
-                const searchTerm = searchInput.value.trim();
+                number = num;
+            }
+            
+            if (isPrice) {
+                const rounded = Math.round(number * 100) / 100;
+                const hasKopecks = Math.abs(rounded - Math.round(rounded)) > 0.001;
                 
-                if (!searchTerm) {
-                    showPrintStatus('Введите текст для поиска', 'error');
-                    return;
-                }
-                
-                results = performSimpleSearch(searchTerm, mode);
-            }
-            
-            displayResults(results, mode);
-        }
-
-        function displayResults(results, mode) {
-            const resultsContainer = document.getElementById('resultsContainer');
-            
-            if (results.length === 0) {
-                resultsContainer.innerHTML = `
-                    <div class="no-results">
-                        Товары не найдены
-                    </div>
-                `;
-                resultsContainer.style.display = 'block';
-                return;
-            }
-            
-            const groupedResults = groupProductsByKey(results);
-            
-            let html = `
-                <div class="results-count">
-                    Найдено товаров: ${results.length} (${groupedResults.length} уникальных)
-                </div>
-                <div class="search-mode">
-                    Режим поиска: ${getSearchModeDisplayName(mode)}
-                </div>
-            `;
-            
-            groupedResults.forEach(product => {
-                const hasImage = product.imageCode && product.imageCode.trim() !== '';
-                const hasMultipleBarcodes = product.barcodes.length > 1;
-                const boxQuantity = product.boxQuantity || '';
-                
-                html += `
-                    <div class="product-card">
-                        <div class="product-field barcode">
-                            <strong>Штрихкод:</strong> 
-                            ${hasMultipleBarcodes ? 
-                                createMultipleBarcodesHTML(product.barcodes, mode === 'barcode' ? searchInput.value : '') : 
-                                `<span>${highlightMatch(product.barcode, mode === 'barcode' ? searchInput.value : '')}</span>`}
-                        </div>
-                        <div class="product-field article" id="articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}">
-                            <strong>Артикул:</strong> ${highlightMatch(product.article, mode === 'article' ? searchInput.value : '')}
-                            ${hasImage ? '<button class="image-button">&#127750;</button>' : '<span class="no-image-text">(без изображения)</span>'}
-                            <button class="print-button" onclick="openPrintModal(${JSON.stringify(product).replace(/"/g, '&quot;')})" title="Печать ценника">
-                                &#129534;
-                            </button>
-                        </div>
-                        <div class="product-field name">
-                            ${highlightMatch(product.name, mode === 'name' ? searchInput.value : '')}
-                        </div>
-                        ${formatPriceWithDiscount(product)}
-                        ${formatStockInfo(product)}
-                    </div>
-                `;
-            });
-            
-            resultsContainer.innerHTML = html;
-            resultsContainer.style.display = 'block';
-            
-            // Добавляем обработчики для кнопок изображений
-            groupedResults.forEach(product => {
-                const hasImage = product.imageCode && product.imageCode.trim() !== '';
-                if (hasImage) {
-                    setTimeout(() => {
-                        const container = document.getElementById(`articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}`);
-                        if (container) {
-                            const imageButton = container.querySelector('.image-button');
-                            if (imageButton) {
-                                imageButton.onclick = function() {
-                                    showProductImage(product);
-                                };
-                            }
-                        }
-                    }, 0);
-                }
-            });
-            
-            scrollToResults();
-        }
-
-        function formatStockInfo(product) {
-            const stocks = product.stocks;
-            const coefficients = product.coefficients;
-            const storageLocation = product.storageLocation;
-            const boxQuantity = product.boxQuantity || '';
-            
-            let html = '<div class="stock-info">';
-            html += '<div class="stock-title">Остатки:</div>';
-            
-            [1, 2, 3, 4].forEach(i => {
-                const quantity = stocks[`warehouse${i}`];
-                const coeff = coefficients[`warehouse${i}`];
-                const quantityClass = quantity < 0 ? 'negative' : 'positive';
-                const names = ['Уральская 97', 'ОСНОВНОЙ СКЛАД', 'Шевченко 139', 'МАГАЗИН 234'];
-                
-                html += `<div class="stock-item">
-                    <div class="stock-name">${names[i-1]}:</div>
-                    <div class="stock-quantity ${quantityClass}">
-                        ${formatNumber(quantity)} шт. 
-                        <span class="box-coefficient">(${formatCoefficient(coeff)} кор.)</span>
-                    </div>
-                </div>`;
-            });
-            
-            html += '</div>';
-            
-            if (boxQuantity && boxQuantity.trim() !== '') {
-                html += `<div class="box-quantity-info">
-                    <div class="box-quantity-title">Кол-во в коробке:</div>
-                    <div class="box-quantity-value">${boxQuantity} шт.</div>
-                </div>`;
-            }
-            
-            if (storageLocation && storageLocation.trim() !== '') {
-                html += `<div class="storage-location">
-                    <div class="storage-title">Место хранения:</div>
-                    <div class="storage-value">${storageLocation}</div>
-                </div>`;
-            }
-            
-            return html;
-        }
-
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
-        
-        // Элементы DOM
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearchBtn');
-        const searchButton = document.getElementById('searchButton');
-        const scanButton = document.getElementById('scanButton');
-        const resultsContainer = document.getElementById('resultsContainer');
-        const searchModeRadios = document.querySelectorAll('input[name="searchMode"]');
-        const combinedSearchFields = document.getElementById('combinedSearchFields');
-        const articleInput = document.getElementById('articleInput');
-        const nameInput = document.getElementById('nameInput');
-        const barcodeInput = document.getElementById('barcodeInput');
-        
-        // Модальные окна
-        const cameraModal = document.getElementById('cameraModal');
-        const resultModal = document.getElementById('resultModal');
-        const printModal = document.getElementById('printModal');
-        const datesModal = document.getElementById('datesModal');
-        const closeCameraModal = document.getElementById('closeCameraModal');
-        const closePrintModalBtn = document.getElementById('closePrintModal');
-        const closeDatesModalBtn = document.getElementById('closeDatesModal');
-        
-        // Элементы камеры
-        const cameraVideo = document.getElementById('cameraVideo');
-        const stopCameraBtn = document.getElementById('stopCamera');
-        
-        // Элементы результатов
-        const resultCount = document.getElementById('resultCount');
-        const resultProducts = document.getElementById('resultProducts');
-        const continueScanBtn = document.getElementById('continueScanBtn');
-        const closeResultBtn = document.getElementById('closeResultBtn');
-
-        // Элементы нового модального окна печати
-        const printActionBtn = document.getElementById('printActionBtn');
-
-        // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
-
-        searchButton.addEventListener('click', searchProducts);
-
-        clearSearchBtn.addEventListener('click', clearSearchFields);
-
-        searchInput.addEventListener('input', updateClearButton);
-        articleInput.addEventListener('input', updateClearButton);
-        nameInput.addEventListener('input', updateClearButton);
-        barcodeInput.addEventListener('input', updateClearButton);
-
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') searchProducts();
-        });
-
-        articleInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') searchProducts();
-        });
-
-        nameInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') searchProducts();
-        });
-
-        barcodeInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') searchProducts();
-        });
-
-        // Обработчик сканирования уже настроен в setupPlatformUI()
-
-        closeCameraModal.addEventListener('click', function() {
-            stopCameraStream();
-            cameraModal.style.display = 'none';
-        });
-
-        cameraModal.addEventListener('click', function(e) {
-            if (e.target === cameraModal) {
-                stopCameraStream();
-                cameraModal.style.display = 'none';
-            }
-        });
-
-        stopCameraBtn.addEventListener('click', function() {
-            stopCameraStream();
-            cameraModal.style.display = 'none';
-        });
-
-        continueScanBtn.addEventListener('click', function() {
-            resultModal.style.display = 'none';
-            setTimeout(() => {
-                openCamera();
-            }, 300);
-        });
-
-        closeResultBtn.addEventListener('click', function() {
-            resultModal.style.display = 'none';
-        });
-
-        resultModal.addEventListener('click', function(e) {
-            if (e.target === resultModal) resultModal.style.display = 'none';
-        });
-
-        closePrintModalBtn.addEventListener('click', closePrintModal);
-
-        printModal.addEventListener('click', function(e) {
-            if (e.target === printModal) closePrintModal();
-        });
-
-        closeDatesModalBtn.addEventListener('click', closeDatesModal);
-
-        datesModal.addEventListener('click', function(e) {
-            if (e.target === datesModal) closeDatesModal();
-        });
-
-        printActionBtn.addEventListener('click', handlePrint);
-
-        document.getElementById('current-date').addEventListener('click', openDatesModal);
-
-        searchModeRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                updateSearchUI();
-                if (searchInput.value.trim() || 
-                    (getCurrentSearchMode() === 'combined' && 
-                     (articleInput.value.trim() || nameInput.value.trim() || barcodeInput.value.trim()))) {
-                    searchProducts();
-                }
-            });
-        });
-
-        window.addEventListener('load', function() {
-            // Определяем платформу
-            detectPlatform();
-            
-            document.getElementById('modeArticle').checked = true;
-            updateSearchUI();
-            searchInput.focus();
-            setupPlatformUI(); // Исправленная функция
-            initScrollToTopButton();
-            setupPriceTagTypeSelector();
-
-            // Устанавливаем дату обновления если она есть
-            if (DATA_UPDATE_DATE && DATA_UPDATE_DATE.trim() !== "") {
-                let displayDate = DATA_UPDATE_DATE;
-                if (DATA_UPDATE_DATE.includes(" ")) {
-                    displayDate = DATA_UPDATE_DATE.split(" ")[0];
-                }
-                document.getElementById('current-date').textContent = displayDate;
-            }
-            
-            // Добавляем iOS-specific стили
-            if (isIOSDevice) {
-                const style = document.createElement('style');
-                style.textContent = `
-                    /* Улучшения для iOS */
-                    button {
-                        -webkit-tap-highlight-color: transparent;
-                        cursor: pointer;
-                    }
-                    input, button, select, textarea {
-                        font-size: 16px; /* Предотвращает масштабирование в iOS */
-                    }
-                    .search-input, .combined-input {
-                        border-radius: 8px;
-                    }
-                    #cameraVideo {
-                        transform: scaleX(-1); /* Исправление зеркального отображения */
-                        object-fit: cover;
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                // Предварительная инициализация для iOS
-                setTimeout(() => {
-                    if (isBarcodeDetectorSupported()) {
-                        initBarcodeDetector().then(detector => {
-                            barcodeDetector = detector;
-                            console.log('BarcodeDetector для iOS инициализирован:', !!detector);
-                        });
-                    }
-                }, 500);
-            }
-        });
-
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') clearSearchFields();
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                e.preventDefault();
-                const mode = getCurrentSearchMode();
-                if (mode === 'combined') {
-                    articleInput.focus();
+                if (hasKopecks) {
+                    return rounded.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                 } else {
-                    searchInput.focus();
-                    searchInput.select();
+                    return Math.round(rounded).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                 }
             }
+            
+            if (number < 0) {
+                return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            }
+            return Math.round(number).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+
+        function formatCoefficient(num) {
+            return num.toFixed(3).replace('.', ',');
+        }
+
+        // Добавляем недостающие обработчики событий
+        document.addEventListener('DOMContentLoaded', function() {
+            // Поиск по Enter в комбинированных полях
+            articleInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') searchProducts();
+            });
+            
+            nameInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') searchProducts();
+            });
+            
+            barcodeInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') searchProducts();
+            });
+            
+            // Обработчик Escape для очистки поиска
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') clearSearchFields();
+            });
+            
+            // Горячая клавиша Ctrl+F для фокуса на поиске
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    const mode = getCurrentSearchMode();
+                    if (mode === 'combined') {
+                        articleInput.focus();
+                    } else {
+                        searchInput.focus();
+                        searchInput.select();
+                    }
+                }
+            });
         });
+
+        // Экспортируем функции для использования в HTML
+        window.showBarcodeTooltip = showBarcodeTooltip;
+        window.toggleBarcodesList = toggleBarcodesList;
+        window.openPrintModal = openPrintModal;
+        window.showProductImage = showProductImage;
+        window.handleImageError = handleImageError;
     </script>
 </body>
 </html>
+
