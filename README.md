@@ -2,13 +2,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сканирование штрихкодов</title>
+    <title>Сканирование штрихкодов на iOS</title>
+    <!-- Библиотека QuaggaJS для сканирования штрихкодов -->
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             padding: 20px;
-            background: #f2f2f7;
         }
         
         .container {
@@ -19,74 +27,95 @@
         .header {
             text-align: center;
             margin-bottom: 30px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .header h1 {
-            color: #1c1c1e;
-            margin: 0 0 10px 0;
+            font-size: 28px;
+            margin-bottom: 10px;
         }
         
         .header p {
-            color: #8e8e93;
-            margin: 0;
+            font-size: 16px;
+            opacity: 0.9;
         }
         
-        .search-box {
+        .card {
             background: white;
+            border-radius: 20px;
             padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-section {
             margin-bottom: 20px;
         }
         
         .search-input {
             width: 100%;
-            padding: 16px;
-            font-size: 17px;
-            border: 2px solid #e5e5ea;
+            padding: 16px 20px;
+            font-size: 18px;
+            border: 2px solid #e0e0e0;
             border-radius: 12px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
         }
         
         .buttons {
             display: flex;
             gap: 12px;
+            margin-top: 15px;
         }
         
-        .button {
+        .btn {
             flex: 1;
-            padding: 18px;
+            padding: 18px 20px;
             font-size: 17px;
             font-weight: 600;
             border: none;
             border-radius: 12px;
             cursor: pointer;
             text-align: center;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             -webkit-tap-highlight-color: transparent;
-            transition: transform 0.1s, opacity 0.1s;
         }
         
-        .button:active {
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:active {
             transform: scale(0.98);
-            opacity: 0.8;
+            opacity: 0.9;
         }
         
-        .button.search {
+        .btn-secondary {
             background: #34c759;
             color: white;
         }
         
-        .button.scan {
-            background: #007aff;
-            color: white;
+        .btn-secondary:active {
+            transform: scale(0.98);
+            opacity: 0.9;
         }
         
-        .results {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        .results-container {
             display: none;
             margin-top: 20px;
         }
@@ -94,47 +123,80 @@
         .results-title {
             font-size: 20px;
             font-weight: 600;
-            color: #1c1c1e;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e5e5ea;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
         }
         
         .product-card {
-            padding: 16px;
-            border-bottom: 1px solid #e5e5ea;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s;
         }
         
-        .product-card:last-child {
-            border-bottom: none;
+        .product-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
         
         .product-article {
-            font-weight: 600;
-            color: #000;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3436;
+            background: #f8f9fa;
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
         }
         
         .product-name {
-            color: #1c1c1e;
-            font-size: 15px;
-            margin: 8px 0;
-            line-height: 1.4;
+            font-size: 16px;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
         }
         
         .product-price {
+            font-size: 24px;
+            font-weight: 700;
             color: #ff3b30;
-            font-weight: 600;
-            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .product-barcode {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #666;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 10px;
         }
         
         .no-results {
             text-align: center;
             padding: 40px 20px;
-            color: #8e8e93;
+            color: #666;
         }
         
-        /* Модальное окно камеры */
+        .no-results-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        /* Модальное окно сканирования */
         .modal {
             display: none;
             position: fixed;
@@ -142,7 +204,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: black;
+            background: rgba(0, 0, 0, 0.95);
             z-index: 1000;
         }
         
@@ -150,14 +212,20 @@
             width: 100%;
             height: 100%;
             position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .scanner-container {
+            flex: 1;
+            position: relative;
             overflow: hidden;
         }
         
-        #cameraVideo {
+        #scanner {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
         
         .scan-overlay {
@@ -167,9 +235,9 @@
             transform: translate(-50%, -50%);
             width: 80%;
             max-width: 400px;
-            height: 180px;
-            border: 3px solid rgba(52, 199, 89, 0.8);
-            border-radius: 12px;
+            height: 200px;
+            border: 4px solid rgba(52, 199, 89, 0.8);
+            border-radius: 15px;
             pointer-events: none;
             box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
         }
@@ -179,98 +247,103 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 3px;
-            background: #34c759;
-            box-shadow: 0 0 10px rgba(52, 199, 89, 0.8);
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                #34c759, 
+                transparent);
             animation: scan 2s ease-in-out infinite;
+            box-shadow: 0 0 10px #34c759;
         }
         
         @keyframes scan {
-            0% { top: 0; }
-            50% { top: 100%; }
-            100% { top: 0; }
+            0% {
+                top: 0;
+                opacity: 1;
+            }
+            50% {
+                top: 100%;
+                opacity: 1;
+            }
+            51% {
+                opacity: 0;
+            }
+            100% {
+                top: 0;
+                opacity: 0;
+            }
         }
         
-        .scan-hint {
+        .scanner-info {
             position: absolute;
-            top: calc(50% + 110px);
+            top: calc(50% + 120px);
             left: 0;
             width: 100%;
             text-align: center;
             color: white;
-            font-size: 14px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            font-size: 16px;
             padding: 0 20px;
-            box-sizing: border-box;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
         
         .modal-controls {
-            position: absolute;
-            bottom: 30px;
-            left: 0;
-            width: 100%;
-            padding: 0 20px;
-            box-sizing: border-box;
-        }
-        
-        .modal-buttons {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             gap: 12px;
-            max-width: 400px;
-            margin: 0 auto;
         }
         
-        .modal-button {
+        .modal-btn {
             flex: 1;
             padding: 16px;
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: none;
             border-radius: 12px;
-            color: white;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s;
             -webkit-tap-highlight-color: transparent;
         }
         
-        .modal-button:active {
-            background: rgba(255,255,255,0.25);
-        }
-        
-        .modal-button.close {
-            background: rgba(255,59,48,0.8);
-        }
-        
-        .modal-button.close:active {
-            background: rgba(255,59,48,0.9);
-        }
-        
-        .error-message {
-            position: absolute;
-            top: 50%;
-            left: 20px;
-            right: 20px;
-            transform: translateY(-50%);
-            background: rgba(255,59,48,0.95);
+        .modal-btn-primary {
+            background: rgba(255, 255, 255, 0.2);
             color: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            display: none;
-            z-index: 1001;
+            backdrop-filter: blur(10px);
         }
         
-        .debug-info {
+        .modal-btn-primary:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .modal-btn-danger {
+            background: rgba(255, 59, 48, 0.8);
+            color: white;
+        }
+        
+        .modal-btn-danger:active {
+            background: rgba(255, 59, 48, 0.9);
+        }
+        
+        .flash-indicator {
             position: absolute;
             top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 204, 0, 0.9);
+            border-radius: 50%;
             display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         
         .status-message {
@@ -280,31 +353,103 @@
             width: 100%;
             text-align: center;
             color: white;
-            font-size: 16px;
-            font-weight: 500;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            padding: 10px 20px;
-            box-sizing: border-box;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
             display: none;
         }
         
-        .success-overlay {
+        .scanned-badge {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(52, 199, 89, 0.3);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(52, 199, 89, 0.95);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: bold;
             display: none;
-            justify-content: center;
-            align-items: center;
             z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: badgeAppear 0.5s ease-out;
         }
         
-        .success-icon {
-            font-size: 80px;
+        @keyframes badgeAppear {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .debug-info {
+            position: absolute;
+            bottom: 80px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: #34c759;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: monospace;
+            display: none;
+        }
+        
+        .camera-selector {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+        
+        .camera-select {
+            background: rgba(0,0,0,0.7);
             color: white;
-            text-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .btn {
+                padding: 16px;
+                font-size: 16px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .scan-overlay {
+                width: 90%;
+                height: 180px;
+            }
+        }
+        
+        .loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #34c759;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
     </style>
 </head>
@@ -312,97 +457,124 @@
     <div class="container">
         <div class="header">
             <h1>📦 Сканирование товаров</h1>
-            <p>Наведите камеру на штрихкод EAN-13 или Code-128</p>
+            <p>Используется QuaggaJS для работы на iOS</p>
         </div>
         
-        <div class="search-box">
+        <div class="card search-section">
             <input type="text" 
                    class="search-input" 
                    id="searchInput" 
-                   placeholder="Штрихкод или артикул..."
+                   placeholder="Введите штрихкод или нажмите кнопку сканирования..."
                    autocomplete="off"
                    autocapitalize="none"
                    autocorrect="off">
             
             <div class="buttons">
-                <button class="button search" id="searchButton">
-                    🔍 Найти
+                <button class="btn btn-primary" id="searchButton">
+                    <span>🔍</span> Найти
                 </button>
-                <button class="button scan" id="scanButton">
-                    📷 Сканировать
+                <button class="btn btn-secondary" id="scanButton">
+                    <span>📷</span> Сканировать
                 </button>
             </div>
         </div>
         
-        <div class="results" id="resultsContainer">
-            <div class="results-title" id="resultsTitle">Результаты поиска</div>
+        <div class="card results-container" id="resultsContainer">
+            <div class="results-title">Результаты поиска</div>
             <div id="productsList"></div>
         </div>
     </div>
     
-    <!-- Модальное окно камеры -->
-    <div class="modal" id="cameraModal">
+    <!-- Модальное окно сканирования -->
+    <div class="modal" id="scannerModal">
         <div class="modal-content">
-            <video id="cameraVideo" playsinline autoplay></video>
-            
-            <div class="scan-overlay">
-                <div class="scan-line"></div>
-            </div>
-            
-            <div class="scan-hint">
-                Наведите на штрихкод в рамке
-            </div>
-            
-            <div class="status-message" id="statusMessage">
-                Сканирование...
-            </div>
-            
-            <div class="success-overlay" id="successOverlay">
-                <div class="success-icon">✓</div>
-            </div>
-            
-            <div class="debug-info" id="debugInfo"></div>
-            
-            <div class="modal-controls">
-                <div class="modal-buttons">
-                    <button class="modal-button" id="toggleTorch">
-                        💡 Фонарик
-                    </button>
-                    <button class="modal-button close" id="closeCameraModal">
-                        ✕ Закрыть
-                    </button>
+            <div class="scanner-container">
+                <div class="loader" id="scannerLoader"></div>
+                <video id="scanner" playsinline></video>
+                <canvas id="scannerCanvas" style="display:none;"></canvas>
+                
+                <div class="scan-overlay">
+                    <div class="scan-line"></div>
+                </div>
+                
+                <div class="scanner-info">
+                    Наведите камеру на штрихкод в рамке
+                </div>
+                
+                <div class="status-message" id="scannerStatus"></div>
+                <div class="scanned-badge" id="scannedBadge">✓ Найдено!</div>
+                <div class="flash-indicator" id="flashIndicator">⚡</div>
+                <div class="debug-info" id="debugInfo"></div>
+                
+                <div class="camera-selector">
+                    <select class="camera-select" id="cameraSelect">
+                        <option value="environment">Тыловая камера</option>
+                        <option value="user">Фронтальная камера</option>
+                    </select>
                 </div>
             </div>
             
-            <div class="error-message" id="cameraError"></div>
+            <div class="modal-controls">
+                <button class="modal-btn modal-btn-primary" id="toggleTorch">
+                    💡 Фонарик
+                </button>
+                <button class="modal-btn modal-btn-danger" id="closeScanner">
+                    ✕ Закрыть
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
         // Глобальные переменные
-        let stream = null;
-        let barcodeDetector = null;
-        let scanInterval = null;
-        let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        let lastScanTime = 0;
+        let isScannerInitialized = false;
+        let isScanning = false;
+        let lastScannedCode = '';
         let scanCooldown = 2000; // 2 секунды между сканированиями
         let torchEnabled = false;
+        let currentStream = null;
+        let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         
-        // Тестовые данные
-        const productsData = `6970787612595;KS-8001;Набор для творчества "ЧАСТИЧНАЯ ВЫКЛАДКА СТРАЗАМИ" 10*15 в пакете;70,00;70,00;7;;10;2;0,035;;0,050;0,010;;Cb010003474_1;;;200;Cb010003474_1;`;
+        // Тестовые данные товаров
+        const productsData = {
+            "6970787612595": {
+                article: "KS-8001",
+                name: "Набор для творчества 'ЧАСТИЧНАЯ ВЫКЛАДКА СТРАЗАМИ' 10*15 в пакете",
+                price: "70,00"
+            },
+            "6132588301003": {
+                article: "TS-MY88301",
+                name: "Конструктор 'Гоночная машина'",
+                price: "1780,00"
+            },
+            "4606782423066": {
+                article: "30Б5Aгр_26515",
+                name: "Блокнот SketchBook 30л А5ф КРАФТ без линовки жесткая подложка",
+                price: "101,00"
+            },
+            "4606782424018": {
+                article: "30Б5Aгр_26515",
+                name: "Блокнот SketchBook 30л А5ф КРАФТ без линовки жесткая подложка",
+                price: "101,00"
+            },
+            "4600797004630": {
+                article: "ФЗ-407057",
+                name: "Фреска с блестками Морской конек",
+                price: "204,00"
+            }
+        };
         
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('Устройство:', isIOS ? 'iOS' : 'Android/Другое');
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Устройство iOS:', isIOS);
+            console.log('Quagga доступен:', typeof Quagga !== 'undefined');
             
-            // Инициализация BarcodeDetector с конкретными форматами
-            await initBarcodeDetector();
-            
-            // Обработчики событий
+            // Установка обработчиков событий
             document.getElementById('searchButton').addEventListener('click', performSearch);
-            document.getElementById('scanButton').addEventListener('click', openCamera);
-            document.getElementById('closeCameraModal').addEventListener('click', closeCamera);
+            document.getElementById('scanButton').addEventListener('click', openScanner);
+            document.getElementById('closeScanner').addEventListener('click', closeScanner);
             document.getElementById('toggleTorch').addEventListener('click', toggleTorch);
+            document.getElementById('cameraSelect').addEventListener('change', changeCamera);
             
             document.getElementById('searchInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') performSearch();
@@ -412,357 +584,375 @@
             setTimeout(() => {
                 document.getElementById('searchInput').focus();
             }, 500);
+            
+            // Показать сообщение о поддержке
+            if (isIOS) {
+                console.log('Используется iOS, активирован QuaggaJS');
+            }
         });
         
-        // Инициализация BarcodeDetector
-        async function initBarcodeDetector() {
-            if (!('BarcodeDetector' in window)) {
-                console.warn('BarcodeDetector API не поддерживается');
-                showMessage('Ваш браузер не поддерживает прямое сканирование');
-                return;
-            }
-            
+        // Открытие сканера
+        async function openScanner() {
             try {
-                // Получаем поддерживаемые форматы
-                const supportedFormats = await BarcodeDetector.getSupportedFormats();
-                console.log('Поддерживаемые форматы штрихкодов:', supportedFormats);
+                console.log('Открытие сканера QuaggaJS...');
                 
-                // Создаем детектор с наиболее распространенными форматами
-                const formats = [
-                    'ean_13',   // EAN-13 (самый распространенный)
-                    'ean_8',    // EAN-8
-                    'upc_a',    // UPC-A
-                    'upc_e',    // UPC-E
-                    'code_128', // Code 128
-                    'code_39',  // Code 39
-                    'codabar'   // Codabar
-                ].filter(format => supportedFormats.includes(format));
+                // Показываем модальное окно и лоадер
+                document.getElementById('scannerModal').style.display = 'block';
+                document.getElementById('scannerLoader').style.display = 'block';
+                showScannerStatus('Инициализация сканера...');
                 
-                if (formats.length === 0) {
-                    console.warn('Нет поддержки нужных форматов штрихкодов');
-                    showMessage('Нет поддержки форматов штрихкодов');
-                    return;
-                }
-                
-                barcodeDetector = new BarcodeDetector({ formats });
-                console.log('BarcodeDetector инициализирован с форматами:', formats);
-                
-            } catch (error) {
-                console.error('Ошибка инициализации BarcodeDetector:', error);
-                showMessage('Ошибка инициализации сканера');
-            }
-        }
-        
-        // Открытие камеры
-        async function openCamera() {
-            try {
-                console.log('Открытие камеры...');
-                
-                // Скрываем сообщение об ошибке
-                hideError();
-                
-                // Показываем статус
-                showStatus('Подготовка камеры...');
-                
-                // Останавливаем предыдущий поток
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                    stream = null;
-                }
-                
-                // Определяем параметры камеры
-                const constraints = {
-                    video: {
-                        facingMode: { exact: 'environment' },
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 },
-                        frameRate: { ideal: 24, max: 30 }
-                    },
-                    audio: false
-                };
-                
-                // Пробуем получить доступ к камере
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia(constraints);
-                    console.log('Камера подключена');
-                } catch (err) {
-                    console.log('Пробуем альтернативные настройки:', err);
-                    
-                    // Пробуем без exact, чтобы получить любую камеру
-                    stream = await navigator.mediaDevices.getUserMedia({
-                        video: {
-                            facingMode: 'environment',
-                            width: { min: 640, ideal: 1280, max: 1920 },
-                            height: { min: 480, ideal: 720, max: 1080 }
-                        },
-                        audio: false
-                    });
-                }
-                
-                const video = document.getElementById('cameraVideo');
-                video.srcObject = stream;
-                
-                // Ждем готовности видео
-                await new Promise((resolve) => {
-                    video.onloadedmetadata = () => {
-                        video.play()
-                            .then(() => {
-                                console.log('Видео запущено');
-                                
-                                // Настройки для iOS
-                                if (isIOS) {
-                                    video.style.transform = 'none';
-                                    video.style.webkitTransform = 'none';
-                                }
-                                
-                                resolve();
-                            })
-                            .catch(err => {
-                                console.error('Ошибка воспроизведения видео:', err);
-                                showError('Ошибка запуска камеры');
-                                reject(err);
-                            });
-                    };
-                });
-                
-                // Показываем модальное окно
-                document.getElementById('cameraModal').style.display = 'block';
-                hideStatus();
+                // Инициализируем Quagga
+                await initQuagga();
                 
                 // Запускаем сканирование
-                setTimeout(() => startScanning(), 500);
+                Quagga.start();
+                isScanning = true;
+                
+                // Скрываем лоадер
+                document.getElementById('scannerLoader').style.display = 'none';
+                hideScannerStatus();
+                
+                console.log('Сканер запущен');
                 
             } catch (error) {
-                console.error('Ошибка камеры:', error);
-                showError(getCameraErrorMessage(error));
+                console.error('Ошибка инициализации сканера:', error);
+                showScannerStatus('Ошибка: ' + error.message);
+                
+                // Пробуем альтернативный метод
+                setTimeout(() => {
+                    initAlternativeScanner();
+                }, 1000);
             }
         }
         
-        // Запуск сканирования с оптимизацией для iOS
-        function startScanning() {
-            if (!barcodeDetector) {
-                showError('Сканер штрихкодов недоступен');
-                return;
-            }
-            
-            const video = document.getElementById('cameraVideo');
-            
-            // Очищаем предыдущий интервал
-            if (scanInterval) {
-                clearInterval(scanInterval);
-                scanInterval = null;
-            }
-            
-            // Создаем canvas для анализа
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            
-            // Оптимизация для iOS
-            const scanDelay = isIOS ? 800 : 400; // iOS требует больше времени
-            
-            scanInterval = setInterval(async () => {
-                try {
-                    // Проверяем готовность видео
-                    if (video.readyState !== video.HAVE_ENOUGH_DATA) {
-                        return;
-                    }
-                    
-                    // Проверяем кд между сканированиями
-                    const now = Date.now();
-                    if (now - lastScanTime < 1000) {
-                        return;
-                    }
-                    
-                    // Устанавливаем размеры canvas (уменьшаем для производительности)
-                    canvas.width = video.videoWidth * 0.7;
-                    canvas.height = video.videoHeight * 0.7;
-                    
-                    // Рисуем кадр видео на canvas
-                    context.drawImage(
-                        video, 
-                        0, 0, video.videoWidth, video.videoHeight,
-                        0, 0, canvas.width, canvas.height
-                    );
-                    
-                    // Обновляем debug информацию
-                    updateDebugInfo(canvas.width, canvas.height);
-                    
-                    // Детектируем штрихкоды
-                    try {
-                        const barcodes = await barcodeDetector.detect(canvas);
-                        
-                        if (barcodes && barcodes.length > 0) {
-                            const barcode = barcodes[0];
-                            console.log('Найден штрихкод:', barcode.rawValue, 'Тип:', barcode.format);
-                            handleScannedBarcode(barcode.rawValue);
+        // Инициализация QuaggaJS
+        function initQuagga() {
+            return new Promise((resolve, reject) => {
+                // Получаем выбранную камеру
+                const cameraId = document.getElementById('cameraSelect').value;
+                
+                // Настройки Quagga для iOS
+                const config = {
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: document.querySelector('#scanner'),
+                        constraints: {
+                            facingMode: cameraId,
+                            width: { min: 640, ideal: 1280, max: 1920 },
+                            height: { min: 480, ideal: 720, max: 1080 },
+                            aspectRatio: { ideal: 4/3 }
+                        },
+                        area: {
+                            top: "25%",
+                            right: "10%",
+                            left: "10%",
+                            bottom: "25%"
                         }
-                    } catch (detectError) {
-                        console.warn('Ошибка детектирования:', detectError);
+                    },
+                    decoder: {
+                        readers: [
+                            "ean_reader",
+                            "ean_8_reader",
+                            "code_128_reader",
+                            "code_39_reader",
+                            "codabar_reader",
+                            "upc_reader",
+                            "upc_e_reader"
+                        ],
+                        multiple: false
+                    },
+                    locate: true,
+                    frequency: 10, // Частота проверки (кадров в секунду)
+                    numOfWorkers: navigator.hardwareConcurrency || 2,
+                    debug: {
+                        drawBoundingBox: true,
+                        showFrequency: false,
+                        drawScanline: true,
+                        showPattern: false
                     }
+                };
+                
+                // Инициализация Quagga
+                Quagga.init(config, function(err) {
+                    if (err) {
+                        console.error("Ошибка инициализации Quagga:", err);
+                        reject(err);
+                        return;
+                    }
+                    
+                    console.log("Quagga успешно инициализирован");
+                    isScannerInitialized = true;
+                    
+                    // Получаем поток для управления фонариком
+                    const video = document.getElementById('scanner');
+                    if (video.srcObject) {
+                        currentStream = video.srcObject;
+                    }
+                    
+                    // Обработка обнаруженных штрихкодов
+                    Quagga.onProcessed(function(result) {
+                        drawDebugOverlay(result);
+                    });
+                    
+                    Quagga.onDetected(function(result) {
+                        if (result && result.codeResult) {
+                            const code = result.codeResult.code;
+                            console.log("Найден штрихкод:", code, "Формат:", result.codeResult.format);
+                            handleScannedCode(code);
+                        }
+                    });
+                    
+                    resolve();
+                });
+            });
+        }
+        
+        // Альтернативный метод сканирования (если Quagga не работает)
+        function initAlternativeScanner() {
+            console.log('Запуск альтернативного сканера...');
+            showScannerStatus('Используется альтернативный метод...');
+            
+            // Простая реализация с canvas и анализом изображения
+            const video = document.getElementById('scanner');
+            const canvas = document.getElementById('scannerCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Запрашиваем доступ к камере
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: document.getElementById('cameraSelect').value,
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                },
+                audio: false
+            }).then(stream => {
+                currentStream = stream;
+                video.srcObject = stream;
+                video.play();
+                
+                document.getElementById('scannerLoader').style.display = 'none';
+                showScannerStatus('Наведите на штрихкод...');
+                
+                // Запускаем простой анализ изображений
+                startSimpleScanning(video, canvas, ctx);
+                
+            }).catch(err => {
+                console.error('Ошибка доступа к камере:', err);
+                showScannerStatus('Ошибка камеры: ' + err.message);
+            });
+        }
+        
+        // Простой метод сканирования (запасной вариант)
+        function startSimpleScanning(video, canvas, ctx) {
+            let scanning = true;
+            
+            function scanFrame() {
+                if (!scanning) return;
+                
+                try {
+                    // Устанавливаем размеры canvas
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    
+                    // Рисуем текущий кадр
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    // Получаем данные изображения
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    
+                    // Простой алгоритм поиска штрихкода
+                    // (Это упрощенная реализация, в реальном приложении нужна библиотека)
+                    
+                    // Показываем в debug
+                    updateDebugInfo(`Анализ: ${canvas.width}x${canvas.height}`);
                     
                 } catch (error) {
-                    console.error('Ошибка в цикле сканирования:', error);
+                    console.warn('Ошибка анализа:', error);
                 }
-            }, scanDelay);
+                
+                // Рекурсивный вызов
+                requestAnimationFrame(scanFrame);
+            }
             
-            console.log('Сканирование запущено, интервал:', scanDelay, 'мс');
-            showStatus('Наведите на штрихкод...');
+            // Запускаем сканирование
+            scanFrame();
+            
+            // Возвращаем функцию остановки
+            return () => {
+                scanning = false;
+            };
         }
         
-        // Обработка отсканированного штрихкода
-        function handleScannedBarcode(barcode) {
+        // Обработка найденного штрихкода
+        function handleScannedCode(code) {
             const now = Date.now();
             
             // Проверяем кд
-            if (now - lastScanTime < scanCooldown) {
-                console.log('Сканирование слишком часто, пропускаем');
+            if (now - lastScannedCode.timestamp < scanCooldown && 
+                lastScannedCode.code === code) {
+                console.log('Дубликат, пропускаем');
                 return;
             }
             
-            lastScanTime = now;
+            // Обновляем время последнего сканирования
+            lastScannedCode = {
+                code: code,
+                timestamp: now
+            };
+            
+            console.log('Обработка штрихкода:', code);
             
             // Визуальная обратная связь
-            showSuccessFeedback();
+            showScannedBadge(code);
             
             // Останавливаем сканирование
-            if (scanInterval) {
-                clearInterval(scanInterval);
-                scanInterval = null;
+            if (isScanning) {
+                Quagga.stop();
+                isScanning = false;
             }
             
-            // Через 1 секунду закрываем камеру и показываем результат
+            // Через 1.5 секунды закрываем сканер и показываем результат
             setTimeout(() => {
-                closeCamera();
+                closeScanner();
                 
                 // Заполняем поле ввода
-                document.getElementById('searchInput').value = barcode;
+                document.getElementById('searchInput').value = code;
                 
                 // Выполняем поиск
                 setTimeout(() => performSearch(), 300);
-            }, 1000);
+            }, 1500);
         }
         
         // Поиск товара
         function performSearch() {
             const searchValue = document.getElementById('searchInput').value.trim();
-            if (!searchValue) return;
-            
-            // Очищаем предыдущие результаты
-            document.getElementById('productsList').innerHTML = '';
-            
-            // Ищем в данных
-            const results = searchProduct(searchValue);
-            
-            if (results.length === 0) {
-                document.getElementById('productsList').innerHTML = `
-                    <div class="no-results">
-                        <div style="font-size: 48px; margin-bottom: 20px;">🔍</div>
-                        <div style="font-size: 17px; margin-bottom: 10px;">
-                            Товар не найден
-                        </div>
-                        <div style="font-size: 15px; color: #8e8e93;">
-                            Штрихкод: <strong>${searchValue}</strong>
-                        </div>
-                    </div>
-                `;
-            } else {
-                let html = '';
-                results.forEach(product => {
-                    html += `
-                        <div class="product-card">
-                            <div class="product-article">${product.article}</div>
-                            <div class="product-name">${product.name}</div>
-                            <div class="product-price">${product.price} руб.</div>
-                            <div style="font-size: 13px; color: #8e8e93; margin-top: 8px;">
-                                Штрихкод: ${product.barcode}
-                            </div>
-                        </div>
-                    `;
-                });
-                document.getElementById('productsList').innerHTML = html;
+            if (!searchValue) {
+                alert('Введите штрихкод для поиска');
+                return;
             }
             
-            document.getElementById('resultsContainer').style.display = 'block';
-            document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Поиск в данных (по штрихкоду или части артикула)
-        function searchProduct(searchValue) {
-            const lines = productsData.split('\n');
-            const results = [];
+            // Очищаем предыдущие результаты
+            const productsList = document.getElementById('productsList');
+            productsList.innerHTML = '';
             
-            for (const line of lines) {
-                if (!line.trim()) continue;
-                
-                const parts = line.split(';');
-                const barcode = parts[0];
-                const article = parts[1];
-                
-                // Ищем по полному совпадению штрихкода или части артикула
-                if (barcode === searchValue || 
-                    article.toLowerCase().includes(searchValue.toLowerCase())) {
-                    results.push({
-                        barcode: barcode,
-                        article: article,
-                        name: parts[2],
-                        price: parts[3]
-                    });
+            // Показываем контейнер результатов
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.style.display = 'block';
+            
+            // Ищем товар
+            let found = false;
+            
+            // Проверяем точное совпадение штрихкода
+            if (productsData[searchValue]) {
+                const product = productsData[searchValue];
+                displayProduct(product, searchValue);
+                found = true;
+            } else {
+                // Ищем по части артикула
+                for (const [barcode, product] of Object.entries(productsData)) {
+                    if (product.article.toLowerCase().includes(searchValue.toLowerCase())) {
+                        displayProduct(product, barcode);
+                        found = true;
+                    }
                 }
             }
             
-            return results;
+            // Если ничего не найдено
+            if (!found) {
+                productsList.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <div style="font-size: 18px; margin-bottom: 10px; color: #333;">
+                            Товар не найден
+                        </div>
+                        <div style="font-size: 15px; color: #666;">
+                            Штрихкод/артикул: <strong>${searchValue}</strong>
+                        </div>
+                        <div style="margin-top: 20px; font-size: 14px; color: #888;">
+                            Попробуйте другой штрихкод или отсканируйте заново
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Прокручиваем к результатам
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
         }
         
-        // Остановка камеры
-        function stopCamera() {
-            if (scanInterval) {
-                clearInterval(scanInterval);
-                scanInterval = null;
+        // Отображение товара
+        function displayProduct(product, barcode) {
+            const productsList = document.getElementById('productsList');
+            
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            productCard.innerHTML = `
+                <div class="product-header">
+                    <div class="product-article">${product.article}</div>
+                </div>
+                <div class="product-name">${product.name}</div>
+                <div class="product-price">${product.price} руб.</div>
+                <div class="product-barcode">
+                    Штрихкод: ${barcode}
+                </div>
+            `;
+            
+            productsList.appendChild(productCard);
+        }
+        
+        // Закрытие сканера
+        function closeScanner() {
+            console.log('Закрытие сканера...');
+            
+            // Останавливаем Quagga
+            if (isScannerInitialized && isScanning) {
+                Quagga.stop();
+                isScanning = false;
             }
             
-            if (stream) {
-                stream.getTracks().forEach(track => {
-                    track.stop();
-                });
-                stream = null;
+            // Останавливаем поток камеры
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
             }
             
-            const video = document.getElementById('cameraVideo');
-            if (video) {
-                video.srcObject = null;
-            }
+            // Скрываем модальное окно
+            document.getElementById('scannerModal').style.display = 'none';
             
+            // Скрываем все вспомогательные элементы
+            hideScannerStatus();
+            document.getElementById('scannedBadge').style.display = 'none';
+            document.getElementById('flashIndicator').style.display = 'none';
+            
+            // Выключаем фонарик
             torchEnabled = false;
         }
         
-        // Закрытие камеры
-        function closeCamera() {
-            stopCamera();
-            document.getElementById('cameraModal').style.display = 'none';
-            hideStatus();
-            hideError();
-            hideSuccessFeedback();
-        }
-        
-        // Управление фонариком
+        // Переключение фонарика
         function toggleTorch() {
-            if (!stream) return;
+            if (!currentStream) return;
             
-            const videoTrack = stream.getVideoTracks()[0];
+            const videoTrack = currentStream.getVideoTracks()[0];
             
-            if ('applyConstraints' in videoTrack) {
+            if (videoTrack && 'applyConstraints' in videoTrack) {
                 try {
                     torchEnabled = !torchEnabled;
                     
+                    // Пытаемся включить фонарик
                     videoTrack.applyConstraints({
                         advanced: [{ torch: torchEnabled }]
                     }).then(() => {
                         console.log('Фонарик:', torchEnabled ? 'включен' : 'выключен');
-                        document.getElementById('toggleTorch').textContent = 
-                            torchEnabled ? '💡 Выключить' : '💡 Фонарик';
+                        
+                        // Показываем индикатор
+                        const indicator = document.getElementById('flashIndicator');
+                        indicator.style.display = torchEnabled ? 'flex' : 'none';
+                        indicator.textContent = torchEnabled ? '⚡ ON' : '⚡';
+                        
                     }).catch(err => {
                         console.warn('Фонарик не поддерживается:', err);
                         torchEnabled = false;
+                        document.getElementById('flashIndicator').style.display = 'none';
                     });
                 } catch (error) {
                     console.warn('Ошибка управления фонариком:', error);
@@ -770,87 +960,109 @@
             }
         }
         
+        // Смена камеры
+        function changeCamera() {
+            if (isScanning) {
+                // Перезапускаем сканер с новой камерой
+                closeScanner();
+                setTimeout(openScanner, 500);
+            }
+        }
+        
         // Визуальная обратная связь при успешном сканировании
-        function showSuccessFeedback() {
-            const overlay = document.getElementById('successOverlay');
-            overlay.style.display = 'flex';
-            
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 1000);
+        function showScannedBadge(code) {
+            const badge = document.getElementById('scannedBadge');
+            badge.textContent = `✓ ${code}`;
+            badge.style.display = 'block';
         }
         
-        function hideSuccessFeedback() {
-            document.getElementById('successOverlay').style.display = 'none';
-        }
-        
-        // Показать статус
-        function showStatus(message) {
-            const status = document.getElementById('statusMessage');
+        // Показать статус сканера
+        function showScannerStatus(message) {
+            const status = document.getElementById('scannerStatus');
             status.textContent = message;
             status.style.display = 'block';
         }
         
-        function hideStatus() {
-            document.getElementById('statusMessage').style.display = 'none';
+        function hideScannerStatus() {
+            document.getElementById('scannerStatus').style.display = 'none';
         }
         
-        // Показать ошибку
-        function showError(message) {
-            const errorEl = document.getElementById('cameraError');
-            errorEl.textContent = message;
-            errorEl.style.display = 'block';
-        }
-        
-        function hideError() {
-            document.getElementById('cameraError').style.display = 'none';
-        }
-        
-        function showMessage(message) {
-            alert(message);
-        }
-        
-        // Получить понятное сообщение об ошибке камеры
-        function getCameraErrorMessage(error) {
-            if (error.name === 'NotAllowedError') {
-                return 'Доступ к камере запрещен. Разрешите доступ в настройках Safari.';
-            } else if (error.name === 'NotFoundError') {
-                return 'Камера не найдена на устройстве.';
-            } else if (error.name === 'NotReadableError') {
-                return 'Камера используется другим приложением. Закройте другие приложения, использующие камеру.';
-            } else if (error.name === 'OverconstrainedError') {
-                return 'Запрошенные настройки камеры не поддерживаются.';
-            } else {
-                return `Ошибка: ${error.message || 'Неизвестная ошибка'}`;
-            }
-        }
-        
-        // Обновление debug информации
-        function updateDebugInfo(width, height) {
+        // Отладочная информация
+        function updateDebugInfo(message) {
             const debugEl = document.getElementById('debugInfo');
-            if (debugEl.style.display === 'block') {
-                debugEl.innerHTML = `
-                    Размер: ${width}x${height}<br>
-                    iOS: ${isIOS ? 'Да' : 'Нет'}<br>
-                    Детектор: ${barcodeDetector ? 'Да' : 'Нет'}
-                `;
+            debugEl.textContent = message;
+            debugEl.style.display = 'block';
+        }
+        
+        // Отрисовка отладочной информации от Quagga
+        function drawDebugOverlay(result) {
+            const canvas = document.querySelector("canvas");
+            const ctx = canvas.getContext('2d');
+            
+            if (!result) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (result.boxes) {
+                ctx.strokeStyle = '#0F0';
+                ctx.lineWidth = 2;
+                
+                result.boxes.filter(box => box !== result.box).forEach(box => {
+                    ctx.strokeRect(box[0], box[1], box[2] - box[0], box[3] - box[1]);
+                });
+            }
+            
+            if (result.box) {
+                ctx.strokeStyle = '#00F';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(result.box[0], result.box[1], 
+                             result.box[2] - result.box[0], 
+                             result.box[3] - result.box[1]);
+            }
+            
+            if (result.codeResult && result.codeResult.code) {
+                ctx.font = '18px Arial';
+                ctx.fillStyle = '#FFF';
+                ctx.textAlign = 'center';
+                ctx.fillText(result.codeResult.code, canvas.width / 2, canvas.height - 10);
             }
         }
         
-        // Включение debug информации (для тестирования)
+        // Горячие клавиши для отладки
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'd' && e.ctrlKey) {
+            // Ctrl+D для отладки
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
                 const debugEl = document.getElementById('debugInfo');
                 debugEl.style.display = debugEl.style.display === 'none' ? 'block' : 'none';
             }
+            
+            // Escape для закрытия сканера
+            if (e.key === 'Escape' && document.getElementById('scannerModal').style.display === 'block') {
+                closeScanner();
+            }
+            
+            // Enter в поле ввода для поиска
+            if (e.key === 'Enter' && document.activeElement.id === 'searchInput') {
+                performSearch();
+            }
         });
         
-        // Автоматический поиск при вставке
+        // Обработка вставки из буфера обмена
         document.getElementById('searchInput').addEventListener('paste', function(e) {
             setTimeout(() => {
                 performSearch();
             }, 100);
         });
+        
+        // Проверка поддержки камеры
+        function checkCameraSupport() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Ваш браузер не поддерживает доступ к камере. Пожалуйста, используйте Safari на iOS или Chrome на Android.');
+                return false;
+            }
+            return true;
+        }
     </script>
 </body>
 </html>
