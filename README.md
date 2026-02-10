@@ -681,6 +681,7 @@
             width: 100%;
             height: auto;
             border-radius: 8px;
+            transform: scaleX(-1); /* Исправление инверсии для iOS */
         }
         
         .camera-controls {
@@ -1011,6 +1012,35 @@
         .ios-print-button:hover {
             background-color: #4A47C7;
         }
+        
+        /* Для исправления инверсии камеры */
+        .video-fix-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+        }
+        
+        .fixed-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Исправление зеркального отображения */
+        }
+        
+        .ios-scan-instruction {
+            background-color: #f0f8ff;
+            border: 2px solid #2196F3;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+            display: none;
+        }
+        
+        .ios-scan-instruction.visible {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -1074,9 +1104,17 @@
         
         <div class="buttons-container">
             <button class="search-button" id="searchButton">Найти</button>
-            <button class="scan-button" id="scanButton" style="display: none;">
+            <button class="scan-button" id="scanButton">
                 <span class="scan-icon">&#128247;</span> Сканировать штрихкод
             </button>
+        </div>
+
+        <!-- Инструкция для iOS сканирования -->
+        <div class="ios-scan-instruction" id="iosScanInstruction">
+            <strong>📱 Для iOS устройств:</strong><br>
+            1. Наведите камеру на штрихкод<br>
+            2. Штрихкод должен находиться в рамке<br>
+            3. Сканирование происходит автоматически
         </div>
 
 		<div class="barcode-supported">
@@ -1101,7 +1139,9 @@
                 <div class="scan-box">
                     <div class="scan-line"></div>
                 </div>
-                <video id="cameraVideo" playsinline></video>
+                <div class="video-fix-container">
+                    <video id="cameraVideo" playsinline></video>
+                </div>
                 <div class="camera-controls">
                     <button class="camera-btn" id="stopCamera">Остановить</button>
                 </div>
@@ -20850,6 +20890,11 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                     // Создаем HTML для печати
                     const printWindow = window.open('', '_blank');
                     
+                    if (!printWindow) {
+                        reject(new Error('Не удалось открыть окно для печати'));
+                        return;
+                    }
+                    
                     const canvas = createPriceTagImage(product, type);
                     const dataUrl = canvas.toDataURL('image/png');
                     
@@ -20860,20 +20905,38 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                             <title>Печать ценника</title>
                             <meta name="viewport" content="width=device-width, initial-scale=1">
                             <style>
+                                @page {
+                                    margin: 0;
+                                    size: 58mm 40mm; /* Размер ценника для принтера Xprinter */
+                                }
                                 body {
                                     margin: 0;
-                                    padding: 20px;
-                                    text-align: center;
+                                    padding: 0;
+                                    width: 58mm;
+                                    height: 40mm;
+                                }
+                                .print-container {
+                                    width: 58mm;
+                                    height: 40mm;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
                                 }
                                 img {
                                     width: 55mm;
-                                    height: auto;
-                                    margin: 0 auto;
+                                    height: 38mm;
                                     display: block;
                                 }
                                 @media print {
-                                    body { padding: 0; }
-                                    img { 
+                                    body {
+                                        width: 58mm !important;
+                                        height: 40mm !important;
+                                    }
+                                    .print-container {
+                                        width: 58mm !important;
+                                        height: 40mm !important;
+                                    }
+                                    img {
                                         width: 55mm !important;
                                         height: 38mm !important;
                                     }
@@ -20881,42 +20944,50 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                             </style>
                             <script>
                                 window.onload = function() {
-                                    // Автоматический вызов печати
+                                    // Даем время на загрузку изображения
                                     setTimeout(function() {
                                         window.print();
+                                        // Закрываем окно через 2 секунды
                                         setTimeout(function() {
                                             window.close();
-                                        }, 100);
+                                        }, 2000);
+                                    }, 1000);
+                                };
+                                window.onafterprint = function() {
+                                    setTimeout(function() {
+                                        window.close();
                                     }, 500);
                                 };
                             <\/script>
                         </head>
                         <body>
-                            <img src="${dataUrl}" alt="Ценник">
+                            <div class="print-container">
+                                <img src="${dataUrl}" alt="Ценник">
+                            </div>
                         </body>
                         </html>
                     `);
                     
                     printWindow.document.close();
                     
-                    printWindow.onafterprint = function() {
-                        printWindow.close();
-                        resolve(true);
-                    };
-                    
-                    printWindow.onbeforeunload = function() {
-                        resolve(true);
-                    };
-                    
-                    // Fallback
+                    // Fallback - закрываем окно через 5 секунд если печать не началась
                     setTimeout(() => {
                         if (!printWindow.closed) {
                             printWindow.close();
                             resolve(true);
                         }
-                    }, 3000);
+                    }, 5000);
+                    
+                    // Следим за закрытием окна
+                    const checkClosed = setInterval(() => {
+                        if (printWindow.closed) {
+                            clearInterval(checkClosed);
+                            resolve(true);
+                        }
+                    }, 500);
                     
                 } catch (error) {
+                    console.error('Ошибка печати на iOS:', error);
                     reject(error);
                 }
             });
@@ -20943,7 +21014,18 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                         canvas.width = img.width;
                         canvas.height = img.height;
                         const ctx = canvas.getContext('2d');
+                        
+                        // Исправление ориентации для iOS
+                        ctx.save();
+                        
+                        // Для iOS: исправляем инверсию
+                        if (isIOSDevice) {
+                            ctx.translate(canvas.width, 0);
+                            ctx.scale(-1, 1);
+                        }
+                        
                         ctx.drawImage(img, 0, 0);
+                        ctx.restore();
                         
                         // Пытаемся найти штрихкод
                         if (!barcodeDetector && isBarcodeDetectorSupported()) {
@@ -20955,12 +21037,19 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                             if (barcodes.length > 0) {
                                 handleScannedCode(barcodes[0].rawValue);
                             } else {
-                                alert('Штрихкод не найден на изображении');
+                                alert('Штрихкод не найден на изображении. Попробуйте снова.');
                             }
                         } else {
-                            alert('Сканирование изображений не поддерживается');
+                            // Fallback для iOS без BarcodeDetector
+                            alert('Сканирование изображений не поддерживается в этой версии iOS');
                         }
                         
+                        URL.revokeObjectURL(img.src);
+                        iosScanInput.value = '';
+                    };
+                    
+                    img.onerror = function() {
+                        alert('Ошибка загрузки изображения');
                         URL.revokeObjectURL(img.src);
                         iosScanInput.value = '';
                     };
@@ -21001,6 +21090,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             }
         }
 
+        // Исправленная функция сканирования для iOS
         function startBarcodeDetection(detector) {
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
@@ -21010,7 +21100,16 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                     canvas.width = cameraVideo.videoWidth;
                     canvas.height = cameraVideo.videoHeight;
                     
-                    context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+                    // Для iOS: исправляем инверсию
+                    if (isIOSDevice) {
+                        context.save();
+                        context.translate(canvas.width, 0);
+                        context.scale(-1, 1);
+                        context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+                        context.restore();
+                    } else {
+                        context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+                    }
                     
                     try {
                         const barcodes = await detector.detect(canvas);
@@ -21030,14 +21129,18 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         function stopCameraStream() {
             if (stream) {
-                stream.getTracks().forEach(track => track.stop());
+                stream.getTracks().forEach(track => {
+                    track.stop();
+                });
                 stream = null;
             }
             if (scanInterval) {
                 clearInterval(scanInterval);
                 scanInterval = null;
             }
-            cameraVideo.srcObject = null;
+            if (cameraVideo.srcObject) {
+                cameraVideo.srcObject = null;
+            }
         }
 
         // ===== ANDROID-СПЕЦИФИЧНЫЕ ФУНКЦИИ =====
@@ -21061,6 +21164,9 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 cameraVideo.srcObject = stream;
                 cameraModal.style.display = 'flex';
                 
+                // Сбрасываем трансформацию для Android
+                cameraVideo.style.transform = 'scaleX(1)';
+                
                 await cameraVideo.play();
                 
                 if (!barcodeDetector) {
@@ -21083,41 +21189,88 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         // ===== IOS-СПЕЦИФИЧНЫЕ ФУНКЦИИ =====
 
-        // Функция открытия камеры для iOS
+        // Функция открытия камеры для iOS (исправленная)
         async function openCameraIOS() {
             try {
-                // Проверяем разрешение на камеру заранее
-                if (navigator.permissions && navigator.permissions.query) {
-                    try {
-                        const permissions = await navigator.permissions.query({ name: 'camera' });
-                        if (permissions.state === 'denied') {
-                            alert('Разрешите доступ к камере в настройках Safari');
-                            return;
-                        }
-                    } catch (e) {
-                        // Игнорируем ошибку проверки разрешений
-                    }
-                }
+                // Скрываем инструкцию в модальном окне
+                document.getElementById('iosScanInstruction').style.display = 'none';
                 
                 stopCameraStream();
                 
+                // Для iOS используем упрощенные настройки
                 const constraints = {
                     video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 },
-                        frameRate: { ideal: 30, max: 30 }
+                        facingMode: { exact: 'environment' },
+                        width: { min: 640, ideal: 1280, max: 1920 },
+                        height: { min: 480, ideal: 720, max: 1080 }
                     },
                     audio: false
                 };
                 
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                // Пробуем разные варианты для совместимости
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia(constraints);
+                } catch (firstError) {
+                    console.log('Первый запрос не удался, пробуем альтернативные настройки:', firstError);
+                    
+                    // Альтернативные настройки для iOS
+                    const altConstraints = {
+                        video: {
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        },
+                        audio: false
+                    };
+                    
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia(altConstraints);
+                    } catch (secondError) {
+                        console.log('Второй запрос не удался:', secondError);
+                        
+                        // Минимальные настройки
+                        const minConstraints = {
+                            video: true,
+                            audio: false
+                        };
+                        
+                        stream = await navigator.mediaDevices.getUserMedia(minConstraints);
+                    }
+                }
+                
+                if (!stream) {
+                    throw new Error('Не удалось получить доступ к камере');
+                }
                 
                 cameraVideo.srcObject = stream;
                 cameraModal.style.display = 'flex';
                 
-                await cameraVideo.play();
+                // Для iOS применяем трансформацию для исправления инверсии
+                cameraVideo.style.transform = 'scaleX(-1)';
                 
+                // Ждем пока видео будет готово
+                await new Promise((resolve) => {
+                    cameraVideo.onloadedmetadata = () => {
+                        resolve();
+                    };
+                    cameraVideo.onerror = () => {
+                        resolve(); // Все равно продолжаем
+                    };
+                    setTimeout(resolve, 1000); // Таймаут на всякий случай
+                });
+                
+                try {
+                    await cameraVideo.play();
+                } catch (playError) {
+                    console.log('Ошибка воспроизведения видео:', playError);
+                    // Продолжаем даже если воспроизведение не удалось
+                }
+                
+                // Показываем инструкцию
+                document.getElementById('iosScanInstruction').style.display = 'block';
+                document.getElementById('iosScanInstruction').classList.add('visible');
+                
+                // Инициализируем детектор штрихкодов
                 if (!barcodeDetector && isBarcodeDetectorSupported()) {
                     barcodeDetector = await initBarcodeDetector();
                 }
@@ -21125,19 +21278,33 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 if (barcodeDetector) {
                     startBarcodeDetection(barcodeDetector);
                 } else {
-                    // Для iOS 14 и ниже может не поддерживаться BarcodeDetector
-                    console.log('iOS: BarcodeDetector не поддерживается');
+                    console.log('BarcodeDetector не поддерживается, используем альтернативный метод');
+                    // Можно добавить альтернативный метод сканирования
                 }
                 
             } catch (error) {
-                console.error('Ошибка доступа к камере:', error);
+                console.error('Ошибка доступа к камере на iOS:', error);
+                
+                let errorMessage = 'Ошибка камеры: ' + error.message;
                 
                 if (error.name === 'NotAllowedError') {
-                    alert('Разрешите доступ к камере в настройках Safari:\nНастройки > Safari > Камера');
+                    errorMessage = 'Разрешите доступ к камере в настройках Safari:\nНастройки > Safari > Камера';
                 } else if (error.name === 'NotFoundError') {
-                    alert('Камера не найдена');
-                } else {
-                    alert('Ошибка камеры: ' + error.message);
+                    errorMessage = 'Камера не найдена';
+                } else if (error.message.includes('aborted')) {
+                    errorMessage = 'Операция была прервана. Пожалуйста, попробуйте еще раз.';
+                }
+                
+                alert(errorMessage);
+                
+                // Показываем альтернативный метод сканирования для iOS
+                if (isIOSDevice) {
+                    setTimeout(() => {
+                        const useAlternative = confirm('Не удалось открыть камеру. Хотите использовать альтернативный метод сканирования через галерею?');
+                        if (useAlternative) {
+                            document.getElementById('iosBarcodeScanner').click();
+                        }
+                    }, 500);
                 }
             }
         }
@@ -21345,262 +21512,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             });
         }
 
-        function createProductCard(product, query, searchMode) {
-            const productCard = document.createElement('div');
-            productCard.className = 'product-card';
-            
-            let highlightedName = product.name;
-            let highlightedArticle = product.article;
-            let highlightedBarcode = '';
-            
-            if (searchMode === 'комбинированный') {
-                if (query.article) {
-                    highlightedArticle = highlightMatch(product.article, query.article);
-                }
-                if (query.name) {
-                    highlightedName = highlightMatch(product.name, query.name);
-                }
-                if (query.barcode) {
-                    if (product.count > 1) {
-                        highlightedBarcode = createMultipleBarcodesHTML(product.barcodes, query.barcode);
-                    } else {
-                        highlightedBarcode = highlightMatch(product.barcode, query.barcode);
-                    }
-                }
-            } else {
-                if (searchMode === 'по артикулу' || searchMode === 'комбинированный') {
-                    highlightedArticle = highlightMatch(product.article, query);
-                }
-                if (searchMode === 'по наименованию' || searchMode === 'комбинированный') {
-                    highlightedName = highlightMatch(product.name, query);
-                }
-                if (searchMode === 'по штрихкоду') {
-                    if (product.count > 1) {
-                        highlightedBarcode = createMultipleBarcodesHTML(product.barcodes, query);
-                    } else {
-                        highlightedBarcode = highlightMatch(product.barcode, query);
-                    }
-                }
-            }
-            
-            if (!highlightedBarcode) {
-                if (product.count > 1) {
-                    highlightedBarcode = createMultipleBarcodesHTML(product.barcodes, '');
-                } else {
-                    highlightedBarcode = product.barcode;
-                }
-            }
-            
-            const container = document.createElement('div');
-            
-            const articleRow = document.createElement('div');
-            articleRow.className = 'article';
-            articleRow.innerHTML = `Артикул: ${highlightedArticle}`;
-            
-            const hasImage = product.imageCode && product.imageCode.trim() !== '';
-            
-            if (hasImage) {
-                const imageButton = document.createElement('button');
-                imageButton.className = 'image-button';
-                imageButton.title = 'Показать изображение товара';
-                imageButton.innerHTML = '&#127750;';
-                imageButton.onclick = function() {
-                    showProductImage(product);
-                };
-                articleRow.appendChild(imageButton);
-            } else {
-                const noImageSpan = document.createElement('span');
-                noImageSpan.className = 'no-image-text';
-                noImageSpan.textContent = '(без изображения)';
-                articleRow.appendChild(noImageSpan);
-            }
-            
-            const printButton = document.createElement('button');
-            printButton.className = 'print-button';
-            printButton.title = 'Печать ценника';
-            printButton.innerHTML = '&#129534;';
-            printButton.onclick = function() {
-                openPrintModal(product);
-            };
-            
-            const articleContainer = document.createElement('div');
-            articleContainer.style.display = 'flex';
-            articleContainer.style.justifyContent = 'space-between';
-            articleContainer.style.alignItems = 'center';
-            articleContainer.style.marginBottom = '5px';
-            
-            articleContainer.appendChild(articleRow);
-            articleContainer.appendChild(printButton);
-            
-            container.innerHTML = `
-                <div class="product-field barcode">Штрихкод: ${highlightedBarcode}</div>
-                <div class="product-field name">${highlightedName}</div>
-                ${formatPriceWithDiscount(product)}
-            `;
-            
-            container.insertBefore(articleContainer, container.firstChild);
-            
-            const stockInfo = document.createElement('div');
-            stockInfo.innerHTML = `
-                <div class="stock-info">
-                    <div class="stock-title">Остатки:</div>
-                    <div class="stock-item">
-                        <span class="stock-name">Уральская 97:</span>
-                        <span class="stock-quantity ${product.stocks.warehouse1 < 0 ? 'negative' : 'positive'}">
-                            ${formatNumber(product.stocks.warehouse1)} шт. 
-                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse1)} кор.)</span>
-                        </span>
-                    </div>
-                    <div class="stock-item">
-                        <span class="stock-name">ОСНОВНОЙ СКЛАД:</span>
-                        <span class="stock-quantity ${product.stocks.warehouse2 < 0 ? 'negative' : 'positive'}">
-                            ${formatNumber(product.stocks.warehouse2)} шт. 
-                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse2)} кор.)</span>
-                        </span>
-                    </div>
-                    <div class="stock-item">
-                        <span class="stock-name">Шевченко 139:</span>
-                        <span class="stock-quantity ${product.stocks.warehouse3 < 0 ? 'negative' : 'positive'}">
-                            ${formatNumber(product.stocks.warehouse3)} шт. 
-                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse3)} кор.)</span>
-                        </span>
-                    </div>
-                    <div class="stock-item">
-                        <span class="stock-name">МАГАЗИН 234:</span>
-                        <span class="stock-quantity ${product.stocks.warehouse4 < 0 ? 'negative' : 'positive'}">
-                            ${formatNumber(product.stocks.warehouse4)} шт. 
-                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse4)} кор.)</span>
-                        </span>
-                    </div>
-                </div>
-            `;
-            
-            if (product.boxQuantity && product.boxQuantity.trim() !== '') {
-                stockInfo.innerHTML += `
-                    <div class="box-quantity-info">
-                        <div class="box-quantity-title">Кол-во в коробке:</div>
-                        <div class="box-quantity-value">${product.boxQuantity} шт.</div>
-                    </div>
-                `;
-            }
-            
-            if (product.storageLocation && product.storageLocation.trim() !== '') {
-                stockInfo.innerHTML += `
-                    <div class="storage-location">
-                        <div class="storage-title">Место хранения:</div>
-                        <div class="storage-value">${product.storageLocation}</div>
-                    </div>
-                `;
-            }
-            
-            productCard.appendChild(container);
-            productCard.appendChild(stockInfo);
-            
-            return productCard;
-        }
-
-        function displayResults(results, query, searchMode) {
-            const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = '';
-
-            if (results.length === 0) {
-                resultsContainer.innerHTML = '<div class="no-results">Товары не найдены</div>';
-                resultsContainer.style.display = 'block';
-                scrollToResults();
-                return;
-            }
-
-            const groupedResults = groupProductsByKey(results);
-            const totalCount = results.length;
-            const uniqueCount = groupedResults.length;
-
-            const countElement = document.createElement('div');
-            countElement.className = 'results-count';
-            countElement.textContent = `Найдено товаров: ${totalCount} (${uniqueCount} уникальных)`;
-            resultsContainer.appendChild(countElement);
-
-            const modeElement = document.createElement('div');
-            modeElement.className = 'search-mode';
-            modeElement.textContent = `Режим поиска: ${searchMode}`;
-            resultsContainer.appendChild(modeElement);
-
-            groupedResults.forEach(product => {
-                const productCard = createProductCard(product, query, searchMode);
-                resultsContainer.appendChild(productCard);
-            });
-
-            resultsContainer.style.display = 'block';
-            scrollToResults();
-        }
-
-        function searchProducts() {
-            const searchMode = getCurrentSearchMode();
-            
-            let results = [];
-            let query = '';
-            let displaySearchMode = getSearchModeDisplayName(searchMode);
-
-            if (searchMode === 'combined') {
-                const articlePart = articleInput.value.trim();
-                const namePart = nameInput.value.trim();
-                const barcodePart = barcodeInput.value.trim();
-                
-                query = {
-                    article: articlePart,
-                    name: namePart,
-                    barcode: barcodePart
-                };
-                
-                results = performCombinedSearch(articlePart, namePart, barcodePart);
-            } else {
-                query = searchInput.value.trim();
-                
-                if (!query) {
-                    resultsContainer.style.display = 'none';
-                    return;
-                }
-                
-                results = performSimpleSearch(query, searchMode);
-            }
-
-            displayResults(results, query, displaySearchMode);
-        }
-
-        function updateClearButton() {
-            const mode = getCurrentSearchMode();
-            let hasText = false;
-            
-            if (mode === 'combined') {
-                hasText = articleInput.value.trim() !== '' || 
-                          nameInput.value.trim() !== '' || 
-                          barcodeInput.value.trim() !== '';
-            } else {
-                hasText = searchInput.value.trim() !== '';
-            }
-            
-            if (hasText) {
-                clearSearchBtn.style.display = 'block';
-            } else {
-                clearSearchBtn.style.display = 'none';
-            }
-        }
-
-        function clearSearchFields() {
-            const mode = getCurrentSearchMode();
-            
-            if (mode === 'combined') {
-                articleInput.value = '';
-                nameInput.value = '';
-                barcodeInput.value = '';
-            } else {
-                searchInput.value = '';
-                searchInput.focus();
-            }
-            
-            updateClearButton();
-            resultsContainer.style.display = 'none';
-        }
-
         // ===== ФУНКЦИИ ДЛЯ ПЕЧАТИ =====
 
         function updatePriceTagPreview(product, type = 'regular') {
@@ -21661,7 +21572,15 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 // Для iOS сразу показываем готовую кнопку
                 printBtn.disabled = false;
                 printBtn.textContent = 'Печатать через AirPrint';
-                updatePrinterStatus('Готово к печати через AirPrint', 'connected');
+                updatePrinterStatus('Готово к печати', 'connected');
+                
+                // Добавляем инструкцию для Xprinter XP-P323B
+                if (window.confirm('Для принтера Xprinter XP-P323B:\n\n1. Убедитесь, что принтер включен и подключен к той же Wi-Fi сети\n2. В диалоге печати выберите "Принтер"\n3. Найдите "Xprinter XP-P323B" в списке\n4. Если принтера нет, нажмите "Другие принтеры" и найдите его\n\nПродолжить?')) {
+                    // Продолжаем
+                } else {
+                    closePrintModal();
+                    return;
+                }
             } else {
                 // Для Android пытаемся подключиться к принтеру
                 printBtn.disabled = true;
@@ -21705,7 +21624,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             printBtn.disabled = true;
             
             if (isIOSDevice) {
-                printBtn.textContent = 'Открываю AirPrint...';
+                printBtn.textContent = 'Подготавливаю к печати...';
             } else {
                 printBtn.textContent = 'Печатаю...';
             }
@@ -21713,12 +21632,14 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             try {
                 if (isIOSDevice) {
                     // Используем AirPrint для iOS
+                    showPrintStatus('Подготавливаю документ для печати...', 'info');
                     await printOnIOS(currentProductForPrint, currentPriceTagType);
-                    showPrintStatus('Открывается окно AirPrint...', 'info');
+                    showPrintStatus('Открывается диалог печати...', 'info');
                     
+                    // Закрываем модальное окно через 2 секунды
                     setTimeout(() => {
                         closePrintModal();
-                    }, 1500);
+                    }, 2000);
                 } else {
                     // Используем Web Serial для Android/Desktop
                     await printPriceTag(currentProductForPrint, currentPriceTagType);
@@ -21731,7 +21652,13 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 
             } catch (error) {
                 console.error('Ошибка печати:', error);
-                showPrintStatus('Ошибка печати: ' + error.message, 'error');
+                
+                let errorMessage = 'Ошибка печати: ' + error.message;
+                if (isIOSDevice && error.message.includes('Xprinter')) {
+                    errorMessage = 'Для принтера Xprinter XP-P323B:\n1. Убедитесь, что принтер включен\n2. Подключен к той же Wi-Fi сети\n3. Поддерживает AirPrint';
+                }
+                
+                showPrintStatus(errorMessage, 'error');
                 printBtn.disabled = false;
                 
                 if (isIOSDevice) {
@@ -22129,7 +22056,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
         }
 
         function setupPlatformUI() {
-            // Всегда показываем кнопку сканирования
+            // Всегда показываем кнопку сканирования (исправленная строка)
             scanButton.style.display = 'flex';
             
             if (isIOSDevice) {
@@ -22137,34 +22064,230 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 // Для iOS добавляем альтернативный метод сканирования
                 setupIOSBarcodeScanning();
                 
+                // Показываем инструкцию для iOS
+                document.getElementById('iosScanInstruction').style.display = 'block';
+                
                 // Меняем текст кнопки для iOS
                 scanButton.innerHTML = '<span class="scan-icon">📷</span> Сканировать (iOS)';
                 scanButton.classList.add('ios-scan-button');
                 
                 // Настраиваем обработчик для iOS
-                const originalHandler = scanButton.onclick;
                 scanButton.onclick = function(e) {
-                    if (isIOSDevice) {
-                        e.preventDefault();
-                        // Используем камеру iOS
-                        openCamera();
-                    } else if (originalHandler) {
-                        originalHandler.call(this, e);
-                    }
+                    e.preventDefault();
+                    openCamera();
                 };
                 
             } else if (isAndroidDevice) {
                 console.log('Настроен интерфейс для Android');
+                // Скрываем инструкцию для Android
+                document.getElementById('iosScanInstruction').style.display = 'none';
+                
                 // Для Android используем стандартный метод
                 setTimeout(() => {
                     initBarcodeDetector();
                 }, 1000);
+                
+                // Для Android устанавливаем стандартный обработчик
+                scanButton.onclick = function(e) {
+                    e.preventDefault();
+                    openCamera();
+                };
+                
             } else {
                 console.log('Настроен интерфейс для Desktop');
+                // Скрываем инструкцию для Desktop
+                document.getElementById('iosScanInstruction').style.display = 'none';
+                
+                // Для Desktop также показываем кнопку сканирования
                 setTimeout(() => {
                     initBarcodeDetector();
                 }, 1000);
+                
+                // Для Desktop устанавливаем стандартный обработчик
+                scanButton.onclick = function(e) {
+                    e.preventDefault();
+                    openCamera();
+                };
             }
+        }
+
+        // ===== ИСПРАВЛЕННЫЕ ФУНКЦИИ ПОИСКА =====
+
+        function clearSearchFields() {
+            searchInput.value = '';
+            articleInput.value = '';
+            nameInput.value = '';
+            barcodeInput.value = '';
+            
+            updateClearButton();
+            
+            // Скрываем результаты поиска
+            resultsContainer.style.display = 'none';
+            resultsContainer.innerHTML = '';
+            
+            searchInput.focus();
+        }
+
+        function updateClearButton() {
+            const mode = getCurrentSearchMode();
+            
+            if (mode === 'combined') {
+                const hasValue = articleInput.value.trim() !== '' || 
+                                nameInput.value.trim() !== '' || 
+                                barcodeInput.value.trim() !== '';
+                clearSearchBtn.style.display = hasValue ? 'block' : 'none';
+            } else {
+                clearSearchBtn.style.display = searchInput.value.trim() !== '' ? 'block' : 'none';
+            }
+        }
+
+        function searchProducts() {
+            const mode = getCurrentSearchMode();
+            let results = [];
+            
+            if (mode === 'combined') {
+                const articlePart = articleInput.value.trim();
+                const namePart = nameInput.value.trim();
+                const barcodePart = barcodeInput.value.trim();
+                
+                if (!articlePart && !namePart && !barcodePart) {
+                    showPrintStatus('Введите хотя бы один критерий для поиска', 'error');
+                    return;
+                }
+                
+                results = performCombinedSearch(articlePart, namePart, barcodePart);
+            } else {
+                const searchTerm = searchInput.value.trim();
+                
+                if (!searchTerm) {
+                    showPrintStatus('Введите текст для поиска', 'error');
+                    return;
+                }
+                
+                results = performSimpleSearch(searchTerm, mode);
+            }
+            
+            displayResults(results, mode);
+        }
+
+        function displayResults(results, mode) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        Товары не найдены
+                    </div>
+                `;
+                resultsContainer.style.display = 'block';
+                return;
+            }
+            
+            const groupedResults = groupProductsByKey(results);
+            
+            let html = `
+                <div class="results-count">
+                    Найдено товаров: ${results.length} (${groupedResults.length} уникальных)
+                </div>
+                <div class="search-mode">
+                    Режим поиска: ${getSearchModeDisplayName(mode)}
+                </div>
+            `;
+            
+            groupedResults.forEach(product => {
+                const hasImage = product.imageCode && product.imageCode.trim() !== '';
+                const hasMultipleBarcodes = product.barcodes.length > 1;
+                const boxQuantity = product.boxQuantity || '';
+                
+                html += `
+                    <div class="product-card">
+                        <div class="product-field barcode">
+                            <strong>Штрихкод:</strong> 
+                            ${hasMultipleBarcodes ? 
+                                createMultipleBarcodesHTML(product.barcodes, mode === 'barcode' ? searchInput.value : '') : 
+                                `<span>${highlightMatch(product.barcode, mode === 'barcode' ? searchInput.value : '')}</span>`}
+                        </div>
+                        <div class="product-field article" id="articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}">
+                            <strong>Артикул:</strong> ${highlightMatch(product.article, mode === 'article' ? searchInput.value : '')}
+                            ${hasImage ? '<button class="image-button">&#127750;</button>' : '<span class="no-image-text">(без изображения)</span>'}
+                            <button class="print-button" onclick="openPrintModal(${JSON.stringify(product).replace(/"/g, '&quot;')})" title="Печать ценника">
+                                &#129534;
+                            </button>
+                        </div>
+                        <div class="product-field name">
+                            ${highlightMatch(product.name, mode === 'name' ? searchInput.value : '')}
+                        </div>
+                        ${formatPriceWithDiscount(product)}
+                        ${formatStockInfo(product)}
+                    </div>
+                `;
+            });
+            
+            resultsContainer.innerHTML = html;
+            resultsContainer.style.display = 'block';
+            
+            // Добавляем обработчики для кнопок изображений
+            groupedResults.forEach(product => {
+                const hasImage = product.imageCode && product.imageCode.trim() !== '';
+                if (hasImage) {
+                    setTimeout(() => {
+                        const container = document.getElementById(`articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}`);
+                        if (container) {
+                            const imageButton = container.querySelector('.image-button');
+                            if (imageButton) {
+                                imageButton.onclick = function() {
+                                    showProductImage(product);
+                                };
+                            }
+                        }
+                    }, 0);
+                }
+            });
+            
+            scrollToResults();
+        }
+
+        function formatStockInfo(product) {
+            const stocks = product.stocks;
+            const coefficients = product.coefficients;
+            const storageLocation = product.storageLocation;
+            const boxQuantity = product.boxQuantity || '';
+            
+            let html = '<div class="stock-info">';
+            html += '<div class="stock-title">Остатки:</div>';
+            
+            [1, 2, 3, 4].forEach(i => {
+                const quantity = stocks[`warehouse${i}`];
+                const coeff = coefficients[`warehouse${i}`];
+                const quantityClass = quantity < 0 ? 'negative' : 'positive';
+                const names = ['Уральская 97', 'ОСНОВНОЙ СКЛАД', 'Шевченко 139', 'МАГАЗИН 234'];
+                
+                html += `<div class="stock-item">
+                    <div class="stock-name">${names[i-1]}:</div>
+                    <div class="stock-quantity ${quantityClass}">
+                        ${formatNumber(quantity)} шт. 
+                        <span class="box-coefficient">(${formatCoefficient(coeff)} кор.)</span>
+                    </div>
+                </div>`;
+            });
+            
+            html += '</div>';
+            
+            if (boxQuantity && boxQuantity.trim() !== '') {
+                html += `<div class="box-quantity-info">
+                    <div class="box-quantity-title">Кол-во в коробке:</div>
+                    <div class="box-quantity-value">${boxQuantity} шт.</div>
+                </div>`;
+            }
+            
+            if (storageLocation && storageLocation.trim() !== '') {
+                html += `<div class="storage-location">
+                    <div class="storage-title">Место хранения:</div>
+                    <div class="storage-value">${storageLocation}</div>
+                </div>`;
+            }
+            
+            return html;
         }
 
         // ===== ИНИЦИАЛИЗАЦИЯ =====
@@ -22230,7 +22353,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             if (e.key === 'Enter') searchProducts();
         });
 
-        scanButton.addEventListener('click', openCamera);
+        // Обработчик сканирования уже настроен в setupPlatformUI()
 
         closeCameraModal.addEventListener('click', function() {
             stopCameraStream();
@@ -22298,7 +22421,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             document.getElementById('modeArticle').checked = true;
             updateSearchUI();
             searchInput.focus();
-            setupPlatformUI();
+            setupPlatformUI(); // Исправленная функция
             initScrollToTopButton();
             setupPriceTagTypeSelector();
 
@@ -22316,10 +22439,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 const style = document.createElement('style');
                 style.textContent = `
                     /* Улучшения для iOS */
-                    video {
-                        -webkit-transform: scaleX(-1);
-                        transform: scaleX(-1);
-                    }
                     button {
                         -webkit-tap-highlight-color: transparent;
                         cursor: pointer;
@@ -22329,6 +22448,10 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                     }
                     .search-input, .combined-input {
                         border-radius: 8px;
+                    }
+                    #cameraVideo {
+                        transform: scaleX(-1); /* Исправление зеркального отображения */
+                        object-fit: cover;
                     }
                 `;
                 document.head.appendChild(style);
