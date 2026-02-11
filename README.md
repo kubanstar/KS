@@ -646,233 +646,7 @@
             cursor: pointer;
         }
 
-        /* Стили для модального окна iOS сканирования */
-        .ios-scanner-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 1000;
-        }
-        
-        .ios-scanner-content {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .ios-scanner-container {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        #ios-qr-reader {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        /* Кастомные стили для Html5-QRCode */
-        #html5-qrcode-anchor-scan-type-change,
-        #html5qr-code-full-region__scan_region {
-            display: none !important;
-        }
-        
-        #qr-reader__scan_region {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 400px;
-            height: 200px;
-            z-index: 10;
-        }
-        
-        #qr-reader__scan_region img {
-            display: none;
-        }
-        
-        #qr-reader__scan_region hr {
-            display: none;
-        }
-        
-        /* Наш оверлей поверх сканера iOS */
-        .ios-scan-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
-        }
-        
-        .ios-scan-frame {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 400px;
-            height: 200px;
-            border: 4px solid rgba(52, 199, 89, 0.8);
-            border-radius: 15px;
-            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-        }
-        
-        .ios-scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                transparent, 
-                #34c759, 
-                transparent);
-            animation: scan 2s ease-in-out infinite;
-            box-shadow: 0 0 10px #34c759;
-        }
-        
-        @keyframes scan {
-            0% {
-                top: 0;
-                opacity: 1;
-            }
-            50% {
-                top: 100%;
-                opacity: 1;
-            }
-            51% {
-                opacity: 0;
-            }
-            100% {
-                top: 0;
-                opacity: 0;
-            }
-        }
-        
-        .ios-scanner-info {
-            position: absolute;
-            top: calc(50% + 120px);
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-size: 16px;
-            padding: 0 20px;
-            z-index: 10;
-        }
-        
-        .ios-modal-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            gap: 12px;
-            z-index: 100;
-        }
-        
-        .ios-modal-btn {
-            flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .ios-modal-btn-danger {
-            background: rgba(255, 59, 48, 0.8);
-            color: white;
-        }
-        
-        .ios-scanner-status {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-            display: none;
-        }
-        
-        .ios-scanned-badge {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(52, 199, 89, 0.95);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 15px;
-            font-size: 24px;
-            font-weight: bold;
-            display: none;
-            z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: badgeAppear 0.5s ease-out;
-        }
-        
-        @keyframes badgeAppear {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            70% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
-        
-        .ios-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #34c759;
-            animation: spin 1s linear infinite;
-            z-index: 100;
-            display: none;
-        }
-        
-        @keyframes spin {
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        .ios-permission-hint {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 300px;
-            z-index: 1000;
-            display: none;
-        }
-        
-        /* Обычное модальное окно камеры для Android/Desktop */
+        /* Обычное модальное окно камеры для всех платформ */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -964,6 +738,12 @@
             animation: scan 2s linear infinite;
         }
         
+        @keyframes scan {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
+
         .barcode-supported {
             margin-top: 10px;
             font-size: 12px;
@@ -1216,6 +996,36 @@
             font-weight: bold;
             margin-bottom: 5px;
         }
+
+        /* Контейнер для Html5-QRCode (скрытый для iOS) */
+        #ios-qr-reader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+        }
+        
+        /* Кастомные стили для Html5-QRCode - скрываем все UI элементы */
+        #html5-qrcode-anchor-scan-type-change,
+        #html5qr-code-full-region__scan_region,
+        #qr-reader__dashboard_section_swaplink,
+        #qr-reader__dashboard_section_csr {
+            display: none !important;
+        }
+        
+        /* Скрываем все элементы сканера */
+        #qr-reader__scan_region,
+        #qr-reader__dashboard {
+            display: none !important;
+        }
+        
+        /* Скрываем элементы статуса */
+        #qr-reader__status_span {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -1298,7 +1108,7 @@
     <!-- Кнопка "Наверх" -->
     <button class="scroll-to-top-btn" id="scrollToTopBtn" title="Наверх">&#9650;</button>
 
-    <!-- Модальное окно камеры для Android/Desktop -->
+    <!-- Модальное окно камеры (используется для всех платформ) -->
     <div class="modal-overlay" id="cameraModal">
         <div class="modal-frame">
             <h3>Сканирование штрихкода</h3>
@@ -1306,52 +1116,15 @@
                 <div class="scan-box">
                     <div class="scan-line"></div>
                 </div>
+                <!-- Для iOS: скрытый Html5-QRCode контейнер -->
+                <div id="ios-qr-reader"></div>
+                <!-- Для Android/Desktop: обычный video элемент -->
                 <video id="cameraVideo" playsinline></video>
                 <div class="camera-controls">
                     <button class="camera-btn" id="stopCamera">Остановить</button>
                 </div>
             </div>
             <button class="close-modal" id="closeCameraModal">Закрыть</button>
-        </div>
-    </div>
-
-    <!-- Модальное окно iOS сканирования -->
-    <div class="ios-scanner-modal" id="iosScannerModal">
-        <div class="ios-scanner-content">
-            <div class="ios-scanner-container">
-                <!-- Контейнер для Html5-QRCode -->
-                <div id="ios-qr-reader"></div>
-                
-                <!-- Наш оверлей -->
-                <div class="ios-scan-overlay">
-                    <div class="ios-scan-frame">
-                        <div class="ios-scan-line"></div>
-                    </div>
-                </div>
-                
-                <!-- Сообщения и статусы -->
-                <div class="ios-scanner-info">
-                    Наведите камеру на штрихкод в рамке
-                </div>
-                
-                <div class="ios-scanner-status" id="iosScannerStatus"></div>
-                <div class="ios-scanned-badge" id="iosScannedBadge"></div>
-                <div class="ios-loader" id="iosScannerLoader">Загрузка...</div>
-                
-                <!-- Подсказка для iOS -->
-                <div class="ios-permission-hint" id="iosPermissionHint">
-                    📱 Для iOS:<br><br>
-                    1. Разрешите доступ к камере<br>
-                    2. Нажмите "Разрешить"<br>
-                    3. Камера активируется автоматически
-                </div>
-            </div>
-            
-            <div class="ios-modal-controls">
-                <button class="ios-modal-btn ios-modal-btn-danger" id="closeIosScanner">
-                    ✕ Закрыть сканер
-                </button>
-            </div>
         </div>
     </div>
 
@@ -1431,7 +1204,6 @@
         const DATA_UPDATE_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026"
         
         // ===== ДАТЫ ИЗМЕНЕНИЯ ФАЙЛОВ =====
-        // Эти данные будут заполняться AHK скриптом
         const URAL_OFFICE_DATE = ""; // Будет заполнена AHK скриптом: "03.02.2026 14:32"
         const URAL_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 8:19"
         const SHEVCHENKO_OFFICE_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 07:33"
@@ -20646,7 +20418,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             }
         }
 
-        async function openCamera() {
+        async function openCameraForAndroidDesktop() {
             try {
                 stopCameraStream();
                 
@@ -20724,31 +20496,34 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
         }
 
         // ===== ФУНКЦИИ ДЛЯ iOS СКАНИРОВАНИЯ =====
-        async function openIosScanner() {
-            console.log('Открытие iOS сканера...');
+        async function openCameraForIOS() {
+            console.log('Открытие iOS сканера через Html5-QRCode...');
             
-            const modal = document.getElementById('iosScannerModal');
-            modal.style.display = 'block';
-            
-            document.getElementById('iosScannerLoader').style.display = 'block';
-            showIosScannerStatus('Инициализация камеры...');
-            
-            setTimeout(() => {
-                initIosBarcodeScanner();
-            }, 300);
+            try {
+                // Сначала показываем модальное окно камеры
+                cameraModal.style.display = 'flex';
+                
+                // Ждем немного перед инициализацией сканера
+                setTimeout(() => {
+                    initIosBarcodeScanner();
+                }, 300);
+                
+            } catch (error) {
+                console.error('Ошибка открытия iOS камеры:', error);
+                alert('Не удалось получить доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.');
+            }
         }
 
         function initIosBarcodeScanner() {
             try {
+                // Останавливаем предыдущий сканер если есть
                 if (iosHtml5QrCode && isIosScanning) {
-                    iosHtml5QrCode.stop().then(() => {
-                        iosHtml5QrCode.clear();
-                        iosHtml5QrCode = null;
-                    }).catch(() => {
-                        iosHtml5QrCode = null;
-                    });
+                    iosHtml5QrCode.stop().catch(() => {});
+                    iosHtml5QrCode.clear();
+                    iosHtml5QrCode = null;
                 }
                 
+                // Создаем конфигурацию для сканера
                 const config = {
                     fps: 10,
                     qrbox: { 
@@ -20756,11 +20531,16 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                         height: 150 
                     },
                     rememberLastUsedCamera: true,
-                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+                    showTorchButtonIfSupported: false,
+                    showZoomSliderIfSupported: false,
+                    showFullScreenButtonIfSupported: false
                 };
                 
+                // Инициализируем Html5-QRCode
                 iosHtml5QrCode = new Html5Qrcode("ios-qr-reader");
                 
+                // Начинаем сканирование
                 iosHtml5QrCode.start(
                     { 
                         facingMode: "environment"
@@ -20772,56 +20552,46 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                     console.log('iOS сканирование запущено успешно');
                     isIosScanning = true;
                     
-                    document.getElementById('iosScannerLoader').style.display = 'none';
-                    document.getElementById('iosPermissionHint').style.display = 'none';
-                    hideIosScannerStatus();
-                    
-                    setTimeout(() => {
-                        document.getElementById('iosPermissionHint').style.display = 'none';
-                    }, 2000);
-                    
                 }).catch(err => {
                     console.error('Ошибка запуска iOS сканера:', err);
                     
-                    if (err.toString().includes('environment')) {
-                        console.log('Пробуем фронтальную камеру iOS...');
-                        showIosScannerStatus('Пробуем фронтальную камеру...');
-                        
-                        iosHtml5QrCode.start(
-                            { facingMode: "user" }, 
-                            config,
-                            onIosScanSuccess,
-                            onIosScanError
-                        ).then(() => {
-                            isIosScanning = true;
-                            document.getElementById('iosScannerLoader').style.display = 'none';
-                            hideIosScannerStatus();
-                        }).catch(err2 => {
-                            console.error('Ошибка с фронтальной камерой iOS:', err2);
-                            showIosScannerStatus('Ошибка камеры: ' + err2.message);
-                        });
-                    } else {
-                        showIosScannerStatus('Ошибка: ' + err.message);
-                    }
+                    // Пробуем фронтальную камеру
+                    iosHtml5QrCode.start(
+                        { facingMode: "user" }, 
+                        config,
+                        onIosScanSuccess,
+                        onIosScanError
+                    ).then(() => {
+                        isIosScanning = true;
+                    }).catch(err2 => {
+                        console.error('Ошибка с фронтальной камерой iOS:', err2);
+                        alert('Не удалось запустить камеру на iOS');
+                        closeScanner();
+                    });
                 });
                 
             } catch (error) {
                 console.error('Критическая ошибка iOS инициализации:', error);
-                showIosScannerStatus('Ошибка: ' + error.message);
+                alert('Ошибка инициализации камеры на iOS');
+                closeScanner();
             }
         }
 
         function onIosScanSuccess(decodedText, decodedResult) {
             console.log('iOS сканирование успешно:', decodedText);
             
+            // Проверяем чтобы не было дублирования
             if (lastScannedCode === decodedText) {
                 return;
             }
             
+            // Запоминаем последний отсканированный код
             lastScannedCode = decodedText;
             
-            showIosScannedBadge(decodedText);
+            // НЕ ПОКАЗЫВАЕМ бейдж "Найдено", сразу обрабатываем код
+            processScannedCode(decodedText);
             
+            // Останавливаем сканирование
             if (iosHtml5QrCode && isIosScanning) {
                 iosHtml5QrCode.stop().then(() => {
                     isIosScanning = false;
@@ -20830,29 +20600,18 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 });
             }
             
-            setTimeout(() => {
-                closeIosScanner();
-                
-                document.getElementById('searchInput').value = decodedText;
-                
-                performSearch();
-                
-                setTimeout(() => {
-                    lastScannedCode = '';
-                }, 3000);
-                
-            }, 1500);
+            // Закрываем модальное окно камеры
+            closeScanner();
         }
 
         function onIosScanError(error) {
+            // Игнорируем обычные ошибки сканирования (когда нет кода в кадре)
             if (!error.includes('NotFoundException') && !error.includes('No multi format readers configured')) {
                 console.warn('Ошибка iOS сканирования:', error);
             }
         }
 
-        function closeIosScanner() {
-            console.log('Закрытие iOS сканера...');
-            
+        function stopIosScanner() {
             if (iosHtml5QrCode && isIosScanning) {
                 iosHtml5QrCode.stop().then(() => {
                     console.log('iOS сканирование остановлено');
@@ -20865,34 +20624,12 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                     isIosScanning = false;
                 });
             }
-            
-            document.getElementById('iosScannerModal').style.display = 'none';
-            document.getElementById('iosScannedBadge').style.display = 'none';
-            document.getElementById('iosPermissionHint').style.display = 'none';
-            hideIosScannerStatus();
-        }
-
-        function showIosScannedBadge(code) {
-            const badge = document.getElementById('iosScannedBadge');
-            badge.textContent = `✓ Найдено: ${code}`;
-            badge.style.display = 'block';
-        }
-
-        function showIosScannerStatus(message) {
-            const status = document.getElementById('iosScannerStatus');
-            status.textContent = message;
-            status.style.display = 'block';
-        }
-
-        function hideIosScannerStatus() {
-            document.getElementById('iosScannerStatus').style.display = 'none';
         }
 
         // ===== ОБЩАЯ ФУНКЦИЯ ОБРАБОТКИ СКАНИРОВАНИЯ =====
-        function handleScannedCode(code) {
+        function processScannedCode(code) {
             if (!code || code.trim().length === 0) return;
             
-            stopCameraStream();
             document.getElementById('modeBarcode').checked = true;
             updateSearchUI();
             
@@ -20902,6 +20639,13 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             
             const results = performSimpleSearch(cleanCode, 'barcode');
             showScanResults(cleanCode, results);
+        }
+
+        function handleScannedCode(code) {
+            if (!code || code.trim().length === 0) return;
+            
+            stopCameraStream();
+            processScannedCode(code);
         }
 
         function setupPlatformUI() {
@@ -20926,18 +20670,19 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         function openScanner() {
             if (isIOS) {
-                openIosScanner();
+                openCameraForIOS();
             } else {
-                openCamera();
+                openCameraForAndroidDesktop();
             }
         }
 
         function closeScanner() {
+            cameraModal.style.display = 'none';
+            
             if (isIOS) {
-                closeIosScanner();
+                stopIosScanner();
             } else {
                 stopCameraStream();
-                cameraModal.style.display = 'none';
             }
         }
 
@@ -21114,13 +20859,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 });
             }
             
-            // Закрываем оба типа модальных окон
-            if (isIOS) {
-                closeIosScanner();
-            } else {
-                cameraModal.style.display = 'none';
-            }
-            
+            // Показываем модальное окно с результатами
             resultModal.style.display = 'flex';
         }
 
@@ -21172,6 +20911,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             return html;
         }
 
+        // ===== ОСТАЛЬНЫЕ ФУНКЦИИ (без изменений) =====
         function createProductCard(product, query, searchMode) {
             const productCard = document.createElement('div');
             productCard.className = 'product-card';
@@ -22316,7 +22056,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
         const closeCameraModal = document.getElementById('closeCameraModal');
         const closePrintModalBtn = document.getElementById('closePrintModal');
         const closeDatesModalBtn = document.getElementById('closeDatesModal');
-        const closeIosScannerBtn = document.getElementById('closeIosScanner');
         
         const cameraVideo = document.getElementById('cameraVideo');
         const stopCameraBtn = document.getElementById('stopCamera');
@@ -22386,10 +22125,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         stopCameraBtn.addEventListener('click', function() {
             closeScanner();
-        });
-
-        closeIosScannerBtn.addEventListener('click', function() {
-            closeIosScanner();
         });
 
         continueScanBtn.addEventListener('click', function() {
