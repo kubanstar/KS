@@ -20768,27 +20768,48 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             
             lastScannedCode = decodedText;
             
-            // ЗАМЕНА: вместо показа значка, сразу обрабатываем результат
+            // НЕМЕДЛЕННО останавливаем сканер перед обработкой результата
             if (iosHtml5QrCode && isIosScanning) {
                 iosHtml5QrCode.stop().then(() => {
+                    console.log('iOS сканирование остановлено');
+                    iosHtml5QrCode.clear();
+                    iosHtml5QrCode = null;
                     isIosScanning = false;
-                }).catch(() => {
+                    
+                    // Закрываем iOS сканер
+                    document.getElementById('iosScannerModal').style.display = 'none';
+                    
+                    // Заполняем поле поиска
+                    document.getElementById('searchInput').value = decodedText;
+                    
+                    // Выполняем поиск
+                    const results = performSimpleSearch(decodedText, 'barcode');
+                    
+                    // Показываем результаты в модальном окне
+                    showScanResults(decodedText, results);
+                    
+                    setTimeout(() => {
+                        lastScannedCode = '';
+                    }, 3000);
+                    
+                }).catch(err => {
+                    console.log('Ошибка остановки iOS:', err);
+                    iosHtml5QrCode = null;
                     isIosScanning = false;
+                    
+                    // Все равно продолжаем обработку
+                    document.getElementById('iosScannerModal').style.display = 'none';
+                    document.getElementById('searchInput').value = decodedText;
+                    const results = performSimpleSearch(decodedText, 'barcode');
+                    showScanResults(decodedText, results);
                 });
+            } else {
+                // Если сканер уже остановлен, просто обрабатываем результат
+                document.getElementById('iosScannerModal').style.display = 'none';
+                document.getElementById('searchInput').value = decodedText;
+                const results = performSimpleSearch(decodedText, 'barcode');
+                showScanResults(decodedText, results);
             }
-            
-            // ЗАМЕНА: закрываем iOS сканер и сразу открываем модальное окно результатов
-            closeIosScanner();
-            
-            document.getElementById('searchInput').value = decodedText;
-            
-            // Выполняем поиск и показываем результаты в модальном окне
-            const results = performSimpleSearch(decodedText, 'barcode');
-            showScanResults(decodedText, results);
-            
-            setTimeout(() => {
-                lastScannedCode = '';
-            }, 3000);
         }
 
         function onIosScanError(error) {
@@ -21051,13 +21072,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                     
                     resultProducts.appendChild(productCard);
                 });
-            }
-            
-            // Закрываем оба типа модальных окон
-            if (isIOS) {
-                closeIosScanner();
-            } else {
-                cameraModal.style.display = 'none';
             }
             
             // Открываем модальное окно результатов
