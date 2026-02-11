@@ -1357,15 +1357,7 @@
                 </div>
                 
                 <div class="ios-status-message" id="iosScannerStatus"></div>
-                <div class="ios-scanned-badge" id="iosScannedBadge"></div>
                 <div class="ios-loader" id="iosScannerLoader">Загрузка...</div>
-                
-                <div class="ios-permission-hint" id="iosPermissionHint">
-                    📱 Для iOS:<br><br>
-                    1. Разрешите доступ к камере<br>
-                    2. Нажмите "Разрешить"<br>
-                    3. Камера активируется автоматически
-                </div>
                 
                 <div class="ios-no-camera" id="iosNoCameraMessage">
                     <h3 style="color: #ff3b30; margin-bottom:15px;">⚠️ Камера недоступна</h3>
@@ -21476,13 +21468,8 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             
             document.getElementById('iosScannerLoader').style.display = 'block';
             showIOSScannerStatus('Инициализация камеры...');
-            
-            if (isIOS()) {
-                setTimeout(() => {
-                    document.getElementById('iosPermissionHint').style.display = 'block';
-                }, 500);
-            }
-            
+      
+
             setTimeout(() => {
                 initIOSBarcodeScanner();
             }, 300);
@@ -21532,7 +21519,6 @@ function initIOSBarcodeScanner() {
             iosIsScanning = true;
 
             document.getElementById('iosScannerLoader').style.display = 'none';
-            document.getElementById('iosPermissionHint').style.display = 'none';
             document.getElementById('iosNoCameraMessage').style.display = 'none';
             hideIOSScannerStatus();
 
@@ -21613,8 +21599,7 @@ function initIOSBarcodeScanner() {
             }
             
             iosLastScannedCode = decodedText;
-            
-            showIOSScannedBadge(decodedText);
+
             
             if (iosHtml5QrCode && iosIsScanning) {
                 iosHtml5QrCode.stop().then(() => {
@@ -21653,7 +21638,6 @@ function initIOSBarcodeScanner() {
         function showIOSNoCameraMessage() {
             document.getElementById('iosScannerLoader').style.display = 'none';
             document.getElementById('iosNoCameraMessage').style.display = 'block';
-            document.getElementById('iosPermissionHint').style.display = 'none';
             hideIOSScannerStatus();
         }
 
@@ -21674,18 +21658,10 @@ function initIOSBarcodeScanner() {
             }
             
             document.getElementById('iosScannerModal').style.display = 'none';
-            document.getElementById('iosScannedBadge').style.display = 'none';
             document.getElementById('iosNoCameraMessage').style.display = 'none';
-            document.getElementById('iosPermissionHint').style.display = 'none';
             hideIOSScannerStatus();
             
             iosCurrentFacingMode = 'environment';
-        }
-
-        function showIOSScannedBadge(code) {
-            const badge = document.getElementById('iosScannedBadge');
-            badge.textContent = `✓ Найдено: ${code}`;
-            badge.style.display = 'block';
         }
 
         function showIOSScannerStatus(message) {
