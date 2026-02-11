@@ -21609,7 +21609,6 @@ function initIOSBarcodeScanner() {
                 });
             }
             
-            setTimeout(() => {
                 closeIOSScanner();
                 
                 document.getElementById('modeBarcode').checked = true;
@@ -21625,8 +21624,6 @@ function initIOSBarcodeScanner() {
                 setTimeout(() => {
                     iosLastScannedCode = '';
                 }, 3000);
-                
-            }, 1500);
         }
 
         function onIOSScanError(error) {
