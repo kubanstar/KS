@@ -20573,335 +20573,362 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             return Object.values(groups);
         }
 
-        // ===== ФУНКЦИИ ДЛЯ СКАНИРОВАНИЯ (Android/Desktop) =====
-        // ПОЛНОСТЬЮ ОРИГИНАЛЬНАЯ ВЕРСИЯ, КАК БЫЛО В ПЕРВОМ КОДЕ
-        function isBarcodeDetectorSupported() {
-            return ('BarcodeDetector' in window);
-        }
+// ===== ФУНКЦИИ ДЛЯ СКАНИРОВАНИЯ (Android/Desktop) =====
+// ИСПРАВЛЕННАЯ ВЕРСИЯ - БЕЛОЕ ОКНО БОЛЬШЕ НЕ ПОЯВЛЯЕТСЯ
+function isBarcodeDetectorSupported() {
+    return ('BarcodeDetector' in window);
+}
 
-        async function initBarcodeDetector() {
-            if (!isBarcodeDetectorSupported()) {
-                console.warn('BarcodeDetector API не поддерживается в этом браузере');
-                return null;
-            }
+async function initBarcodeDetector() {
+    if (!isBarcodeDetectorSupported()) {
+        console.warn('BarcodeDetector API не поддерживается в этом браузере');
+        return null;
+    }
+    
+    try {
+        const formats = await BarcodeDetector.getSupportedFormats();
+        const supportedFormats = formats.filter(format => 
+            ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_39', 'code_128', 'codabar'].includes(format)
+        );
+        
+        if (supportedFormats.length === 0) {
+            console.warn('Нет поддержки нужных форматов штрихкодов');
+            return null;
+        }
+        
+        return new BarcodeDetector({ formats: supportedFormats });
+    } catch (error) {
+        console.error('Ошибка инициализации BarcodeDetector:', error);
+        return null;
+    }
+}
+
+async function openCamera() {
+    try {
+        // Сначала останавливаем предыдущий поток и закрываем модальное окно
+        if (stream || cameraModal.style.display === 'flex') {
+            stopCameraStream();
+            cameraModal.style.display = 'none';
+            // Даем время на освобождение ресурсов
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        const constraints = {
+            video: {
+                facingMode: 'environment',
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            },
+            audio: false
+        };
+        
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        
+        // Убеждаемся что видео элемент чистый
+        cameraVideo.srcObject = null;
+        cameraVideo.srcObject = stream;
+        
+        // Показываем модальное окно ТОЛЬКО после получения потока
+        cameraModal.style.display = 'flex';
+        
+        await cameraVideo.play();
+        
+        if (!barcodeDetector) {
+            barcodeDetector = await initBarcodeDetector();
+        }
+        
+        if (!barcodeDetector) {
+            alert('Ваш браузер не поддерживает прямое сканирование штрихкодов.');
+            stopCameraStream();
+            cameraModal.style.display = 'none';
+            return;
+        }
+        
+        startBarcodeDetection(barcodeDetector);
+        
+    } catch (error) {
+        console.error('Ошибка доступа к камере:', error);
+        alert('Не удалось получить доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.');
+        cameraModal.style.display = 'none';
+    }
+}
+
+function startBarcodeDetection(detector) {
+    // Очищаем предыдущий интервал
+    if (scanInterval) {
+        clearInterval(scanInterval);
+        scanInterval = null;
+    }
+    
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    
+    scanInterval = setInterval(async () => {
+        // Проверяем что видео готово и модальное окно открыто
+        if (cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA && 
+            cameraModal.style.display === 'flex' &&
+            cameraVideo.videoWidth > 0) {
+            
+            canvas.width = cameraVideo.videoWidth;
+            canvas.height = cameraVideo.videoHeight;
+            
+            context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
             
             try {
-                const formats = await BarcodeDetector.getSupportedFormats();
-                const supportedFormats = formats.filter(format => 
-                    ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_39', 'code_128', 'codabar'].includes(format)
-                );
+                const barcodes = await detector.detect(canvas);
                 
-                if (supportedFormats.length === 0) {
-                    console.warn('Нет поддержки нужных форматов штрихкодов');
-                    return null;
-                }
-                
-                return new BarcodeDetector({ formats: supportedFormats });
-            } catch (error) {
-                console.error('Ошибка инициализации BarcodeDetector:', error);
-                return null;
-            }
-        }
-
-        async function openCamera() {
-            try {
-                stopCameraStream();
-                
-                const constraints = {
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    },
-                    audio: false
-                };
-                
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                
-                cameraVideo.srcObject = stream;
-                cameraModal.style.display = 'flex';
-                
-                await cameraVideo.play();
-                
-                if (!barcodeDetector) {
-                    barcodeDetector = await initBarcodeDetector();
-                }
-                
-                if (!barcodeDetector) {
-                    alert('Ваш браузер не поддерживает прямое сканирование штрихкодов.');
-                    stopCameraStream();
+                if (barcodes && barcodes.length > 0) {
+                    const barcode = barcodes[0];
+                    handleScannedCode(barcode.rawValue);
                     return;
                 }
                 
-                startBarcodeDetection(barcodeDetector);
-                
             } catch (error) {
-                console.error('Ошибка доступа к камере:', error);
-                alert('Не удалось получить доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.');
+                // Игнорируем ошибки детектирования
             }
         }
+    }, 300);
+}
 
-        function startBarcodeDetection(detector) {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            
-            scanInterval = setInterval(async () => {
-                if (cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA) {
-                    canvas.width = cameraVideo.videoWidth;
-                    canvas.height = cameraVideo.videoHeight;
-                    
-                    context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
-                    
-                    try {
-                        const barcodes = await detector.detect(canvas);
-                        
-                        if (barcodes && barcodes.length > 0) {
-                            const barcode = barcodes[0];
-                            handleScannedCode(barcode.rawValue);
-                            return;
-                        }
-                        
-                    } catch (error) {
-                        console.error('Ошибка детектирования штрихкода:', error);
-                    }
-                }
-            }, 300);
+function stopCameraStream() {
+    if (stream) {
+        stream.getTracks().forEach(track => {
+            track.stop();
+        });
+        stream = null;
+    }
+    if (scanInterval) {
+        clearInterval(scanInterval);
+        scanInterval = null;
+    }
+    if (cameraVideo) {
+        cameraVideo.srcObject = null;
+    }
+}
+
+// ===== ФУНКЦИИ ДЛЯ iOS СКАНИРОВАНИЯ =====
+// ИСПРАВЛЕННАЯ ВЕРСИЯ - БЕЗ ОКНА "НАЙДЕНО", БЕЗ ПОДСКАЗОК
+async function openIosScanner() {
+    console.log('Открытие iOS сканера...');
+    
+    const modal = document.getElementById('iosScannerModal');
+    modal.style.display = 'block';
+    
+    document.getElementById('iosScannerLoader').style.display = 'block';
+    showIosScannerStatus('Инициализация камеры...');
+    
+    setTimeout(() => {
+        initIosBarcodeScanner();
+    }, 300);
+}
+
+function initIosBarcodeScanner() {
+    try {
+        if (iosHtml5QrCode && isIosScanning) {
+            iosHtml5QrCode.stop().then(() => {
+                iosHtml5QrCode.clear();
+                iosHtml5QrCode = null;
+            }).catch(() => {
+                iosHtml5QrCode = null;
+            });
         }
-
-        function stopCameraStream() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            if (scanInterval) {
-                clearInterval(scanInterval);
-                scanInterval = null;
-            }
-            cameraVideo.srcObject = null;
-        }
-
-        // ===== ФУНКЦИИ ДЛЯ iOS СКАНИРОВАНИЯ =====
-        // ИСПРАВЛЕННАЯ ВЕРСИЯ - БЕЗ ОКНА "НАЙДЕНО", БЕЗ ПОДСКАЗОК
-        async function openIosScanner() {
-            console.log('Открытие iOS сканера...');
+        
+        const config = {
+            fps: 10,
+            qrbox: { 
+                width: 250, 
+                height: 150 
+            },
+            rememberLastUsedCamera: true,
+            supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+        };
+        
+        iosHtml5QrCode = new Html5Qrcode("ios-qr-reader");
+        
+        iosHtml5QrCode.start(
+            { 
+                facingMode: "environment"
+            }, 
+            config,
+            onIosScanSuccess,
+            onIosScanError
+        ).then(() => {
+            console.log('iOS сканирование запущено успешно');
+            isIosScanning = true;
             
-            const modal = document.getElementById('iosScannerModal');
-            modal.style.display = 'block';
+            document.getElementById('iosScannerLoader').style.display = 'none';
+            hideIosScannerStatus();
             
-            document.getElementById('iosScannerLoader').style.display = 'block';
-            showIosScannerStatus('Инициализация камеры...');
+        }).catch(err => {
+            console.error('Ошибка запуска iOS сканера:', err);
             
-            setTimeout(() => {
-                initIosBarcodeScanner();
-            }, 300);
-        }
-
-        function initIosBarcodeScanner() {
-            try {
-                if (iosHtml5QrCode && isIosScanning) {
-                    iosHtml5QrCode.stop().then(() => {
-                        iosHtml5QrCode.clear();
-                        iosHtml5QrCode = null;
-                    }).catch(() => {
-                        iosHtml5QrCode = null;
-                    });
-                }
-                
-                const config = {
-                    fps: 10,
-                    qrbox: { 
-                        width: 250, 
-                        height: 150 
-                    },
-                    rememberLastUsedCamera: true,
-                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
-                };
-                
-                iosHtml5QrCode = new Html5Qrcode("ios-qr-reader");
+            if (err.toString().includes('environment')) {
+                console.log('Пробуем фронтальную камеру iOS...');
+                showIosScannerStatus('Пробуем фронтальную камеру...');
                 
                 iosHtml5QrCode.start(
-                    { 
-                        facingMode: "environment"
-                    }, 
+                    { facingMode: "user" }, 
                     config,
                     onIosScanSuccess,
                     onIosScanError
                 ).then(() => {
-                    console.log('iOS сканирование запущено успешно');
                     isIosScanning = true;
-                    
                     document.getElementById('iosScannerLoader').style.display = 'none';
                     hideIosScannerStatus();
-                    
-                }).catch(err => {
-                    console.error('Ошибка запуска iOS сканера:', err);
-                    
-                    if (err.toString().includes('environment')) {
-                        console.log('Пробуем фронтальную камеру iOS...');
-                        showIosScannerStatus('Пробуем фронтальную камеру...');
-                        
-                        iosHtml5QrCode.start(
-                            { facingMode: "user" }, 
-                            config,
-                            onIosScanSuccess,
-                            onIosScanError
-                        ).then(() => {
-                            isIosScanning = true;
-                            document.getElementById('iosScannerLoader').style.display = 'none';
-                            hideIosScannerStatus();
-                        }).catch(err2 => {
-                            console.error('Ошибка с фронтальной камерой iOS:', err2);
-                            showIosScannerStatus('Ошибка камеры: ' + err2.message);
-                        });
-                    } else {
-                        showIosScannerStatus('Ошибка: ' + err.message);
-                    }
-                });
-                
-            } catch (error) {
-                console.error('Критическая ошибка iOS инициализации:', error);
-                showIosScannerStatus('Ошибка: ' + error.message);
-            }
-        }
-
-        function onIosScanSuccess(decodedText, decodedResult) {
-            console.log('iOS сканирование успешно:', decodedText);
-            
-            if (lastScannedCode === decodedText) {
-                return;
-            }
-            
-            lastScannedCode = decodedText;
-            
-            // Останавливаем iOS сканер
-            if (iosHtml5QrCode && isIosScanning) {
-                iosHtml5QrCode.stop().then(() => {
-                    console.log('iOS сканирование остановлено');
-                    iosHtml5QrCode.clear();
-                    iosHtml5QrCode = null;
-                    isIosScanning = false;
-                    
-                    // Закрываем iOS сканер
-                    document.getElementById('iosScannerModal').style.display = 'none';
-                    
-                    // Заполняем поле поиска
-                    document.getElementById('searchInput').value = decodedText;
-                    
-                    // Выполняем поиск
-                    const results = performSimpleSearch(decodedText, 'barcode');
-                    
-                    // Показываем результаты в модальном окне
-                    showScanResults(decodedText, results);
-                    
-                    setTimeout(() => {
-                        lastScannedCode = '';
-                    }, 3000);
-                    
-                }).catch(err => {
-                    console.log('Ошибка остановки iOS:', err);
-                    iosHtml5QrCode = null;
-                    isIosScanning = false;
-                    
-                    // Все равно продолжаем обработку
-                    document.getElementById('iosScannerModal').style.display = 'none';
-                    document.getElementById('searchInput').value = decodedText;
-                    const results = performSimpleSearch(decodedText, 'barcode');
-                    showScanResults(decodedText, results);
+                }).catch(err2 => {
+                    console.error('Ошибка с фронтальной камерой iOS:', err2);
+                    showIosScannerStatus('Ошибка камеры: ' + err2.message);
                 });
             } else {
-                // Если сканер уже остановлен, просто обрабатываем результат
-                document.getElementById('iosScannerModal').style.display = 'none';
-                document.getElementById('searchInput').value = decodedText;
-                const results = performSimpleSearch(decodedText, 'barcode');
-                showScanResults(decodedText, results);
+                showIosScannerStatus('Ошибка: ' + err.message);
             }
-        }
+        });
+        
+    } catch (error) {
+        console.error('Критическая ошибка iOS инициализации:', error);
+        showIosScannerStatus('Ошибка: ' + error.message);
+    }
+}
 
-        function onIosScanError(error) {
-            if (!error.includes('NotFoundException') && !error.includes('No multi format readers configured')) {
-                console.warn('Ошибка iOS сканирования:', error);
-            }
-        }
-
-        function closeIosScanner() {
-            console.log('Закрытие iOS сканера...');
+function onIosScanSuccess(decodedText, decodedResult) {
+    console.log('iOS сканирование успешно:', decodedText);
+    
+    if (lastScannedCode === decodedText) {
+        return;
+    }
+    
+    lastScannedCode = decodedText;
+    
+    // Останавливаем iOS сканер
+    if (iosHtml5QrCode && isIosScanning) {
+        iosHtml5QrCode.stop().then(() => {
+            console.log('iOS сканирование остановлено');
+            iosHtml5QrCode.clear();
+            iosHtml5QrCode = null;
+            isIosScanning = false;
             
-            if (iosHtml5QrCode && isIosScanning) {
-                iosHtml5QrCode.stop().then(() => {
-                    console.log('iOS сканирование остановлено');
-                    iosHtml5QrCode.clear();
-                    iosHtml5QrCode = null;
-                    isIosScanning = false;
-                }).catch(err => {
-                    console.log('Ошибка остановки iOS:', err);
-                    iosHtml5QrCode = null;
-                    isIosScanning = false;
-                });
-            }
-            
+            // Закрываем iOS сканер
             document.getElementById('iosScannerModal').style.display = 'none';
-            hideIosScannerStatus();
-        }
-
-        function showIosScannerStatus(message) {
-            const status = document.getElementById('iosScannerStatus');
-            status.textContent = message;
-            status.style.display = 'block';
-        }
-
-        function hideIosScannerStatus() {
-            document.getElementById('iosScannerStatus').style.display = 'none';
-        }
-
-        // ===== ОБЩАЯ ФУНКЦИЯ ОБРАБОТКИ СКАНИРОВАНИЯ =====
-        function handleScannedCode(code) {
-            if (!code || code.trim().length === 0) return;
             
-            // Android/Desktop - оригинальная логика
-            stopCameraStream();
-            document.getElementById('modeBarcode').checked = true;
-            updateSearchUI();
+            // Заполняем поле поиска
+            document.getElementById('searchInput').value = decodedText;
             
-            const cleanCode = code.toString().trim();
-            searchInput.value = cleanCode;
-            updateClearButton();
+            // Выполняем поиск
+            const results = performSimpleSearch(decodedText, 'barcode');
             
-            const results = performSimpleSearch(cleanCode, 'barcode');
-            showScanResults(cleanCode, results);
-        }
+            // Показываем результаты в модальном окне
+            showScanResults(decodedText, results);
+            
+            setTimeout(() => {
+                lastScannedCode = '';
+            }, 3000);
+            
+        }).catch(err => {
+            console.log('Ошибка остановки iOS:', err);
+            iosHtml5QrCode = null;
+            isIosScanning = false;
+            
+            // Все равно продолжаем обработку
+            document.getElementById('iosScannerModal').style.display = 'none';
+            document.getElementById('searchInput').value = decodedText;
+            const results = performSimpleSearch(decodedText, 'barcode');
+            showScanResults(decodedText, results);
+        });
+    } else {
+        // Если сканер уже остановлен, просто обрабатываем результат
+        document.getElementById('iosScannerModal').style.display = 'none';
+        document.getElementById('searchInput').value = decodedText;
+        const results = performSimpleSearch(decodedText, 'barcode');
+        showScanResults(decodedText, results);
+    }
+}
 
-        function setupPlatformUI() {
-            if (isIOS) {
-                // iOS - используем Html5-QRCode
-                scanButton.style.display = 'flex';
-                searchButton.style.maxWidth = '300px';
-            } else {
-                // Android и Desktop - используем обычное сканирование (ОРИГИНАЛ)
-                scanButton.style.display = 'flex';
-                setTimeout(() => {
-                    initBarcodeDetector();
-                }, 1000);
-            }
-        }
+function onIosScanError(error) {
+    if (!error.includes('NotFoundException') && !error.includes('No multi format readers configured')) {
+        console.warn('Ошибка iOS сканирования:', error);
+    }
+}
 
-        function openScanner() {
-            if (isIOS) {
-                openIosScanner();
-            } else {
-                // Android/Desktop - оригинальная логика
-                openCamera();
-            }
-        }
+function closeIosScanner() {
+    console.log('Закрытие iOS сканера...');
+    
+    if (iosHtml5QrCode && isIosScanning) {
+        iosHtml5QrCode.stop().then(() => {
+            console.log('iOS сканирование остановлено');
+            iosHtml5QrCode.clear();
+            iosHtml5QrCode = null;
+            isIosScanning = false;
+        }).catch(err => {
+            console.log('Ошибка остановки iOS:', err);
+            iosHtml5QrCode = null;
+            isIosScanning = false;
+        });
+    }
+    
+    document.getElementById('iosScannerModal').style.display = 'none';
+    hideIosScannerStatus();
+}
 
-        function closeScanner() {
-            if (isIOS) {
-                closeIosScanner();
-            } else {
-                // Android/Desktop - оригинальная логика
-                stopCameraStream();
-                cameraModal.style.display = 'none';
-            }
-        }
+function showIosScannerStatus(message) {
+    const status = document.getElementById('iosScannerStatus');
+    status.textContent = message;
+    status.style.display = 'block';
+}
+
+function hideIosScannerStatus() {
+    document.getElementById('iosScannerStatus').style.display = 'none';
+}
+
+// ===== ОБЩАЯ ФУНКЦИЯ ОБРАБОТКИ СКАНИРОВАНИЯ =====
+function handleScannedCode(code) {
+    if (!code || code.trim().length === 0) return;
+    
+    // Останавливаем камеру и закрываем модальное окно
+    stopCameraStream();
+    cameraModal.style.display = 'none';
+    
+    // Переключаем режим поиска на штрихкод
+    document.getElementById('modeBarcode').checked = true;
+    updateSearchUI();
+    
+    const cleanCode = code.toString().trim();
+    searchInput.value = cleanCode;
+    updateClearButton();
+    
+    const results = performSimpleSearch(cleanCode, 'barcode');
+    showScanResults(cleanCode, results);
+}
+
+function setupPlatformUI() {
+    if (isIOS) {
+        // iOS - используем Html5-QRCode
+        scanButton.style.display = 'flex';
+        searchButton.style.maxWidth = '300px';
+    } else {
+        // Android и Desktop - используем обычное сканирование
+        scanButton.style.display = 'flex';
+        setTimeout(() => {
+            initBarcodeDetector();
+        }, 1000);
+    }
+}
+
+function openScanner() {
+    if (isIOS) {
+        openIosScanner();
+    } else {
+        openCamera();
+    }
+}
+
+function closeScanner() {
+    if (isIOS) {
+        closeIosScanner();
+    } else {
+        stopCameraStream();
+        cameraModal.style.display = 'none';
+    }
+}
 
         // ===== ФУНКЦИИ ДЛЯ ПОИСКА И ОТОБРАЖЕНИЯ =====
         function formatPriceWithDiscount(product) {
@@ -22304,124 +22331,102 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             });
         }
 
-        // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
-        searchButton.addEventListener('click', searchProducts);
-        clearSearchBtn.addEventListener('click', clearSearchFields);
-        scanButton.addEventListener('click', openScanner);
+ // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
+searchButton.addEventListener('click', searchProducts);
+clearSearchBtn.addEventListener('click', clearSearchFields);
+scanButton.addEventListener('click', openScanner);
 
-        searchInput.addEventListener('input', updateClearButton);
-        articleInput.addEventListener('input', updateClearButton);
-        nameInput.addEventListener('input', updateClearButton);
-        barcodeInput.addEventListener('input', updateClearButton);
+searchInput.addEventListener('input', updateClearButton);
+articleInput.addEventListener('input', updateClearButton);
+nameInput.addEventListener('input', updateClearButton);
+barcodeInput.addEventListener('input', updateClearButton);
 
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') searchProducts();
-        });
+searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') searchProducts();
+});
 
-        articleInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') searchProducts();
-        });
+articleInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') searchProducts();
+});
 
-        nameInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') searchProducts();
-        });
+nameInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') searchProducts();
+});
 
-        barcodeInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') searchProducts();
-        });
+barcodeInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') searchProducts();
+});
 
-        closeCameraModal.addEventListener('click', function() {
-            closeScanner();
-        });
+closeCameraModal.addEventListener('click', function() {
+    closeScanner();
+});
 
-        cameraModal.addEventListener('click', function(e) {
-            if (e.target === cameraModal) {
-                closeScanner();
-            }
-        });
+cameraModal.addEventListener('click', function(e) {
+    if (e.target === cameraModal) {
+        closeScanner();
+    }
+});
 
-        stopCameraBtn.addEventListener('click', function() {
-            closeScanner();
-        });
+stopCameraBtn.addEventListener('click', function() {
+    closeScanner();
+});
 
-        closeIosScannerBtn.addEventListener('click', function() {
-            closeIosScanner();
-        });
+closeIosScannerBtn.addEventListener('click', function() {
+    closeIosScanner();
+});
 
-        continueScanBtn.addEventListener('click', function() {
-            resultModal.style.display = 'none';
-            // Оригинальная задержка как в первом коде
-            setTimeout(() => {
-                openScanner();
-            }, 300);
-        });
+continueScanBtn.addEventListener('click', function() {
+    resultModal.style.display = 'none';
+    // Увеличиваем задержку для полного закрытия модального окна
+    setTimeout(() => {
+        openScanner();
+    }, 200);
+});
 
-        closeResultBtn.addEventListener('click', function() {
-            resultModal.style.display = 'none';
-        });
+closeResultBtn.addEventListener('click', function() {
+    resultModal.style.display = 'none';
+    // Убеждаемся что камера остановлена при закрытии
+    if (!isIOS) {
+        stopCameraStream();
+        cameraModal.style.display = 'none';
+    }
+});
 
-        resultModal.addEventListener('click', function(e) {
-            if (e.target === resultModal) resultModal.style.display = 'none';
-        });
+resultModal.addEventListener('click', function(e) {
+    if (e.target === resultModal) {
+        resultModal.style.display = 'none';
+        // Убеждаемся что камера остановлена при закрытии
+        if (!isIOS) {
+            stopCameraStream();
+            cameraModal.style.display = 'none';
+        }
+    }
+});
 
-        closePrintModalBtn.addEventListener('click', closePrintModal);
-        printModal.addEventListener('click', function(e) {
-            if (e.target === printModal) closePrintModal();
-        });
+closePrintModalBtn.addEventListener('click', closePrintModal);
+printModal.addEventListener('click', function(e) {
+    if (e.target === printModal) closePrintModal();
+});
 
-        closeDatesModalBtn.addEventListener('click', closeDatesModal);
-        datesModal.addEventListener('click', function(e) {
-            if (e.target === datesModal) closeDatesModal();
-        });
+closeDatesModalBtn.addEventListener('click', closeDatesModal);
+datesModal.addEventListener('click', function(e) {
+    if (e.target === datesModal) closeDatesModal();
+});
 
-        printActionBtn.addEventListener('click', handlePrint);
+printActionBtn.addEventListener('click', handlePrint);
 
-        document.getElementById('current-date').addEventListener('click', openDatesModal);
+document.getElementById('current-date').addEventListener('click', openDatesModal);
 
-        searchModeRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                updateSearchUI();
-                if (searchInput.value.trim() || 
-                    (getCurrentSearchMode() === 'combined' && 
-                     (articleInput.value.trim() || nameInput.value.trim() || barcodeInput.value.trim()))) {
-                    searchProducts();
-                }
-            });
-        });
-
-        window.addEventListener('load', function() {
-            document.getElementById('modeArticle').checked = true;
-            updateSearchUI();
-            searchInput.focus();
-            setupPlatformUI();
-            initScrollToTopButton();
-            setupPriceTagTypeSelector();
-
-            if (DATA_UPDATE_DATE && DATA_UPDATE_DATE.trim() !== "") {
-                let displayDate = DATA_UPDATE_DATE;
-                if (DATA_UPDATE_DATE.includes(" ")) {
-                    displayDate = DATA_UPDATE_DATE.split(" ")[0];
-                }
-                document.getElementById('current-date').textContent = displayDate;
-            }
-        });
-
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') clearSearchFields();
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                e.preventDefault();
-                const mode = getCurrentSearchMode();
-                if (mode === 'combined') {
-                    articleInput.focus();
-                } else {
-                    searchInput.focus();
-                    searchInput.select();
-                }
-            }
-        });
+searchModeRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+        updateSearchUI();
+        if (searchInput.value.trim() || 
+            (getCurrentSearchMode() === 'combined' && 
+             (articleInput.value.trim() || nameInput.value.trim() || barcodeInput.value.trim()))) {
+            searchProducts();
+        }
+    });
+});
     </script>
 </body>
 </html>
