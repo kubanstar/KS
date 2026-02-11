@@ -1352,21 +1352,11 @@
                     </div>
                 </div>
                 
-                <div class="ios-scanner-info">
-                    Наведите камеру на штрихкод в рамке
-                </div>
+				<div class="ios-scanner-info" style="display: none;"></div>
                 
                 <div class="ios-status-message" id="iosScannerStatus"></div>
-                <div class="ios-scanned-badge" id="iosScannedBadge"></div>
                 <div class="ios-loader" id="iosScannerLoader">Загрузка...</div>
-                
-                <div class="ios-permission-hint" id="iosPermissionHint">
-                    📱 Для iOS:<br><br>
-                    1. Разрешите доступ к камере<br>
-                    2. Нажмите "Разрешить"<br>
-                    3. Камера активируется автоматически
-                </div>
-                
+              
                 <div class="ios-no-camera" id="iosNoCameraMessage">
                     <h3 style="color: #ff3b30; margin-bottom:15px;">⚠️ Камера недоступна</h3>
                     <p>Ваш браузер не поддерживает доступ к камере или камера заблокирована.</p>
@@ -21613,9 +21603,7 @@ function initIOSBarcodeScanner() {
             }
             
             iosLastScannedCode = decodedText;
-            
-            showIOSScannedBadge(decodedText);
-            
+        
             if (iosHtml5QrCode && iosIsScanning) {
                 iosHtml5QrCode.stop().then(() => {
                     iosIsScanning = false;
@@ -21680,12 +21668,6 @@ function initIOSBarcodeScanner() {
             hideIOSScannerStatus();
             
             iosCurrentFacingMode = 'environment';
-        }
-
-        function showIOSScannedBadge(code) {
-            const badge = document.getElementById('iosScannedBadge');
-            badge.textContent = `✓ Найдено: ${code}`;
-            badge.style.display = 'block';
         }
 
         function showIOSScannerStatus(message) {
