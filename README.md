@@ -1391,10 +1391,18 @@
         const SHEVCHENKO_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 09:02"
 
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+        // Переменные для Android/Desktop сканирования
         let stream = null;
         let barcodeDetector = null;
         let scanInterval = null;
+        
+        // Переменные для iOS сканирования
+        let iosHtml5QrCode = null;
+        let isIosScanning = false;
+        
+        // Общие переменные
         let lastScannedCode = '';
+        let isCameraActive = false;
         
         // Переменные для печати
         let serialPort = null;
@@ -1406,10 +1414,6 @@
         
         // НОВАЯ ПЕРЕМЕННАЯ: тип ценника (по умолчанию обычный)
         let currentPriceTagType = 'regular';
-        
-        // Переменные для iOS сканирования
-        let iosHtml5QrCode = null;
-        let isIosScanning = false;
         
         // Определяем платформу
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -20601,7 +20605,17 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         async function openCamera() {
             try {
-                stopCameraStream();
+                // Останавливаем предыдущий поток, если он есть
+                await stopCameraStream();
+                
+                // Скрываем модальное окно результатов
+                resultModal.style.display = 'none';
+                
+                // Показываем модальное окно камеры
+                cameraModal.style.display = 'flex';
+                
+                // Даем время на отображение модального окна
+                await new Promise(resolve => setTimeout(resolve, 50));
                 
                 const constraints = {
                     video: {
@@ -20615,7 +20629,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 stream = await navigator.mediaDevices.getUserMedia(constraints);
                 
                 cameraVideo.srcObject = stream;
-                cameraModal.style.display = 'flex';
                 
                 await cameraVideo.play();
                 
@@ -20625,60 +20638,84 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 
                 if (!barcodeDetector) {
                     alert('Ваш браузер не поддерживает прямое сканирование штрихкодов.');
-                    stopCameraStream();
+                    await stopCameraStream();
+                    cameraModal.style.display = 'none';
                     return;
                 }
                 
+                isCameraActive = true;
                 startBarcodeDetection(barcodeDetector);
                 
             } catch (error) {
                 console.error('Ошибка доступа к камере:', error);
                 alert('Не удалось получить доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.');
+                cameraModal.style.display = 'none';
             }
         }
 
         function startBarcodeDetection(detector) {
+            if (scanInterval) {
+                clearInterval(scanInterval);
+                scanInterval = null;
+            }
+            
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             
             scanInterval = setInterval(async () => {
-                if (cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA) {
+                if (!isCameraActive || !cameraVideo || cameraVideo.readyState !== cameraVideo.HAVE_ENOUGH_DATA) {
+                    return;
+                }
+                
+                try {
                     canvas.width = cameraVideo.videoWidth;
                     canvas.height = cameraVideo.videoHeight;
                     
                     context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
                     
-                    try {
-                        const barcodes = await detector.detect(canvas);
-                        
-                        if (barcodes && barcodes.length > 0) {
-                            const barcode = barcodes[0];
-                            handleScannedCode(barcode.rawValue);
-                            return;
-                        }
-                        
-                    } catch (error) {
-                        console.error('Ошибка детектирования штрихкода:', error);
+                    const barcodes = await detector.detect(canvas);
+                    
+                    if (barcodes && barcodes.length > 0) {
+                        const barcode = barcodes[0];
+                        handleScannedCode(barcode.rawValue);
+                        return;
                     }
+                    
+                } catch (error) {
+                    // Игнорируем ошибки детектирования
                 }
             }, 300);
         }
 
-        function stopCameraStream() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
+        async function stopCameraStream() {
+            isCameraActive = false;
+            
             if (scanInterval) {
                 clearInterval(scanInterval);
                 scanInterval = null;
             }
-            cameraVideo.srcObject = null;
+            
+            if (stream) {
+                stream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                stream = null;
+            }
+            
+            if (cameraVideo) {
+                cameraVideo.srcObject = null;
+            }
+            
+            // Даем время на освобождение ресурсов
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
 
         // ===== ФУНКЦИИ ДЛЯ iOS СКАНИРОВАНИЯ =====
         async function openIosScanner() {
             console.log('Открытие iOS сканера...');
+            
+            // Скрываем модальное окно результатов
+            resultModal.style.display = 'none';
             
             const modal = document.getElementById('iosScannerModal');
             modal.style.display = 'block';
@@ -20768,7 +20805,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             
             lastScannedCode = decodedText;
             
-            // НЕМЕДЛЕННО останавливаем сканер перед обработкой результата
+            // Останавливаем iOS сканер
             if (iosHtml5QrCode && isIosScanning) {
                 iosHtml5QrCode.stop().then(() => {
                     console.log('iOS сканирование остановлено');
@@ -20852,16 +20889,20 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
         function handleScannedCode(code) {
             if (!code || code.trim().length === 0) return;
             
-            stopCameraStream();
-            document.getElementById('modeBarcode').checked = true;
-            updateSearchUI();
-            
-            const cleanCode = code.toString().trim();
-            searchInput.value = cleanCode;
-            updateClearButton();
-            
-            const results = performSimpleSearch(cleanCode, 'barcode');
-            showScanResults(cleanCode, results);
+            // Останавливаем сканер и закрываем модальное окно
+            stopCameraStream().then(() => {
+                cameraModal.style.display = 'none';
+                
+                document.getElementById('modeBarcode').checked = true;
+                updateSearchUI();
+                
+                const cleanCode = code.toString().trim();
+                searchInput.value = cleanCode;
+                updateClearButton();
+                
+                const results = performSimpleSearch(cleanCode, 'barcode');
+                showScanResults(cleanCode, results);
+            });
         }
 
         function setupPlatformUI() {
@@ -20869,14 +20910,8 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 // iOS - используем Html5-QRCode
                 scanButton.style.display = 'flex';
                 searchButton.style.maxWidth = '300px';
-            } else if (isAndroid) {
-                // Android - используем обычное сканирование
-                scanButton.style.display = 'flex';
-                setTimeout(() => {
-                    initBarcodeDetector();
-                }, 1000);
             } else {
-                // Desktop - используем обычное сканирование
+                // Android и Desktop - используем обычное сканирование
                 scanButton.style.display = 'flex';
                 setTimeout(() => {
                     initBarcodeDetector();
@@ -20896,8 +20931,9 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             if (isIOS) {
                 closeIosScanner();
             } else {
-                stopCameraStream();
-                cameraModal.style.display = 'none';
+                stopCameraStream().then(() => {
+                    cameraModal.style.display = 'none';
+                });
             }
         }
 
@@ -21019,6 +21055,10 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         function showScanResults(code, results) {
             lastScannedCode = code;
+            
+            // Убеждаемся, что модальное окно камеры закрыто
+            cameraModal.style.display = 'none';
+            document.getElementById('iosScannerModal').style.display = 'none';
             
             if (results.length === 0) {
                 resultCount.textContent = 'Товары не найдены';
@@ -22348,9 +22388,10 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         continueScanBtn.addEventListener('click', function() {
             resultModal.style.display = 'none';
+            // Используем setTimeout для корректного открытия сканера
             setTimeout(() => {
                 openScanner();
-            }, 300);
+            }, 50);
         });
 
         closeResultBtn.addEventListener('click', function() {
@@ -22358,7 +22399,9 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
         });
 
         resultModal.addEventListener('click', function(e) {
-            if (e.target === resultModal) resultModal.style.display = 'none';
+            if (e.target === resultModal) {
+                resultModal.style.display = 'none';
+            }
         });
 
         closePrintModalBtn.addEventListener('click', closePrintModal);
