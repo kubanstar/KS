@@ -1260,7 +1260,7 @@
     <!-- Кнопка "Наверх" -->
     <button class="scroll-to-top-btn" id="scrollToTopBtn" title="Наверх">&#9650;</button>
 
-    <!-- Модальное окно камеры для Android/Desktop -->
+    <!-- Модальное окно камеры для Android/Desktop (ОРИГИНАЛЬНАЯ ВЕРСИЯ) -->
     <div class="modal-overlay" id="cameraModal">
         <div class="modal-frame">
             <h3>Сканирование штрихкода</h3>
@@ -1277,7 +1277,7 @@
         </div>
     </div>
 
-    <!-- Модальное окно iOS сканирования -->
+    <!-- Модальное окно iOS сканирования (ИСПРАВЛЕННАЯ ВЕРСИЯ) -->
     <div class="ios-scanner-modal" id="iosScannerModal">
         <div class="ios-scanner-content">
             <div class="ios-scanner-container">
@@ -1391,18 +1391,17 @@
         const SHEVCHENKO_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 09:02"
 
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
-        // Переменные для Android/Desktop сканирования
+        // Переменные для Android/Desktop сканирования (ОРИГИНАЛЬНЫЕ)
         let stream = null;
         let barcodeDetector = null;
         let scanInterval = null;
         
-        // Переменные для iOS сканирования
+        // Переменные для iOS сканирования (ИСПРАВЛЕННЫЕ)
         let iosHtml5QrCode = null;
         let isIosScanning = false;
         
         // Общие переменные
         let lastScannedCode = '';
-        let isCameraActive = false;
         
         // Переменные для печати
         let serialPort = null;
@@ -20575,6 +20574,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
         }
 
         // ===== ФУНКЦИИ ДЛЯ СКАНИРОВАНИЯ (Android/Desktop) =====
+        // ПОЛНОСТЬЮ ОРИГИНАЛЬНАЯ ВЕРСИЯ, КАК БЫЛО В ПЕРВОМ КОДЕ
         function isBarcodeDetectorSupported() {
             return ('BarcodeDetector' in window);
         }
@@ -20605,17 +20605,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         async function openCamera() {
             try {
-                // Останавливаем предыдущий поток, если он есть
-                await stopCameraStream();
-                
-                // Скрываем модальное окно результатов
-                resultModal.style.display = 'none';
-                
-                // Показываем модальное окно камеры
-                cameraModal.style.display = 'flex';
-                
-                // Даем время на отображение модального окна
-                await new Promise(resolve => setTimeout(resolve, 50));
+                stopCameraStream();
                 
                 const constraints = {
                     video: {
@@ -20629,6 +20619,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 stream = await navigator.mediaDevices.getUserMedia(constraints);
                 
                 cameraVideo.srcObject = stream;
+                cameraModal.style.display = 'flex';
                 
                 await cameraVideo.play();
                 
@@ -20638,84 +20629,61 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 
                 if (!barcodeDetector) {
                     alert('Ваш браузер не поддерживает прямое сканирование штрихкодов.');
-                    await stopCameraStream();
-                    cameraModal.style.display = 'none';
+                    stopCameraStream();
                     return;
                 }
                 
-                isCameraActive = true;
                 startBarcodeDetection(barcodeDetector);
                 
             } catch (error) {
                 console.error('Ошибка доступа к камере:', error);
                 alert('Не удалось получить доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.');
-                cameraModal.style.display = 'none';
             }
         }
 
         function startBarcodeDetection(detector) {
-            if (scanInterval) {
-                clearInterval(scanInterval);
-                scanInterval = null;
-            }
-            
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             
             scanInterval = setInterval(async () => {
-                if (!isCameraActive || !cameraVideo || cameraVideo.readyState !== cameraVideo.HAVE_ENOUGH_DATA) {
-                    return;
-                }
-                
-                try {
+                if (cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA) {
                     canvas.width = cameraVideo.videoWidth;
                     canvas.height = cameraVideo.videoHeight;
                     
                     context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
                     
-                    const barcodes = await detector.detect(canvas);
-                    
-                    if (barcodes && barcodes.length > 0) {
-                        const barcode = barcodes[0];
-                        handleScannedCode(barcode.rawValue);
-                        return;
+                    try {
+                        const barcodes = await detector.detect(canvas);
+                        
+                        if (barcodes && barcodes.length > 0) {
+                            const barcode = barcodes[0];
+                            handleScannedCode(barcode.rawValue);
+                            return;
+                        }
+                        
+                    } catch (error) {
+                        console.error('Ошибка детектирования штрихкода:', error);
                     }
-                    
-                } catch (error) {
-                    // Игнорируем ошибки детектирования
                 }
             }, 300);
         }
 
-        async function stopCameraStream() {
-            isCameraActive = false;
-            
+        function stopCameraStream() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
             if (scanInterval) {
                 clearInterval(scanInterval);
                 scanInterval = null;
             }
-            
-            if (stream) {
-                stream.getTracks().forEach(track => {
-                    track.stop();
-                });
-                stream = null;
-            }
-            
-            if (cameraVideo) {
-                cameraVideo.srcObject = null;
-            }
-            
-            // Даем время на освобождение ресурсов
-            await new Promise(resolve => setTimeout(resolve, 100));
+            cameraVideo.srcObject = null;
         }
 
         // ===== ФУНКЦИИ ДЛЯ iOS СКАНИРОВАНИЯ =====
+        // ИСПРАВЛЕННАЯ ВЕРСИЯ - БЕЗ ОКНА "НАЙДЕНО", БЕЗ ПОДСКАЗОК
         async function openIosScanner() {
             console.log('Открытие iOS сканера...');
-            
-            // Скрываем модальное окно результатов
-            resultModal.style.display = 'none';
             
             const modal = document.getElementById('iosScannerModal');
             modal.style.display = 'block';
@@ -20889,20 +20857,17 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
         function handleScannedCode(code) {
             if (!code || code.trim().length === 0) return;
             
-            // Останавливаем сканер и закрываем модальное окно
-            stopCameraStream().then(() => {
-                cameraModal.style.display = 'none';
-                
-                document.getElementById('modeBarcode').checked = true;
-                updateSearchUI();
-                
-                const cleanCode = code.toString().trim();
-                searchInput.value = cleanCode;
-                updateClearButton();
-                
-                const results = performSimpleSearch(cleanCode, 'barcode');
-                showScanResults(cleanCode, results);
-            });
+            // Android/Desktop - оригинальная логика
+            stopCameraStream();
+            document.getElementById('modeBarcode').checked = true;
+            updateSearchUI();
+            
+            const cleanCode = code.toString().trim();
+            searchInput.value = cleanCode;
+            updateClearButton();
+            
+            const results = performSimpleSearch(cleanCode, 'barcode');
+            showScanResults(cleanCode, results);
         }
 
         function setupPlatformUI() {
@@ -20911,7 +20876,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
                 scanButton.style.display = 'flex';
                 searchButton.style.maxWidth = '300px';
             } else {
-                // Android и Desktop - используем обычное сканирование
+                // Android и Desktop - используем обычное сканирование (ОРИГИНАЛ)
                 scanButton.style.display = 'flex';
                 setTimeout(() => {
                     initBarcodeDetector();
@@ -20923,6 +20888,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             if (isIOS) {
                 openIosScanner();
             } else {
+                // Android/Desktop - оригинальная логика
                 openCamera();
             }
         }
@@ -20931,9 +20897,9 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             if (isIOS) {
                 closeIosScanner();
             } else {
-                stopCameraStream().then(() => {
-                    cameraModal.style.display = 'none';
-                });
+                // Android/Desktop - оригинальная логика
+                stopCameraStream();
+                cameraModal.style.display = 'none';
             }
         }
 
@@ -21055,10 +21021,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         function showScanResults(code, results) {
             lastScannedCode = code;
-            
-            // Убеждаемся, что модальное окно камеры закрыто
-            cameraModal.style.display = 'none';
-            document.getElementById('iosScannerModal').style.display = 'none';
             
             if (results.length === 0) {
                 resultCount.textContent = 'Товары не найдены';
@@ -22388,10 +22350,10 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 
         continueScanBtn.addEventListener('click', function() {
             resultModal.style.display = 'none';
-            // Используем setTimeout для корректного открытия сканера
+            // Оригинальная задержка как в первом коде
             setTimeout(() => {
                 openScanner();
-            }, 50);
+            }, 300);
         });
 
         closeResultBtn.addEventListener('click', function() {
@@ -22399,9 +22361,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
         });
 
         resultModal.addEventListener('click', function(e) {
-            if (e.target === resultModal) {
-                resultModal.style.display = 'none';
-            }
+            if (e.target === resultModal) resultModal.style.display = 'none';
         });
 
         closePrintModalBtn.addEventListener('click', closePrintModal);
