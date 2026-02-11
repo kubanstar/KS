@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Поиск товаров</title>
+    <!-- Html5-QRCode библиотека для iOS -->
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         body {
@@ -132,6 +133,14 @@
             gap: 8px;
             flex-grow: 1;
             max-width: 200px;
+        }
+        
+        .scan-button-android {
+            display: flex;
+        }
+        
+        .scan-button-ios {
+            display: none;
         }
         
         .search-button:hover {
@@ -646,195 +655,6 @@
             cursor: pointer;
         }
 
-        /* Стили для модального окна iOS сканирования */
-        .ios-scanner-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 1000;
-        }
-        
-        .ios-scanner-content {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .ios-scanner-container {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        #ios-qr-reader {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        /* Кастомные стили для Html5-QRCode */
-        #html5-qrcode-anchor-scan-type-change,
-        #html5qr-code-full-region__scan_region {
-            display: none !important;
-        }
-        
-        #qr-reader__scan_region {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 400px;
-            height: 200px;
-            z-index: 10;
-        }
-        
-        #qr-reader__scan_region img {
-            display: none;
-        }
-        
-        #qr-reader__scan_region hr {
-            display: none;
-        }
-        
-        /* Наш оверлей поверх сканера iOS */
-        .ios-scan-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
-        }
-        
-        .ios-scan-frame {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 400px;
-            height: 200px;
-            border: 4px solid rgba(52, 199, 89, 0.8);
-            border-radius: 15px;
-            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-        }
-        
-        .ios-scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                transparent, 
-                #34c759, 
-                transparent);
-            animation: scan 2s ease-in-out infinite;
-            box-shadow: 0 0 10px #34c759;
-        }
-        
-        @keyframes scan {
-            0% {
-                top: 0;
-                opacity: 1;
-            }
-            50% {
-                top: 100%;
-                opacity: 1;
-            }
-            51% {
-                opacity: 0;
-            }
-            100% {
-                top: 0;
-                opacity: 0;
-            }
-        }
-        
-        .ios-scanner-info {
-            position: absolute;
-            top: calc(50% + 120px);
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-size: 16px;
-            padding: 0 20px;
-            z-index: 10;
-        }
-        
-        .ios-modal-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            gap: 12px;
-            z-index: 100;
-        }
-        
-        .ios-modal-btn {
-            flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .ios-modal-btn-danger {
-            background: rgba(255, 59, 48, 0.8);
-            color: white;
-        }
-        
-        .ios-scanner-status {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-            display: none;
-        }
-        
-        .ios-loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #34c759;
-            animation: spin 1s linear infinite;
-            z-index: 100;
-            display: none;
-        }
-        
-        @keyframes spin {
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        /* Обычное модальное окно камеры для Android/Desktop */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -926,6 +746,12 @@
             animation: scan 2s linear infinite;
         }
         
+        @keyframes scan {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
+
         .barcode-supported {
             margin-top: 10px;
             font-size: 12px;
@@ -1178,6 +1004,240 @@
             font-weight: bold;
             margin-bottom: 5px;
         }
+
+        /* Стили для iOS сканера */
+        .ios-scanner-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 3000;
+        }
+        
+        .ios-scanner-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .ios-scanner-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #ios-qr-reader {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        /* Кастомные стили для Html5-QRCode */
+        #ios-html5-qrcode-anchor-scan-type-change,
+        #ios-html5qr-code-full-region__scan_region {
+            display: none !important;
+        }
+        
+        #ios-qr-reader__scan_region {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 400px;
+            height: 200px;
+            z-index: 3010;
+        }
+        
+        #ios-qr-reader__scan_region img {
+            display: none;
+        }
+        
+        #ios-qr-reader__scan_region hr {
+            display: none;
+        }
+        
+        .ios-scan-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3005;
+        }
+        
+        .ios-scan-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 400px;
+            height: 200px;
+            border: 4px solid rgba(76, 175, 80, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        .ios-scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                #4CAF50, 
+                transparent);
+            animation: ios-scan 2s ease-in-out infinite;
+            box-shadow: 0 0 10px #4CAF50;
+        }
+        
+        @keyframes ios-scan {
+            0% { top: 0; opacity: 1; }
+            50% { top: 100%; opacity: 1; }
+            51% { opacity: 0; }
+            100% { top: 0; opacity: 0; }
+        }
+        
+        .ios-scanner-info {
+            position: absolute;
+            top: calc(50% + 120px);
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            padding: 0 20px;
+            z-index: 3010;
+        }
+        
+        .ios-modal-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            gap: 12px;
+            z-index: 3100;
+        }
+        
+        .ios-modal-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .ios-modal-btn-danger {
+            background: rgba(255, 59, 48, 0.8);
+            color: white;
+        }
+        
+        .ios-modal-btn-primary {
+            background: rgba(76, 175, 80, 0.8);
+            color: white;
+        }
+        
+        .ios-status-message {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3100;
+            display: none;
+        }
+        
+        .ios-scanned-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(76, 175, 80, 0.95);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            display: none;
+            z-index: 3100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: ios-badgeAppear 0.5s ease-out;
+        }
+        
+        @keyframes ios-badgeAppear {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .ios-loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #4CAF50;
+            animation: ios-spin 1s linear infinite;
+            z-index: 3100;
+            display: none;
+        }
+        
+        @keyframes ios-spin {
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .ios-permission-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 300px;
+            z-index: 3100;
+            display: none;
+        }
+        
+        .ios-no-camera {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 320px;
+            z-index: 3100;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -1241,7 +1301,10 @@
         
         <div class="buttons-container">
             <button class="search-button" id="searchButton">Найти</button>
-            <button class="scan-button" id="scanButton" style="display: none;">
+            <button class="scan-button scan-button-android" id="scanButtonAndroid" style="display: none;">
+                <span class="scan-icon">&#128247;</span> Сканировать штрихкод
+            </button>
+            <button class="scan-button scan-button-ios" id="scanButtonIOS" style="display: none;">
                 <span class="scan-icon">&#128247;</span> Сканировать штрихкод
             </button>
         </div>
@@ -1260,7 +1323,7 @@
     <!-- Кнопка "Наверх" -->
     <button class="scroll-to-top-btn" id="scrollToTopBtn" title="Наверх">&#9650;</button>
 
-    <!-- Модальное окно камеры для Android/Desktop (ОРИГИНАЛЬНАЯ ВЕРСИЯ) -->
+    <!-- Модальное окно камеры для Android -->
     <div class="modal-overlay" id="cameraModal">
         <div class="modal-frame">
             <h3>Сканирование штрихкода</h3>
@@ -1277,32 +1340,48 @@
         </div>
     </div>
 
-    <!-- Модальное окно iOS сканирования (ИСПРАВЛЕННАЯ ВЕРСИЯ) -->
+    <!-- Модальное окно сканера для iOS -->
     <div class="ios-scanner-modal" id="iosScannerModal">
         <div class="ios-scanner-content">
             <div class="ios-scanner-container">
-                <!-- Контейнер для Html5-QRCode -->
                 <div id="ios-qr-reader"></div>
                 
-                <!-- Наш оверлей -->
                 <div class="ios-scan-overlay">
                     <div class="ios-scan-frame">
                         <div class="ios-scan-line"></div>
                     </div>
                 </div>
                 
-                <!-- Сообщения и статусы -->
                 <div class="ios-scanner-info">
                     Наведите камеру на штрихкод в рамке
                 </div>
                 
-                <div class="ios-scanner-status" id="iosScannerStatus"></div>
+                <div class="ios-status-message" id="iosScannerStatus"></div>
+                <div class="ios-scanned-badge" id="iosScannedBadge"></div>
                 <div class="ios-loader" id="iosScannerLoader">Загрузка...</div>
+                
+                <div class="ios-permission-hint" id="iosPermissionHint">
+                    📱 Для iOS:<br><br>
+                    1. Разрешите доступ к камере<br>
+                    2. Нажмите "Разрешить"<br>
+                    3. Камера активируется автоматически
+                </div>
+                
+                <div class="ios-no-camera" id="iosNoCameraMessage">
+                    <h3 style="color: #ff3b30; margin-bottom:15px;">⚠️ Камера недоступна</h3>
+                    <p>Ваш браузер не поддерживает доступ к камере или камера заблокирована.</p>
+                    <p style="margin-top:15px; font-size:14px; color:#ccc;">
+                        Используйте Safari на iOS
+                    </p>
+                </div>
             </div>
             
             <div class="ios-modal-controls">
-                <button class="ios-modal-btn ios-modal-btn-danger" id="closeIosScanner">
+                <button class="ios-modal-btn ios-modal-btn-danger" id="closeIOSScanner">
                     ✕ Закрыть сканер
+                </button>
+                <button class="ios-modal-btn ios-modal-btn-primary" id="switchIOSCamera" style="display: none;">
+                    Переключить камеру
                 </button>
             </div>
         </div>
@@ -1337,7 +1416,6 @@
                 Подключаюсь к принтеру...
             </div>
             
-            <!-- НОВЫЙ БЛОК: Выбор типа ценника -->
             <div class="price-tag-type-selector" id="priceTagTypeSelector">
                 <div class="price-tag-type-option selected" data-type="regular">
                     <input type="radio" id="typeRegular" name="priceTagType" class="price-tag-type-radio" value="regular" checked>
@@ -1384,23 +1462,15 @@
         const DATA_UPDATE_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026"
         
         // ===== ДАТЫ ИЗМЕНЕНИЯ ФАЙЛОВ =====
-        // Эти данные будут заполняться AHK скриптом
         const URAL_OFFICE_DATE = ""; // Будет заполнена AHK скриптом: "03.02.2026 14:32"
         const URAL_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 8:19"
         const SHEVCHENKO_OFFICE_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 07:33"
         const SHEVCHENKO_DATE = ""; // Будет заполнена AHK скриптом: "04.02.2026 09:02"
 
         // ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
-        // Переменные для Android/Desktop сканирования (ОРИГИНАЛЬНЫЕ)
         let stream = null;
         let barcodeDetector = null;
         let scanInterval = null;
-        
-        // Переменные для iOS сканирования (ИСПРАВЛЕННЫЕ)
-        let iosHtml5QrCode = null;
-        let isIosScanning = false;
-        
-        // Общие переменные
         let lastScannedCode = '';
         
         // Переменные для печати
@@ -1411,12 +1481,14 @@
         // Текущий товар для печати
         let currentProductForPrint = null;
         
-        // НОВАЯ ПЕРЕМЕННАЯ: тип ценника (по умолчанию обычный)
+        // Переменная: тип ценника (по умолчанию обычный)
         let currentPriceTagType = 'regular';
         
-        // Определяем платформу
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isAndroid = /Android/.test(navigator.userAgent);
+        // ===== ПЕРЕМЕННЫЕ ДЛЯ iOS СКАНЕРА =====
+        let iosHtml5QrCode = null;
+        let iosIsScanning = false;
+        let iosLastScannedCode = '';
+        let iosCurrentFacingMode = 'environment';
         
         // Пример данных
         const productsData = `6080010075148;KS-8001;Набор для творчества "ЧАСТИЧНАЯ ВЫКЛАДКА СТРАЗАМИ" 10*15 в пакете;70,00;70,00;6;;10;2;0,030;;0,050;0,010;;Cb010003474_1;;;200;Cb010003474_1;
@@ -20430,7 +20502,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
 ЦБ010008204;РК-2018;Рюкзак "РК", цв.: в ассортименте;500,00;500,00;1;;;;0,000;0,000;0,000;0,000;;;;;;Cb010008204_1;
 `;
 
-        // ===== ОСНОВНЫЕ ФУНКЦИИ =====
         function parseStockValue(value) {
             if (!value) return 0;
             const cleanValue = value.toString().replace(/\s/g, '').replace(/\u00A0/g, '');
@@ -20475,6 +20546,7 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
         function formatCoefficient(num) {
             return num.toFixed(3).replace('.', ',');
         }
+
 
         function parseProductsData(data) {
             const lines = data.trim().split('\n');
@@ -20573,364 +20645,6 @@ HATBER       ;160ЗКс6В_16765;Записная книжка женщины 16
             return Object.values(groups);
         }
 
-// ===== ФУНКЦИИ ДЛЯ СКАНИРОВАНИЯ (Android/Desktop) =====
-// ИСПРАВЛЕННАЯ ВЕРСИЯ - БЕЛОЕ ОКНО БОЛЬШЕ НЕ ПОЯВЛЯЕТСЯ
-function isBarcodeDetectorSupported() {
-    return ('BarcodeDetector' in window);
-}
-
-async function initBarcodeDetector() {
-    if (!isBarcodeDetectorSupported()) {
-        console.warn('BarcodeDetector API не поддерживается в этом браузере');
-        return null;
-    }
-    
-    try {
-        const formats = await BarcodeDetector.getSupportedFormats();
-        const supportedFormats = formats.filter(format => 
-            ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_39', 'code_128', 'codabar'].includes(format)
-        );
-        
-        if (supportedFormats.length === 0) {
-            console.warn('Нет поддержки нужных форматов штрихкодов');
-            return null;
-        }
-        
-        return new BarcodeDetector({ formats: supportedFormats });
-    } catch (error) {
-        console.error('Ошибка инициализации BarcodeDetector:', error);
-        return null;
-    }
-}
-
-async function openCamera() {
-    try {
-        // Сначала останавливаем предыдущий поток и закрываем модальное окно
-        if (stream || cameraModal.style.display === 'flex') {
-            stopCameraStream();
-            cameraModal.style.display = 'none';
-            // Даем время на освобождение ресурсов
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
-        
-        const constraints = {
-            video: {
-                facingMode: 'environment',
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            },
-            audio: false
-        };
-        
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        
-        // Убеждаемся что видео элемент чистый
-        cameraVideo.srcObject = null;
-        cameraVideo.srcObject = stream;
-        
-        // Показываем модальное окно ТОЛЬКО после получения потока
-        cameraModal.style.display = 'flex';
-        
-        await cameraVideo.play();
-        
-        if (!barcodeDetector) {
-            barcodeDetector = await initBarcodeDetector();
-        }
-        
-        if (!barcodeDetector) {
-            alert('Ваш браузер не поддерживает прямое сканирование штрихкодов.');
-            stopCameraStream();
-            cameraModal.style.display = 'none';
-            return;
-        }
-        
-        startBarcodeDetection(barcodeDetector);
-        
-    } catch (error) {
-        console.error('Ошибка доступа к камере:', error);
-        alert('Не удалось получить доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.');
-        cameraModal.style.display = 'none';
-    }
-}
-
-function startBarcodeDetection(detector) {
-    // Очищаем предыдущий интервал
-    if (scanInterval) {
-        clearInterval(scanInterval);
-        scanInterval = null;
-    }
-    
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    
-    scanInterval = setInterval(async () => {
-        // Проверяем что видео готово и модальное окно открыто
-        if (cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA && 
-            cameraModal.style.display === 'flex' &&
-            cameraVideo.videoWidth > 0) {
-            
-            canvas.width = cameraVideo.videoWidth;
-            canvas.height = cameraVideo.videoHeight;
-            
-            context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
-            
-            try {
-                const barcodes = await detector.detect(canvas);
-                
-                if (barcodes && barcodes.length > 0) {
-                    const barcode = barcodes[0];
-                    handleScannedCode(barcode.rawValue);
-                    return;
-                }
-                
-            } catch (error) {
-                // Игнорируем ошибки детектирования
-            }
-        }
-    }, 300);
-}
-
-function stopCameraStream() {
-    if (stream) {
-        stream.getTracks().forEach(track => {
-            track.stop();
-        });
-        stream = null;
-    }
-    if (scanInterval) {
-        clearInterval(scanInterval);
-        scanInterval = null;
-    }
-    if (cameraVideo) {
-        cameraVideo.srcObject = null;
-    }
-}
-
-// ===== ФУНКЦИИ ДЛЯ iOS СКАНИРОВАНИЯ =====
-// ИСПРАВЛЕННАЯ ВЕРСИЯ - БЕЗ ОКНА "НАЙДЕНО", БЕЗ ПОДСКАЗОК
-async function openIosScanner() {
-    console.log('Открытие iOS сканера...');
-    
-    const modal = document.getElementById('iosScannerModal');
-    modal.style.display = 'block';
-    
-    document.getElementById('iosScannerLoader').style.display = 'block';
-    showIosScannerStatus('Инициализация камеры...');
-    
-    setTimeout(() => {
-        initIosBarcodeScanner();
-    }, 300);
-}
-
-function initIosBarcodeScanner() {
-    try {
-        if (iosHtml5QrCode && isIosScanning) {
-            iosHtml5QrCode.stop().then(() => {
-                iosHtml5QrCode.clear();
-                iosHtml5QrCode = null;
-            }).catch(() => {
-                iosHtml5QrCode = null;
-            });
-        }
-        
-        const config = {
-            fps: 10,
-            qrbox: { 
-                width: 250, 
-                height: 150 
-            },
-            rememberLastUsedCamera: true,
-            supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
-        };
-        
-        iosHtml5QrCode = new Html5Qrcode("ios-qr-reader");
-        
-        iosHtml5QrCode.start(
-            { 
-                facingMode: "environment"
-            }, 
-            config,
-            onIosScanSuccess,
-            onIosScanError
-        ).then(() => {
-            console.log('iOS сканирование запущено успешно');
-            isIosScanning = true;
-            
-            document.getElementById('iosScannerLoader').style.display = 'none';
-            hideIosScannerStatus();
-            
-        }).catch(err => {
-            console.error('Ошибка запуска iOS сканера:', err);
-            
-            if (err.toString().includes('environment')) {
-                console.log('Пробуем фронтальную камеру iOS...');
-                showIosScannerStatus('Пробуем фронтальную камеру...');
-                
-                iosHtml5QrCode.start(
-                    { facingMode: "user" }, 
-                    config,
-                    onIosScanSuccess,
-                    onIosScanError
-                ).then(() => {
-                    isIosScanning = true;
-                    document.getElementById('iosScannerLoader').style.display = 'none';
-                    hideIosScannerStatus();
-                }).catch(err2 => {
-                    console.error('Ошибка с фронтальной камерой iOS:', err2);
-                    showIosScannerStatus('Ошибка камеры: ' + err2.message);
-                });
-            } else {
-                showIosScannerStatus('Ошибка: ' + err.message);
-            }
-        });
-        
-    } catch (error) {
-        console.error('Критическая ошибка iOS инициализации:', error);
-        showIosScannerStatus('Ошибка: ' + error.message);
-    }
-}
-
-function onIosScanSuccess(decodedText, decodedResult) {
-    console.log('iOS сканирование успешно:', decodedText);
-    
-    if (lastScannedCode === decodedText) {
-        return;
-    }
-    
-    lastScannedCode = decodedText;
-    
-    // Останавливаем iOS сканер
-    if (iosHtml5QrCode && isIosScanning) {
-        iosHtml5QrCode.stop().then(() => {
-            console.log('iOS сканирование остановлено');
-            iosHtml5QrCode.clear();
-            iosHtml5QrCode = null;
-            isIosScanning = false;
-            
-            // Закрываем iOS сканер
-            document.getElementById('iosScannerModal').style.display = 'none';
-            
-            // Заполняем поле поиска
-            document.getElementById('searchInput').value = decodedText;
-            
-            // Выполняем поиск
-            const results = performSimpleSearch(decodedText, 'barcode');
-            
-            // Показываем результаты в модальном окне
-            showScanResults(decodedText, results);
-            
-            setTimeout(() => {
-                lastScannedCode = '';
-            }, 3000);
-            
-        }).catch(err => {
-            console.log('Ошибка остановки iOS:', err);
-            iosHtml5QrCode = null;
-            isIosScanning = false;
-            
-            // Все равно продолжаем обработку
-            document.getElementById('iosScannerModal').style.display = 'none';
-            document.getElementById('searchInput').value = decodedText;
-            const results = performSimpleSearch(decodedText, 'barcode');
-            showScanResults(decodedText, results);
-        });
-    } else {
-        // Если сканер уже остановлен, просто обрабатываем результат
-        document.getElementById('iosScannerModal').style.display = 'none';
-        document.getElementById('searchInput').value = decodedText;
-        const results = performSimpleSearch(decodedText, 'barcode');
-        showScanResults(decodedText, results);
-    }
-}
-
-function onIosScanError(error) {
-    if (!error.includes('NotFoundException') && !error.includes('No multi format readers configured')) {
-        console.warn('Ошибка iOS сканирования:', error);
-    }
-}
-
-function closeIosScanner() {
-    console.log('Закрытие iOS сканера...');
-    
-    if (iosHtml5QrCode && isIosScanning) {
-        iosHtml5QrCode.stop().then(() => {
-            console.log('iOS сканирование остановлено');
-            iosHtml5QrCode.clear();
-            iosHtml5QrCode = null;
-            isIosScanning = false;
-        }).catch(err => {
-            console.log('Ошибка остановки iOS:', err);
-            iosHtml5QrCode = null;
-            isIosScanning = false;
-        });
-    }
-    
-    document.getElementById('iosScannerModal').style.display = 'none';
-    hideIosScannerStatus();
-}
-
-function showIosScannerStatus(message) {
-    const status = document.getElementById('iosScannerStatus');
-    status.textContent = message;
-    status.style.display = 'block';
-}
-
-function hideIosScannerStatus() {
-    document.getElementById('iosScannerStatus').style.display = 'none';
-}
-
-// ===== ОБЩАЯ ФУНКЦИЯ ОБРАБОТКИ СКАНИРОВАНИЯ =====
-function handleScannedCode(code) {
-    if (!code || code.trim().length === 0) return;
-    
-    // Останавливаем камеру и закрываем модальное окно
-    stopCameraStream();
-    cameraModal.style.display = 'none';
-    
-    // Переключаем режим поиска на штрихкод
-    document.getElementById('modeBarcode').checked = true;
-    updateSearchUI();
-    
-    const cleanCode = code.toString().trim();
-    searchInput.value = cleanCode;
-    updateClearButton();
-    
-    const results = performSimpleSearch(cleanCode, 'barcode');
-    showScanResults(cleanCode, results);
-}
-
-function setupPlatformUI() {
-    if (isIOS) {
-        // iOS - используем Html5-QRCode
-        scanButton.style.display = 'flex';
-        searchButton.style.maxWidth = '300px';
-    } else {
-        // Android и Desktop - используем обычное сканирование
-        scanButton.style.display = 'flex';
-        setTimeout(() => {
-            initBarcodeDetector();
-        }, 1000);
-    }
-}
-
-function openScanner() {
-    if (isIOS) {
-        openIosScanner();
-    } else {
-        openCamera();
-    }
-}
-
-function closeScanner() {
-    if (isIOS) {
-        closeIosScanner();
-    } else {
-        stopCameraStream();
-        cameraModal.style.display = 'none';
-    }
-}
-
-        // ===== ФУНКЦИИ ДЛЯ ПОИСКА И ОТОБРАЖЕНИЯ =====
         function formatPriceWithDiscount(product) {
             const hasDiscount = product.discountPercent && product.discountPercent.trim() !== '';
             
@@ -20981,673 +20695,8 @@ function closeScanner() {
             `;
         }
 
-        function getCurrentSearchMode() {
-            const selectedRadio = document.querySelector('input[name="searchMode"]:checked');
-            return selectedRadio ? selectedRadio.value : 'article';
-        }
+        // ===== ФУНКЦИИ ДЛЯ РАБОТЫ С СЕРИАЛЬНЫМ ПОРТОМ =====
 
-        function getSearchModeDisplayName(mode) {
-            switch(mode) {
-                case 'article': return 'по артикулу';
-                case 'barcode': return 'по штрихкоду';
-                case 'name': return 'по наименованию';
-                case 'combined': return 'комбинированный';
-                default: return 'по артикулу';
-            }
-        }
-
-        function performCombinedSearch(articlePart, namePart, barcodePart) {
-            const products = parseProductsData(productsData);
-            return products.filter(product => {
-                let matches = 0;
-                let totalConditions = 0;
-                
-                if (articlePart && articlePart.trim() !== '') {
-                    totalConditions++;
-                    if (product.article.toLowerCase().includes(articlePart.toLowerCase())) {
-                        matches++;
-                    }
-                }
-                
-                if (namePart && namePart.trim() !== '') {
-                    totalConditions++;
-                    if (product.name.toLowerCase().includes(namePart.toLowerCase())) {
-                        matches++;
-                    }
-                }
-                
-                if (barcodePart && barcodePart.trim() !== '') {
-                    totalConditions++;
-                    if (product.barcode.includes(barcodePart)) {
-                        matches++;
-                    }
-                }
-                
-                return totalConditions > 0 && matches === totalConditions;
-            });
-        }
-
-        function performSimpleSearch(searchTerm, mode) {
-            const products = parseProductsData(productsData);
-            return products.filter(product => {
-                switch(mode) {
-                    case 'article':
-                        return product.article.toLowerCase().includes(searchTerm.toLowerCase());
-                    
-                    case 'barcode':
-                        return product.barcode.includes(searchTerm);
-                    
-                    case 'name':
-                        return product.name.toLowerCase().includes(searchTerm.toLowerCase());
-                    
-                    default:
-                        return product.article.toLowerCase().includes(searchTerm.toLowerCase());
-                }
-            });
-        }
-
-        function showScanResults(code, results) {
-            lastScannedCode = code;
-            
-            if (results.length === 0) {
-                resultCount.textContent = 'Товары не найдены';
-                resultCount.style.color = '#f44336';
-                resultProducts.innerHTML = '<div class="scan-result-card" style="text-align: center; color: #666; font-style: italic;">По этому штрихкоду товары не найдены в базе данных</div>';
-            } else {
-                const groupedResults = groupProductsByKey(results);
-                resultCount.textContent = `Найдено товаров: ${results.length} (${groupedResults.length} уникальных)`;
-                resultCount.style.color = '#4CAF50';
-                
-                resultProducts.innerHTML = '';
-                
-                groupedResults.forEach(product => {
-                    const productCard = document.createElement('div');
-                    productCard.className = 'scan-result-card';
-                    
-                    const hasImage = product.imageCode && product.imageCode.trim() !== '';
-                    const printButtonHTML = `<button class="print-button" onclick="openPrintModal(${JSON.stringify(product).replace(/"/g, '&quot;')})" title="Печать ценника">&#129534;</button>`;
-
-                    productCard.innerHTML = `
-                        <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
-                            <strong>Штрихкод:</strong> ${product.count > 1 ? `Несколько (${product.count})` : product.barcode}
-                        </div>
-                        <div style="font-weight: bold; color: #333; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;">
-                            <div style="display: flex; align-items: center;" id="articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}">
-                                <strong>Артикул:</strong> ${product.article}
-                                ${hasImage ? '<button class="image-button" style="margin-left: 10px;">&#127750;</button>' : '<span class="no-image-text">(без изображения)</span>'}
-                            </div>
-                            ${printButtonHTML}
-                        </div>
-                        <div style="font-size: 16px; color: #222; margin-bottom: 8px;">
-                            ${product.name}
-                        </div>
-                        ${formatPriceWithDiscountModal(product)}
-                        ${formatStockInfoModal(product)}
-                    `;
-                    
-                    if (hasImage) {
-                        setTimeout(() => {
-                            const container = productCard.querySelector(`#articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}`);
-                            if (container) {
-                                const imageButton = container.querySelector('.image-button');
-                                if (imageButton) {
-                                    imageButton.onclick = function() {
-                                        showProductImage(product);
-                                    };
-                                }
-                            }
-                        }, 0);
-                    }
-                    
-                    resultProducts.appendChild(productCard);
-                });
-            }
-            
-            // Открываем модальное окно результатов
-            resultModal.style.display = 'flex';
-        }
-
-        function formatStockInfoModal(product) {
-            const stocks = product.stocks;
-            const coefficients = product.coefficients;
-            const storageLocation = product.storageLocation;
-            const barcodes = product.barcodes;
-            const scannedCode = lastScannedCode;
-            const boxQuantity = product.boxQuantity || '';
-            
-            let html = '<div class="scan-result-stock">';
-            html += '<div style="font-weight: bold; color: #333; margin-bottom: 5px; font-size: 13px;">Остатки:</div>';
-            
-            [1, 2, 3, 4].forEach(i => {
-                const quantity = stocks[`warehouse${i}`];
-                const coeff = coefficients[`warehouse${i}`];
-                const color = quantity < 0 ? '#f44336' : '#2e7d32';
-                const names = ['Уральская 97:', 'ОСНОВНОЙ СКЛАД:', 'Шевченко 139:', 'МАГАЗИН 234:'];
-                
-                html += `<div style="display: flex; justify-content: space-between; padding: 2px 0; font-size: 12px;">
-                    <span style="color: #555;">${names[i-1]}</span>
-                    <span style="color: ${color}; font-weight: bold;">${formatNumber(quantity)} шт. 
-                        <span style="color: #666; font-size: 11px;">(${formatCoefficient(coeff)} кор.)</span>
-                    </span>
-                </div>`;
-            });
-            
-            html += '</div>';
-            
-            if (boxQuantity && boxQuantity.trim() !== '') {
-                html += `<div class="scan-result-storage" style="background-color: #e8f5e9; border-left-color: #4CAF50;">
-                    <div style="font-weight: bold; color: #2e7d32; margin-bottom: 3px; font-size: 12px;">Кол-во в коробке:</div>
-                    <div style="color: #333; font-weight: bold; font-size: 13px;">${boxQuantity} шт.</div>
-                </div>`;
-            }
-            
-            if (barcodes && barcodes.length > 1) {
-                html += createBarcodesListHTML(barcodes, scannedCode);
-            }
-            
-            if (storageLocation && storageLocation.trim() !== '') {
-                html += `<div class="scan-result-storage">
-                    <div style="font-weight: bold; color: #856404; margin-bottom: 3px; font-size: 12px;">Место хранения:</div>
-                    <div style="color: #333; font-weight: bold; font-size: 13px;">${storageLocation}</div>
-                </div>`;
-            }
-            
-            return html;
-        }
-
-        function createProductCard(product, query, searchMode) {
-            const productCard = document.createElement('div');
-            productCard.className = 'product-card';
-            
-            let highlightedName = product.name;
-            let highlightedArticle = product.article;
-            let highlightedBarcode = '';
-            
-            if (searchMode === 'комбинированный') {
-                if (query.article) {
-                    highlightedArticle = highlightMatch(product.article, query.article);
-                }
-                if (query.name) {
-                    highlightedName = highlightMatch(product.name, query.name);
-                }
-                if (query.barcode) {
-                    if (product.count > 1) {
-                        highlightedBarcode = createMultipleBarcodesHTML(product.barcodes, query.barcode);
-                    } else {
-                        highlightedBarcode = highlightMatch(product.barcode, query.barcode);
-                    }
-                }
-            } else {
-                if (searchMode === 'по артикулу' || searchMode === 'комбинированный') {
-                    highlightedArticle = highlightMatch(product.article, query);
-                }
-                if (searchMode === 'по наименованию' || searchMode === 'комбинированный') {
-                    highlightedName = highlightMatch(product.name, query);
-                }
-                if (searchMode === 'по штрихкоду') {
-                    if (product.count > 1) {
-                        highlightedBarcode = createMultipleBarcodesHTML(product.barcodes, query);
-                    } else {
-                        highlightedBarcode = highlightMatch(product.barcode, query);
-                    }
-                }
-            }
-            
-            if (!highlightedBarcode) {
-                if (product.count > 1) {
-                    highlightedBarcode = createMultipleBarcodesHTML(product.barcodes, '');
-                } else {
-                    highlightedBarcode = product.barcode;
-                }
-            }
-            
-            const container = document.createElement('div');
-            
-            const articleRow = document.createElement('div');
-            articleRow.className = 'article';
-            articleRow.innerHTML = `Артикул: ${highlightedArticle}`;
-            
-            const hasImage = product.imageCode && product.imageCode.trim() !== '';
-            
-            if (hasImage) {
-                const imageButton = document.createElement('button');
-                imageButton.className = 'image-button';
-                imageButton.title = 'Показать изображение товара';
-                imageButton.innerHTML = '&#127750;';
-                imageButton.onclick = function() {
-                    showProductImage(product);
-                };
-                articleRow.appendChild(imageButton);
-            } else {
-                const noImageSpan = document.createElement('span');
-                noImageSpan.className = 'no-image-text';
-                noImageSpan.textContent = '(без изображения)';
-                articleRow.appendChild(noImageSpan);
-            }
-            
-            const printButton = document.createElement('button');
-            printButton.className = 'print-button';
-            printButton.title = 'Печать ценника';
-            printButton.innerHTML = '&#129534;';
-            printButton.onclick = function() {
-                openPrintModal(product);
-            };
-            
-            const articleContainer = document.createElement('div');
-            articleContainer.style.display = 'flex';
-            articleContainer.style.justifyContent = 'space-between';
-            articleContainer.style.alignItems = 'center';
-            articleContainer.style.marginBottom = '5px';
-            
-            articleContainer.appendChild(articleRow);
-            articleContainer.appendChild(printButton);
-            
-            container.innerHTML = `
-                <div class="product-field barcode">Штрихкод: ${highlightedBarcode}</div>
-                <div class="product-field name">${highlightedName}</div>
-                ${formatPriceWithDiscount(product)}
-            `;
-            
-            container.insertBefore(articleContainer, container.firstChild);
-            
-            const stockInfo = document.createElement('div');
-            stockInfo.innerHTML = `
-                <div class="stock-info">
-                    <div class="stock-title">Остатки:</div>
-                    <div class="stock-item">
-                        <span class="stock-name">Уральская 97:</span>
-                        <span class="stock-quantity ${product.stocks.warehouse1 < 0 ? 'negative' : 'positive'}">
-                            ${formatNumber(product.stocks.warehouse1)} шт. 
-                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse1)} кор.)</span>
-                        </span>
-                    </div>
-                    <div class="stock-item">
-                        <span class="stock-name">ОСНОВНОЙ СКЛАД:</span>
-                        <span class="stock-quantity ${product.stocks.warehouse2 < 0 ? 'negative' : 'positive'}">
-                            ${formatNumber(product.stocks.warehouse2)} шт. 
-                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse2)} кор.)</span>
-                        </span>
-                    </div>
-                    <div class="stock-item">
-                        <span class="stock-name">Шевченко 139:</span>
-                        <span class="stock-quantity ${product.stocks.warehouse3 < 0 ? 'negative' : 'positive'}">
-                            ${formatNumber(product.stocks.warehouse3)} шт. 
-                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse3)} кор.)</span>
-                        </span>
-                    </div>
-                    <div class="stock-item">
-                        <span class="stock-name">МАГАЗИН 234:</span>
-                        <span class="stock-quantity ${product.stocks.warehouse4 < 0 ? 'negative' : 'positive'}">
-                            ${formatNumber(product.stocks.warehouse4)} шт. 
-                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse4)} кор.)</span>
-                        </span>
-                    </div>
-                </div>
-            `;
-            
-            if (product.boxQuantity && product.boxQuantity.trim() !== '') {
-                stockInfo.innerHTML += `
-                    <div class="box-quantity-info">
-                        <div class="box-quantity-title">Кол-во в коробке:</div>
-                        <div class="box-quantity-value">${product.boxQuantity} шт.</div>
-                    </div>
-                `;
-            }
-            
-            if (product.storageLocation && product.storageLocation.trim() !== '') {
-                stockInfo.innerHTML += `
-                    <div class="storage-location">
-                        <div class="storage-title">Место хранения:</div>
-                        <div class="storage-value">${product.storageLocation}</div>
-                    </div>
-                `;
-            }
-            
-            productCard.appendChild(container);
-            productCard.appendChild(stockInfo);
-            
-            return productCard;
-        }
-
-        function displayResults(results, query, searchMode) {
-            const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = '';
-
-            if (results.length === 0) {
-                resultsContainer.innerHTML = '<div class="no-results">Товары не найдены</div>';
-                resultsContainer.style.display = 'block';
-                scrollToResults();
-                return;
-            }
-
-            const groupedResults = groupProductsByKey(results);
-            const totalCount = results.length;
-            const uniqueCount = groupedResults.length;
-
-            const countElement = document.createElement('div');
-            countElement.className = 'results-count';
-            countElement.textContent = `Найдено товаров: ${totalCount} (${uniqueCount} уникальных)`;
-            resultsContainer.appendChild(countElement);
-
-            const modeElement = document.createElement('div');
-            modeElement.className = 'search-mode';
-            modeElement.textContent = `Режим поиска: ${searchMode}`;
-            resultsContainer.appendChild(modeElement);
-
-            groupedResults.forEach(product => {
-                const productCard = createProductCard(product, query, searchMode);
-                resultsContainer.appendChild(productCard);
-            });
-
-            resultsContainer.style.display = 'block';
-            scrollToResults();
-        }
-
-        function searchProducts() {
-            const searchMode = getCurrentSearchMode();
-            
-            let results = [];
-            let query = '';
-            let displaySearchMode = getSearchModeDisplayName(searchMode);
-
-            if (searchMode === 'combined') {
-                const articlePart = articleInput.value.trim();
-                const namePart = nameInput.value.trim();
-                const barcodePart = barcodeInput.value.trim();
-                
-                query = {
-                    article: articlePart,
-                    name: namePart,
-                    barcode: barcodePart
-                };
-                
-                results = performCombinedSearch(articlePart, namePart, barcodePart);
-            } else {
-                query = searchInput.value.trim();
-                
-                if (!query) {
-                    resultsContainer.style.display = 'none';
-                    return;
-                }
-                
-                results = performSimpleSearch(query, searchMode);
-            }
-
-            displayResults(results, query, displaySearchMode);
-        }
-
-        // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
-        function createMultipleBarcodesHTML(barcodes, query) {
-            const uniqueBarcodes = [...new Set(barcodes)];
-            const barcodesCount = uniqueBarcodes.length;
-            
-            let html = `<span class="multiple-barcodes" onclick="showBarcodeTooltip(event, this)">Несколько (${barcodesCount})</span>`;
-            html += `<div class="barcode-tooltip">`;
-            html += `<div class="barcode-list">`;
-            
-            uniqueBarcodes.forEach(barcode => {
-                const highlightedBarcode = highlightMatch(barcode, query);
-                html += `<div class="barcode-item">${highlightedBarcode}</div>`;
-            });
-            
-            html += `</div>`;
-            html += `</div>`;
-            
-            return html;
-        }
-
-        function createBarcodesListHTML(barcodes, scannedCode) {
-            const uniqueBarcodes = [...new Set(barcodes)];
-            const barcodesCount = uniqueBarcodes.length;
-            
-            let html = `<div class="scan-result-barcodes" onclick="toggleBarcodesList(this)">`;
-            html += `<div class="scan-result-barcodes-title">`;
-            html += `<span>Штрихкоды (${barcodesCount}):</span>`;
-            html += `<span style="font-size: 10px; color: #666;">нажмите для просмотра</span>`;
-            html += `</div>`;
-            html += `<div class="scan-result-barcodes-list">`;
-            
-            uniqueBarcodes.forEach(barcode => {
-                const isScanned = barcode === scannedCode;
-                const barcodeClass = isScanned ? 'style="color: #e74c3c; font-weight: bold;"' : '';
-                html += `<div class="scan-result-barcode-item" ${barcodeClass}>${barcode}${isScanned ? ' ?' : ''}</div>`;
-            });
-            
-            html += `</div>`;
-            html += `</div>`;
-            
-            return html;
-        }
-
-        function showBarcodeTooltip(event, element) {
-            event.stopPropagation();
-            
-            document.querySelectorAll('.barcode-tooltip').forEach(tooltip => {
-                tooltip.style.display = 'none';
-            });
-            
-            const tooltip = element.nextElementSibling;
-            if (tooltip && tooltip.classList.contains('barcode-tooltip')) {
-                tooltip.style.display = 'block';
-                
-                const rect = element.getBoundingClientRect();
-                tooltip.style.position = 'fixed';
-                tooltip.style.left = Math.min(rect.left, window.innerWidth - 320) + 'px';
-                tooltip.style.top = (rect.bottom + 5) + 'px';
-                
-                const closeTooltip = (e) => {
-                    if (!tooltip.contains(e.target) && e.target !== element) {
-                        tooltip.style.display = 'none';
-                        document.removeEventListener('click', closeTooltip);
-                    }
-                };
-                
-                setTimeout(() => {
-                    document.addEventListener('click', closeTooltip);
-                }, 100);
-            }
-        }
-
-        function toggleBarcodesList(element) {
-            const list = element.querySelector('.scan-result-barcodes-list');
-            list.classList.toggle('expanded');
-            
-            const title = element.querySelector('.scan-result-barcodes-title span:last-child');
-            if (list.classList.contains('expanded')) {
-                title.textContent = 'нажмите для скрытия';
-            } else {
-                title.textContent = 'нажмите для просмотра';
-            }
-        }
-
-        function highlightMatch(text, searchTerm) {
-            if (!searchTerm || !text) return text;
-            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-            return text.toString().replace(regex, '<mark>$1</mark>');
-        }
-
-        function updateClearButton() {
-            const mode = getCurrentSearchMode();
-            let hasText = false;
-            
-            if (mode === 'combined') {
-                hasText = articleInput.value.trim() !== '' || 
-                          nameInput.value.trim() !== '' || 
-                          barcodeInput.value.trim() !== '';
-            } else {
-                hasText = searchInput.value.trim() !== '';
-            }
-            
-            if (hasText) {
-                clearSearchBtn.style.display = 'block';
-            } else {
-                clearSearchBtn.style.display = 'none';
-            }
-        }
-
-        function clearSearchFields() {
-            const mode = getCurrentSearchMode();
-            
-            if (mode === 'combined') {
-                articleInput.value = '';
-                nameInput.value = '';
-                barcodeInput.value = '';
-            } else {
-                searchInput.value = '';
-                searchInput.focus();
-            }
-            
-            updateClearButton();
-            resultsContainer.style.display = 'none';
-        }
-
-        function updateSearchUI() {
-            const mode = getCurrentSearchMode();
-            
-            if (mode === 'combined') {
-                combinedSearchFields.style.display = 'flex';
-                searchInput.style.display = 'none';
-            } else {
-                combinedSearchFields.style.display = 'none';
-                searchInput.style.display = 'block';
-            }
-            
-            updateClearButton();
-        }
-
-        function scrollToResults() {
-            const resultsContainer = document.getElementById('resultsContainer');
-            if (resultsContainer.style.display === 'block') {
-                setTimeout(() => {
-                    resultsContainer.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }, 100);
-            }
-        }
-
-        // ===== ФУНКЦИИ ДЛЯ ИЗОБРАЖЕНИЙ =====
-        function showProductImage(product) {
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.id = 'imageModal';
-            modal.style.display = 'flex';
-            
-            let imageCode = product.imageCode || '';
-            let alternativeImageCode = product.alternativeImageCode || '';
-            
-            let imageUrl = '';
-            
-            if (imageCode) {
-                const cleanCode = imageCode.trim();
-                let fileName = cleanCode;
-                if (!fileName.includes('.jpg') && !fileName.includes('.jpeg') && 
-                    !fileName.includes('.png') && !fileName.includes('.gif')) {
-                    fileName += '.jpg';
-                }
-                imageUrl = `https://kubanstar.ru/images/virtuemart/product/${fileName}`;
-            }
-            
-            modal.innerHTML = `
-                <div class="modal-frame" style="max-width: 90%; max-height: 90%;">
-                    <div style="text-align: center; padding: 20px;">
-                        <h3 style="margin-bottom: 20px;">${product.article} - ${product.name}</h3>
-                        <div style="max-height: 70vh; overflow: auto; margin: 20px 0;" id="imageContainer">
-                            <img id="productImage" 
-                                 src="${imageUrl || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%25%22 y=%2250%25%22 font-size=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22>&#128247;</text></svg>'}" 
-                                 style="max-width: 100%; max-height: 60vh; border-radius: 8px; display: block; margin: 0 auto;"
-                                 onerror="handleImageError(this, '${alternativeImageCode.replace(/'/g, "\\'")}')"
-                                 alt="Изображение товара">
-                            <div id="imageError" style="display: none; padding: 40px; color: #999;">
-                                <div style="font-size: 48px; margin-bottom: 20px;">&#128247;</div>
-                                <div style="font-size: 18px; font-weight: bold; color: #666;">Изображение не найдено</div>
-                                <div style="font-size: 12px; margin-top: 10px; color: #999;">Пробуем альтернативный код...</div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 15px; text-align: center;">
-                            <button onclick="this.closest('.modal-overlay').style.display='none'" 
-                                    class="camera-btn" 
-                                    style="background-color: #f44336; min-width: 200px;">
-                                Закрыть
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            const oldModal = document.getElementById('imageModal');
-            if (oldModal) {
-                oldModal.remove();
-            }
-            
-            document.body.appendChild(modal);
-            
-            modal.onclick = function(e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                }
-            };
-        }
-
-        function handleImageError(imgElement, alternativeImageCode) {
-            const errorDiv = document.getElementById('imageError');
-            
-            if (alternativeImageCode && alternativeImageCode.trim() !== '') {
-                const cleanCode = alternativeImageCode.trim();
-                let fileName = cleanCode;
-                if (!fileName.includes('.jpg') && !fileName.includes('.jpeg') && 
-                    !fileName.includes('.png') && !fileName.includes('.gif')) {
-                    fileName += '.jpg';
-                }
-                const alternativeUrl = `https://kubanstar.ru/images/virtuemart/product/${fileName}`;
-                
-                if (errorDiv) {
-                    errorDiv.style.display = 'block';
-                    errorDiv.innerHTML = `
-                        <div style="font-size: 48px; margin-bottom: 20px;">&#128260;</div>
-                        <div style="font-size: 18px; font-weight: bold; color: #666;">Загружаем альтернативное изображение...</div>
-                        <div style="font-size: 12px; margin-top: 10px; color: #999;">Код: ${alternativeImageCode}</div>
-                    `;
-                }
-                
-                const newImg = new Image();
-                newImg.onload = function() {
-                    imgElement.src = alternativeUrl;
-                    imgElement.style.display = 'block';
-                    if (errorDiv) errorDiv.style.display = 'none';
-                };
-                newImg.onerror = function() {
-                    if (errorDiv) {
-                        errorDiv.style.display = 'block';
-                        errorDiv.innerHTML = `
-                            <div style="font-size: 48px; margin-bottom: 20px;">&#10060;</div>
-                            <div style="font-size: 18px; font-weight: bold; color: #666;">Изображение не найдено</div>
-                            <div style="font-size: 12px; margin-top: 10px; color: #999;">
-                                Основной код: ${imgElement.src.includes('kubanstar.ru') ? imgElement.src.split('/').pop() : 'не указан'}<br>
-                                Альтернативный код: ${alternativeImageCode || 'не указан'}
-                            </div>
-                        `;
-                    }
-                    imgElement.style.display = 'none';
-                };
-                newImg.src = alternativeUrl;
-            } else {
-                if (errorDiv) {
-                    errorDiv.style.display = 'block';
-                    errorDiv.innerHTML = `
-                        <div style="font-size: 48px; margin-bottom: 20px;">&#10060;</div>
-                        <div style="font-size: 18px; font-weight: bold; color: #666;">Изображение не найдено</div>
-                        <div style="font-size: 12px; margin-top: 10px; color: #999;">
-                            Код изображения: ${imgElement.src.includes('kubanstar.ru') ? imgElement.src.split('/').pop() : 'не указан'}
-                        </div>
-                    `;
-                }
-                imgElement.style.display = 'none';
-            }
-        }
-
-        // ===== ФУНКЦИИ ДЛЯ ПЕЧАТИ =====
         function updatePrinterStatus(message, type = 'connecting') {
             const statusEl = document.getElementById('printerStatus');
             statusEl.textContent = message;
@@ -21741,6 +20790,8 @@ function closeScanner() {
                 throw error;
             }
         }
+
+        // ===== ФУНКЦИИ ДЛЯ СОЗДАНИЯ И ПЕЧАТИ ЦЕННИКА =====
 
         function createPriceTagImage(product, type = 'regular') {
             const canvas = document.createElement('canvas');
@@ -21981,10 +21032,10 @@ function closeScanner() {
             
             const command = new Uint8Array(bitmap.data.length + 8);
             
-            command[0] = 0x1D; // GS
-            command[1] = 0x76; // v
-            command[2] = 0x30; // 0
-            command[3] = 0x00; // m = 0
+            command[0] = 0x1D;
+            command[1] = 0x76;
+            command[2] = 0x30;
+            command[3] = 0x00;
             
             const xL = bytesPerLine & 0xFF;
             const xH = (bytesPerLine >> 8) & 0xFF;
@@ -22018,18 +21069,18 @@ function closeScanner() {
                 
                 const fullCommand = new Uint8Array(imageCommand.length + 10);
                 
-                fullCommand[0] = 0x1B; // ESC
-                fullCommand[1] = 0x40; // @
+                fullCommand[0] = 0x1B;
+                fullCommand[1] = 0x40;
                 
-                fullCommand[2] = 0x1B; // ESC
-                fullCommand[3] = 0x6C; // l
+                fullCommand[2] = 0x1B;
+                fullCommand[3] = 0x6C;
                 fullCommand[4] = leftMargin;
                 
                 fullCommand.set(imageCommand, 5);
                 
                 const imageEnd = 5 + imageCommand.length;
-                fullCommand[imageEnd] = 0x0A; // LF
-                fullCommand[imageEnd + 1] = 0x0A; // LF
+                fullCommand[imageEnd] = 0x0A;
+                fullCommand[imageEnd + 1] = 0x0A;
                 
                 await sendRawData(fullCommand);
                 return true;
@@ -22064,6 +21115,8 @@ function closeScanner() {
             
             ctx.restore();
         }
+
+        // ===== ОБНОВЛЕННЫЕ ФУНКЦИИ ДЛЯ ПЕЧАТИ =====
 
         function showPrintStatus(message, type = 'info') {
             const statusEl = document.getElementById('printStatus');
@@ -22147,42 +21200,8 @@ function closeScanner() {
             }
         }
 
-        function setupPriceTagTypeSelector() {
-            const options = priceTagTypeSelector.querySelectorAll('.price-tag-type-option');
-            
-            options.forEach(option => {
-                option.addEventListener('click', function() {
-                    options.forEach(opt => opt.classList.remove('selected'));
-                    
-                    this.classList.add('selected');
-                    
-                    const radio = this.querySelector('input[type="radio"]');
-                    radio.checked = true;
-                    
-                    currentPriceTagType = this.getAttribute('data-type');
-                    
-                    if (currentProductForPrint) {
-                        updatePriceTagPreview(currentProductForPrint, currentPriceTagType);
-                    }
-                });
-            });
-            
-            const radios = priceTagTypeSelector.querySelectorAll('input[type="radio"]');
-            radios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.checked) {
-                        const option = this.closest('.price-tag-type-option');
-                        currentPriceTagType = option.getAttribute('data-type');
-                        
-                        if (currentProductForPrint) {
-                            updatePriceTagPreview(currentProductForPrint, currentPriceTagType);
-                        }
-                    }
-                });
-            });
-        }
+        // ===== ФУНКЦИИ ДЛЯ ОТОБРАЖЕНИЯ ДАТ ФАЙЛОВ =====
 
-        // ===== ФУНКЦИИ ДЛЯ ДАТ =====
         function getFileDatesData() {
             let displayDate = "Дата не указана";
             if (DATA_UPDATE_DATE) {
@@ -22280,38 +21299,1050 @@ function closeScanner() {
             document.getElementById('datesModal').style.display = 'none';
         }
 
-        // ===== ИНИЦИАЛИЗАЦИЯ =====
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearchBtn');
-        const searchButton = document.getElementById('searchButton');
-        const scanButton = document.getElementById('scanButton');
-        const resultsContainer = document.getElementById('resultsContainer');
-        const searchModeRadios = document.querySelectorAll('input[name="searchMode"]');
-        const combinedSearchFields = document.getElementById('combinedSearchFields');
-        const articleInput = document.getElementById('articleInput');
-        const nameInput = document.getElementById('nameInput');
-        const barcodeInput = document.getElementById('barcodeInput');
-        
-        const cameraModal = document.getElementById('cameraModal');
-        const resultModal = document.getElementById('resultModal');
-        const printModal = document.getElementById('printModal');
-        const datesModal = document.getElementById('datesModal');
-        const closeCameraModal = document.getElementById('closeCameraModal');
-        const closePrintModalBtn = document.getElementById('closePrintModal');
-        const closeDatesModalBtn = document.getElementById('closeDatesModal');
-        const closeIosScannerBtn = document.getElementById('closeIosScanner');
-        
-        const cameraVideo = document.getElementById('cameraVideo');
-        const stopCameraBtn = document.getElementById('stopCamera');
-        
-        const resultCount = document.getElementById('resultCount');
-        const resultProducts = document.getElementById('resultProducts');
-        const continueScanBtn = document.getElementById('continueScanBtn');
-        const closeResultBtn = document.getElementById('closeResultBtn');
+        // ===== ФУНКЦИИ ДЛЯ СКАНИРОВАНИЯ (Android) =====
 
-        const printActionBtn = document.getElementById('printActionBtn');
-        const priceTagTypeSelector = document.getElementById('priceTagTypeSelector');
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
 
+        function isAndroid() {
+            return /Android/.test(navigator.userAgent);
+        }
+
+        function isBarcodeDetectorSupported() {
+            return ('BarcodeDetector' in window);
+        }
+
+        async function initBarcodeDetector() {
+            if (!isBarcodeDetectorSupported()) {
+                console.warn('BarcodeDetector API не поддерживается в этом браузере');
+                return null;
+            }
+            
+            try {
+                const formats = await BarcodeDetector.getSupportedFormats();
+                const supportedFormats = formats.filter(format => 
+                    ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_39', 'code_128', 'codabar'].includes(format)
+                );
+                
+                if (supportedFormats.length === 0) {
+                    console.warn('Нет поддержки нужных форматов штрихкодов');
+                    return null;
+                }
+                
+                return new BarcodeDetector({ formats: supportedFormats });
+            } catch (error) {
+                console.error('Ошибка инициализации BarcodeDetector:', error);
+                return null;
+            }
+        }
+
+        function isHTTPS() {
+            return window.location.protocol === 'https:';
+        }
+
+        function isLocalhost() {
+            return window.location.hostname === 'localhost' || 
+                   window.location.hostname === '127.0.0.1' ||
+                   window.location.hostname === '';
+        }
+
+        function canUseCamera() {
+            return true;
+        }
+
+        function setupPlatformUI() {
+            const scanButtonAndroid = document.getElementById('scanButtonAndroid');
+            const scanButtonIOS = document.getElementById('scanButtonIOS');
+            
+            if (isIOS()) {
+                scanButtonAndroid.style.display = 'none';
+                scanButtonIOS.style.display = 'flex';
+                searchButton.style.maxWidth = '300px';
+            } else if (isAndroid()) {
+                scanButtonAndroid.style.display = 'flex';
+                scanButtonIOS.style.display = 'none';
+                setTimeout(() => {
+                    initBarcodeDetector();
+                }, 1000);
+            } else {
+                scanButtonAndroid.style.display = 'flex';
+                scanButtonIOS.style.display = 'none';
+                setTimeout(() => {
+                    initBarcodeDetector();
+                }, 1000);
+            }
+        }
+
+        async function openCamera() {
+            try {
+                stopCameraStream();
+                
+                const constraints = {
+                    video: {
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                };
+                
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                
+                cameraVideo.srcObject = stream;
+                cameraModal.style.display = 'flex';
+                
+                await cameraVideo.play();
+                
+                if (!barcodeDetector) {
+                    barcodeDetector = await initBarcodeDetector();
+                }
+                
+                if (!barcodeDetector) {
+                    alert('Ваш браузер не поддерживает прямое сканирование штрихкодов.');
+                    stopCameraStream();
+                    return;
+                }
+                
+                startBarcodeDetection(barcodeDetector);
+                
+            } catch (error) {
+                console.error('Ошибка доступа к камере:', error);
+                alert('Не удалось получить доступ к камере. Пожалуйста, разрешите доступ к камере в настройках браузера.');
+            }
+        }
+
+        function startBarcodeDetection(detector) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            scanInterval = setInterval(async () => {
+                if (cameraVideo.readyState === cameraVideo.HAVE_ENOUGH_DATA) {
+                    canvas.width = cameraVideo.videoWidth;
+                    canvas.height = cameraVideo.videoHeight;
+                    
+                    context.drawImage(cameraVideo, 0, 0, canvas.width, canvas.height);
+                    
+                    try {
+                        const barcodes = await detector.detect(canvas);
+                        
+                        if (barcodes && barcodes.length > 0) {
+                            const barcode = barcodes[0];
+                            handleScannedCode(barcode.rawValue);
+                            return;
+                        }
+                        
+                    } catch (error) {
+                        console.error('Ошибка детектирования штрихкода:', error);
+                    }
+                }
+            }, 300);
+        }
+
+        function stopCameraStream() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            if (scanInterval) {
+                clearInterval(scanInterval);
+                scanInterval = null;
+            }
+            cameraVideo.srcObject = null;
+        }
+
+        function handleScannedCode(code) {
+            if (!code || code.trim().length === 0) return;
+            
+            stopCameraStream();
+            document.getElementById('modeBarcode').checked = true;
+            updateSearchUI();
+            
+            const cleanCode = code.toString().trim();
+            searchInput.value = cleanCode;
+            updateClearButton();
+            
+            const results = performSimpleSearch(cleanCode, 'barcode');
+            showScanResults(cleanCode, results);
+        }
+
+        // ===== НОВЫЕ ФУНКЦИИ ДЛЯ iOS СКАНЕРА =====
+
+        async function openIOSScanner() {
+            console.log('Открытие iOS сканера...');
+            
+            const iosModal = document.getElementById('iosScannerModal');
+            iosModal.style.display = 'block';
+            
+            document.getElementById('iosScannerLoader').style.display = 'block';
+            showIOSScannerStatus('Инициализация камеры...');
+            
+            if (isIOS()) {
+                setTimeout(() => {
+                    document.getElementById('iosPermissionHint').style.display = 'block';
+                }, 500);
+            }
+            
+            setTimeout(() => {
+                initIOSBarcodeScanner();
+            }, 300);
+        }
+
+        function initIOSBarcodeScanner() {
+            try {
+                if (iosHtml5QrCode && iosIsScanning) {
+                    iosHtml5QrCode.stop().then(() => {
+                        iosHtml5QrCode.clear();
+                        iosHtml5QrCode = null;
+                    }).catch(() => {
+                        iosHtml5QrCode = null;
+                    });
+                }
+                
+                const config = {
+                    fps: 10,
+                    qrbox: { width: 250, height: 150 },
+                    rememberLastUsedCamera: true,
+                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+                };
+                
+                iosHtml5QrCode = new Html5Qrcode("ios-qr-reader");
+                
+                iosHtml5QrCode.start(
+                    { facingMode: iosCurrentFacingMode },
+                    config,
+                    onIOSScanSuccess,
+                    onIOSScanError
+                ).then(() => {
+                    console.log('iOS сканирование запущено успешно');
+                    iosIsScanning = true;
+                    
+                    document.getElementById('iosScannerLoader').style.display = 'none';
+                    document.getElementById('iosPermissionHint').style.display = 'none';
+                    document.getElementById('iosNoCameraMessage').style.display = 'none';
+                    hideIOSScannerStatus();
+                    
+                    setTimeout(() => {
+                        document.getElementById('iosPermissionHint').style.display = 'none';
+                    }, 2000);
+                    
+                }).catch(err => {
+                    console.error('Ошибка запуска iOS сканера:', err);
+                    
+                    if (err.toString().includes('environment')) {
+                        console.log('Пробуем фронтальную камеру...');
+                        showIOSScannerStatus('Пробуем фронтальную камеру...');
+                        
+                        iosCurrentFacingMode = 'user';
+                        document.getElementById('switchIOSCamera').style.display = 'block';
+                        
+                        iosHtml5QrCode.start(
+                            { facingMode: 'user' },
+                            config,
+                            onIOSScanSuccess,
+                            onIOSScanError
+                        ).then(() => {
+                            iosIsScanning = true;
+                            document.getElementById('iosScannerLoader').style.display = 'none';
+                            hideIOSScannerStatus();
+                        }).catch(err2 => {
+                            console.error('Ошибка с фронтальной камерой:', err2);
+                            showIOSNoCameraMessage();
+                        });
+                    } else {
+                        showIOSNoCameraMessage();
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Критическая ошибка инициализации iOS сканера:', error);
+                showIOSNoCameraMessage();
+            }
+        }
+
+        function onIOSScanSuccess(decodedText, decodedResult) {
+            console.log('iOS сканирование успешно:', decodedText);
+            
+            if (iosLastScannedCode === decodedText) {
+                return;
+            }
+            
+            iosLastScannedCode = decodedText;
+            
+            showIOSScannedBadge(decodedText);
+            
+            if (iosHtml5QrCode && iosIsScanning) {
+                iosHtml5QrCode.stop().then(() => {
+                    iosIsScanning = false;
+                }).catch(() => {
+                    iosIsScanning = false;
+                });
+            }
+            
+            setTimeout(() => {
+                closeIOSScanner();
+                
+                document.getElementById('modeBarcode').checked = true;
+                updateSearchUI();
+                
+                const cleanCode = decodedText.toString().trim();
+                searchInput.value = cleanCode;
+                updateClearButton();
+                
+                const results = performSimpleSearch(cleanCode, 'barcode');
+                showScanResults(cleanCode, results);
+                
+                setTimeout(() => {
+                    iosLastScannedCode = '';
+                }, 3000);
+                
+            }, 1500);
+        }
+
+        function onIOSScanError(error) {
+            if (!error.includes('NotFoundException') && !error.includes('No multi format readers configured')) {
+                console.warn('Ошибка iOS сканирования:', error);
+            }
+        }
+
+        function showIOSNoCameraMessage() {
+            document.getElementById('iosScannerLoader').style.display = 'none';
+            document.getElementById('iosNoCameraMessage').style.display = 'block';
+            document.getElementById('iosPermissionHint').style.display = 'none';
+            hideIOSScannerStatus();
+        }
+
+        function closeIOSScanner() {
+            console.log('Закрытие iOS сканера...');
+            
+            if (iosHtml5QrCode && iosIsScanning) {
+                iosHtml5QrCode.stop().then(() => {
+                    console.log('iOS сканирование остановлено');
+                    iosHtml5QrCode.clear();
+                    iosHtml5QrCode = null;
+                    iosIsScanning = false;
+                }).catch(err => {
+                    console.log('Ошибка остановки iOS сканера:', err);
+                    iosHtml5QrCode = null;
+                    iosIsScanning = false;
+                });
+            }
+            
+            document.getElementById('iosScannerModal').style.display = 'none';
+            document.getElementById('iosScannedBadge').style.display = 'none';
+            document.getElementById('iosNoCameraMessage').style.display = 'none';
+            document.getElementById('iosPermissionHint').style.display = 'none';
+            hideIOSScannerStatus();
+            
+            iosCurrentFacingMode = 'environment';
+        }
+
+        function showIOSScannedBadge(code) {
+            const badge = document.getElementById('iosScannedBadge');
+            badge.textContent = `✓ Найдено: ${code}`;
+            badge.style.display = 'block';
+        }
+
+        function showIOSScannerStatus(message) {
+            const status = document.getElementById('iosScannerStatus');
+            status.textContent = message;
+            status.style.display = 'block';
+        }
+
+        function hideIOSScannerStatus() {
+            document.getElementById('iosScannerStatus').style.display = 'none';
+        }
+
+        function switchIOSCamera() {
+            if (!iosHtml5QrCode || !iosIsScanning) return;
+            
+            iosCurrentFacingMode = iosCurrentFacingMode === 'environment' ? 'user' : 'environment';
+            
+            showIOSScannerStatus('Переключение камеры...');
+            
+            iosHtml5QrCode.stop().then(() => {
+                iosHtml5QrCode.clear();
+                
+                const config = {
+                    fps: 10,
+                    qrbox: { width: 250, height: 150 },
+                    rememberLastUsedCamera: true,
+                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+                };
+                
+                iosHtml5QrCode.start(
+                    { facingMode: iosCurrentFacingMode },
+                    config,
+                    onIOSScanSuccess,
+                    onIOSScanError
+                ).then(() => {
+                    hideIOSScannerStatus();
+                }).catch(err => {
+                    console.error('Ошибка переключения камеры:', err);
+                    showIOSScannerStatus('Ошибка переключения камеры');
+                });
+            }).catch(() => {});
+        }
+
+        // ===== ОБЩИЕ ФУНКЦИИ =====
+
+        function showScanResults(code, results) {
+            lastScannedCode = code;
+            
+            if (results.length === 0) {
+                resultCount.textContent = 'Товары не найдены';
+                resultCount.style.color = '#f44336';
+                resultProducts.innerHTML = '<div class="scan-result-card" style="text-align: center; color: #666; font-style: italic;">По этому штрихкоду товары не найдены в базе данных</div>';
+            } else {
+                const groupedResults = groupProductsByKey(results);
+                resultCount.textContent = `Найдено товаров: ${results.length} (${groupedResults.length} уникальных)`;
+                resultCount.style.color = '#4CAF50';
+                
+                resultProducts.innerHTML = '';
+                
+                groupedResults.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'scan-result-card';
+                    
+                    const hasImage = product.imageCode && product.imageCode.trim() !== '';
+                    const printButtonHTML = `<button class="print-button" onclick="openPrintModal(${JSON.stringify(product).replace(/"/g, '&quot;')})" title="Печать ценника">&#129534;</button>`;
+
+                    productCard.innerHTML = `
+                        <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
+                            <strong>Штрихкод:</strong> ${product.count > 1 ? `Несколько (${product.count})` : product.barcode}
+                        </div>
+                        <div style="font-weight: bold; color: #333; margin-bottom: 5px; display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center;" id="articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}">
+                                <strong>Артикул:</strong> ${product.article}
+                                ${hasImage ? '<button class="image-button" style="margin-left: 10px;">&#127750;</button>' : '<span class="no-image-text">(без изображения)</span>'}
+                            </div>
+                            ${printButtonHTML}
+                        </div>
+                        <div style="font-size: 16px; color: #222; margin-bottom: 8px;">
+                            ${product.name}
+                        </div>
+                        ${formatPriceWithDiscountModal(product)}
+                        ${formatStockInfoModal(product)}
+                    `;
+                    
+                    if (hasImage) {
+                        setTimeout(() => {
+                            const container = productCard.querySelector(`#articleContainer_${product.article.replace(/[^a-zA-Z0-9]/g, '_')}`);
+                            if (container) {
+                                const imageButton = container.querySelector('.image-button');
+                                if (imageButton) {
+                                    imageButton.onclick = function() {
+                                        showProductImage(product);
+                                    };
+                                }
+                            }
+                        }, 0);
+                    }
+                    
+                    resultProducts.appendChild(productCard);
+                });
+            }
+            
+            cameraModal.style.display = 'none';
+            document.getElementById('iosScannerModal').style.display = 'none';
+            resultModal.style.display = 'flex';
+        }
+
+        function formatStockInfoModal(product) {
+            const stocks = product.stocks;
+            const coefficients = product.coefficients;
+            const storageLocation = product.storageLocation;
+            const barcodes = product.barcodes;
+            const scannedCode = lastScannedCode;
+            const boxQuantity = product.boxQuantity || '';
+            
+            let html = '<div class="scan-result-stock">';
+            html += '<div style="font-weight: bold; color: #333; margin-bottom: 5px; font-size: 13px;">Остатки:</div>';
+            
+            [1, 2, 3, 4].forEach(i => {
+                const quantity = stocks[`warehouse${i}`];
+                const coeff = coefficients[`warehouse${i}`];
+                const color = quantity < 0 ? '#f44336' : '#2e7d32';
+                const names = ['Уральская 97:', 'ОСНОВНОЙ СКЛАД:', 'Шевченко 139:', 'МАГАЗИН 234:'];
+                
+                html += `<div style="display: flex; justify-content: space-between; padding: 2px 0; font-size: 12px;">
+                    <span style="color: #555;">${names[i-1]}</span>
+                    <span style="color: ${color}; font-weight: bold;">${formatNumber(quantity)} шт. 
+                        <span style="color: #666; font-size: 11px;">(${formatCoefficient(coeff)} кор.)</span>
+                    </span>
+                </div>`;
+            });
+            
+            html += '</div>';
+            
+            if (boxQuantity && boxQuantity.trim() !== '') {
+                html += `<div class="scan-result-storage" style="background-color: #e8f5e9; border-left-color: #4CAF50;">
+                    <div style="font-weight: bold; color: #2e7d32; margin-bottom: 3px; font-size: 12px;">Кол-во в коробке:</div>
+                    <div style="color: #333; font-weight: bold; font-size: 13px;">${boxQuantity} шт.</div>
+                </div>`;
+            }
+            
+            if (barcodes && barcodes.length > 1) {
+                html += createBarcodesListHTML(barcodes, scannedCode);
+            }
+            
+            if (storageLocation && storageLocation.trim() !== '') {
+                html += `<div class="scan-result-storage">
+                    <div style="font-weight: bold; color: #856404; margin-bottom: 3px; font-size: 12px;">Место хранения:</div>
+                    <div style="color: #333; font-weight: bold; font-size: 13px;">${storageLocation}</div>
+                </div>`;
+            }
+            
+            return html;
+        }
+
+        function createMultipleBarcodesHTML(barcodes, query) {
+            const uniqueBarcodes = [...new Set(barcodes)];
+            const barcodesCount = uniqueBarcodes.length;
+            
+            let html = `<span class="multiple-barcodes" onclick="showBarcodeTooltip(event, this)">Несколько (${barcodesCount})</span>`;
+            html += `<div class="barcode-tooltip">`;
+            html += `<div class="barcode-list">`;
+            
+            uniqueBarcodes.forEach(barcode => {
+                const highlightedBarcode = highlightMatch(barcode, query);
+                html += `<div class="barcode-item">${highlightedBarcode}</div>`;
+            });
+            
+            html += `</div>`;
+            html += `</div>`;
+            
+            return html;
+        }
+
+        function createBarcodesListHTML(barcodes, scannedCode) {
+            const uniqueBarcodes = [...new Set(barcodes)];
+            const barcodesCount = uniqueBarcodes.length;
+            
+            let html = `<div class="scan-result-barcodes" onclick="toggleBarcodesList(this)">`;
+            html += `<div class="scan-result-barcodes-title">`;
+            html += `<span>Штрихкоды (${barcodesCount}):</span>`;
+            html += `<span style="font-size: 10px; color: #666;">нажмите для просмотра</span>`;
+            html += `</div>`;
+            html += `<div class="scan-result-barcodes-list">`;
+            
+            uniqueBarcodes.forEach(barcode => {
+                const isScanned = barcode === scannedCode;
+                const barcodeClass = isScanned ? 'style="color: #e74c3c; font-weight: bold;"' : '';
+                html += `<div class="scan-result-barcode-item" ${barcodeClass}>${barcode}${isScanned ? ' ?' : ''}</div>`;
+            });
+            
+            html += `</div>`;
+            html += `</div>`;
+            
+            return html;
+        }
+
+        function showBarcodeTooltip(event, element) {
+            event.stopPropagation();
+            
+            document.querySelectorAll('.barcode-tooltip').forEach(tooltip => {
+                tooltip.style.display = 'none';
+            });
+            
+            const tooltip = element.nextElementSibling;
+            if (tooltip && tooltip.classList.contains('barcode-tooltip')) {
+                tooltip.style.display = 'block';
+                
+                const rect = element.getBoundingClientRect();
+                tooltip.style.position = 'fixed';
+                tooltip.style.left = Math.min(rect.left, window.innerWidth - 320) + 'px';
+                tooltip.style.top = (rect.bottom + 5) + 'px';
+                
+                const closeTooltip = (e) => {
+                    if (!tooltip.contains(e.target) && e.target !== element) {
+                        tooltip.style.display = 'none';
+                        document.removeEventListener('click', closeTooltip);
+                    }
+                };
+                
+                setTimeout(() => {
+                    document.addEventListener('click', closeTooltip);
+                }, 100);
+            }
+        }
+
+        function toggleBarcodesList(element) {
+            const list = element.querySelector('.scan-result-barcodes-list');
+            list.classList.toggle('expanded');
+            
+            const title = element.querySelector('.scan-result-barcodes-title span:last-child');
+            if (list.classList.contains('expanded')) {
+                title.textContent = 'нажмите для скрытия';
+            } else {
+                title.textContent = 'нажмите для просмотра';
+            }
+        }
+
+        function highlightMatch(text, searchTerm) {
+            if (!searchTerm || !text) return text;
+            const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.toString().replace(regex, '<mark>$1</mark>');
+        }
+
+        // ===== ОСТАЛЬНЫЕ ФУНКЦИИ =====
+
+        function getCurrentSearchMode() {
+            const selectedRadio = document.querySelector('input[name="searchMode"]:checked');
+            return selectedRadio ? selectedRadio.value : 'article';
+        }
+
+        function getSearchModeDisplayName(mode) {
+            switch(mode) {
+                case 'article': return 'по артикулу';
+                case 'barcode': return 'по штрихкоду';
+                case 'name': return 'по наименованию';
+                case 'combined': return 'комбинированный';
+                default: return 'по артикулу';
+            }
+        }
+
+        function performCombinedSearch(articlePart, namePart, barcodePart) {
+            const products = parseProductsData(productsData);
+            return products.filter(product => {
+                let matches = 0;
+                let totalConditions = 0;
+                
+                if (articlePart && articlePart.trim() !== '') {
+                    totalConditions++;
+                    if (product.article.toLowerCase().includes(articlePart.toLowerCase())) {
+                        matches++;
+                    }
+                }
+                
+                if (namePart && namePart.trim() !== '') {
+                    totalConditions++;
+                    if (product.name.toLowerCase().includes(namePart.toLowerCase())) {
+                        matches++;
+                    }
+                }
+                
+                if (barcodePart && barcodePart.trim() !== '') {
+                    totalConditions++;
+                    if (product.barcode.includes(barcodePart)) {
+                        matches++;
+                    }
+                }
+                
+                return totalConditions > 0 && matches === totalConditions;
+            });
+        }
+
+        function performSimpleSearch(searchTerm, mode) {
+            const products = parseProductsData(productsData);
+            return products.filter(product => {
+                switch(mode) {
+                    case 'article':
+                        return product.article.toLowerCase().includes(searchTerm.toLowerCase());
+                    
+                    case 'barcode':
+                        return product.barcode.includes(searchTerm);
+                    
+                    case 'name':
+                        return product.name.toLowerCase().includes(searchTerm.toLowerCase());
+                    
+                    default:
+                        return product.article.toLowerCase().includes(searchTerm.toLowerCase());
+                }
+            });
+        }
+
+        function createProductCard(product, query, searchMode) {
+            const productCard = document.createElement('div');
+            productCard.className = 'product-card';
+            
+            let highlightedName = product.name;
+            let highlightedArticle = product.article;
+            let highlightedBarcode = '';
+            
+            if (searchMode === 'комбинированный') {
+                if (query.article) {
+                    highlightedArticle = highlightMatch(product.article, query.article);
+                }
+                if (query.name) {
+                    highlightedName = highlightMatch(product.name, query.name);
+                }
+                if (query.barcode) {
+                    if (product.count > 1) {
+                        highlightedBarcode = createMultipleBarcodesHTML(product.barcodes, query.barcode);
+                    } else {
+                        highlightedBarcode = highlightMatch(product.barcode, query.barcode);
+                    }
+                }
+            } else {
+                if (searchMode === 'по артикулу' || searchMode === 'комбинированный') {
+                    highlightedArticle = highlightMatch(product.article, query);
+                }
+                if (searchMode === 'по наименованию' || searchMode === 'комбинированный') {
+                    highlightedName = highlightMatch(product.name, query);
+                }
+                if (searchMode === 'по штрихкоду') {
+                    if (product.count > 1) {
+                        highlightedBarcode = createMultipleBarcodesHTML(product.barcodes, query);
+                    } else {
+                        highlightedBarcode = highlightMatch(product.barcode, query);
+                    }
+                }
+            }
+            
+            if (!highlightedBarcode) {
+                if (product.count > 1) {
+                    highlightedBarcode = createMultipleBarcodesHTML(product.barcodes, '');
+                } else {
+                    highlightedBarcode = product.barcode;
+                }
+            }
+            
+            const container = document.createElement('div');
+            
+            const articleRow = document.createElement('div');
+            articleRow.className = 'article';
+            articleRow.innerHTML = `Артикул: ${highlightedArticle}`;
+            
+            const hasImage = product.imageCode && product.imageCode.trim() !== '';
+            
+            if (hasImage) {
+                const imageButton = document.createElement('button');
+                imageButton.className = 'image-button';
+                imageButton.title = 'Показать изображение товара';
+                imageButton.innerHTML = '&#127750;';
+                imageButton.onclick = function() {
+                    showProductImage(product);
+                };
+                articleRow.appendChild(imageButton);
+            } else {
+                const noImageSpan = document.createElement('span');
+                noImageSpan.className = 'no-image-text';
+                noImageSpan.textContent = '(без изображения)';
+                articleRow.appendChild(noImageSpan);
+            }
+            
+            const printButton = document.createElement('button');
+            printButton.className = 'print-button';
+            printButton.title = 'Печать ценника';
+            printButton.innerHTML = '&#129534;';
+            printButton.onclick = function() {
+                openPrintModal(product);
+            };
+            
+            const articleContainer = document.createElement('div');
+            articleContainer.style.display = 'flex';
+            articleContainer.style.justifyContent = 'space-between';
+            articleContainer.style.alignItems = 'center';
+            articleContainer.style.marginBottom = '5px';
+            
+            articleContainer.appendChild(articleRow);
+            articleContainer.appendChild(printButton);
+            
+            container.innerHTML = `
+                <div class="product-field barcode">Штрихкод: ${highlightedBarcode}</div>
+                <div class="product-field name">${highlightedName}</div>
+                ${formatPriceWithDiscount(product)}
+            `;
+            
+            container.insertBefore(articleContainer, container.firstChild);
+            
+            const stockInfo = document.createElement('div');
+            stockInfo.innerHTML = `
+                <div class="stock-info">
+                    <div class="stock-title">Остатки:</div>
+                    <div class="stock-item">
+                        <span class="stock-name">Уральская 97:</span>
+                        <span class="stock-quantity ${product.stocks.warehouse1 < 0 ? 'negative' : 'positive'}">
+                            ${formatNumber(product.stocks.warehouse1)} шт. 
+                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse1)} кор.)</span>
+                        </span>
+                    </div>
+                    <div class="stock-item">
+                        <span class="stock-name">ОСНОВНОЙ СКЛАД:</span>
+                        <span class="stock-quantity ${product.stocks.warehouse2 < 0 ? 'negative' : 'positive'}">
+                            ${formatNumber(product.stocks.warehouse2)} шт. 
+                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse2)} кор.)</span>
+                        </span>
+                    </div>
+                    <div class="stock-item">
+                        <span class="stock-name">Шевченко 139:</span>
+                        <span class="stock-quantity ${product.stocks.warehouse3 < 0 ? 'negative' : 'positive'}">
+                            ${formatNumber(product.stocks.warehouse3)} шт. 
+                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse3)} кор.)</span>
+                        </span>
+                    </div>
+                    <div class="stock-item">
+                        <span class="stock-name">МАГАЗИН 234:</span>
+                        <span class="stock-quantity ${product.stocks.warehouse4 < 0 ? 'negative' : 'positive'}">
+                            ${formatNumber(product.stocks.warehouse4)} шт. 
+                            <span class="box-coefficient">(${formatCoefficient(product.coefficients.warehouse4)} кор.)</span>
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            if (product.boxQuantity && product.boxQuantity.trim() !== '') {
+                stockInfo.innerHTML += `
+                    <div class="box-quantity-info">
+                        <div class="box-quantity-title">Кол-во в коробке:</div>
+                        <div class="box-quantity-value">${product.boxQuantity} шт.</div>
+                    </div>
+                `;
+            }
+            
+            if (product.storageLocation && product.storageLocation.trim() !== '') {
+                stockInfo.innerHTML += `
+                    <div class="storage-location">
+                        <div class="storage-title">Место хранения:</div>
+                        <div class="storage-value">${product.storageLocation}</div>
+                    </div>
+                `;
+            }
+            
+            productCard.appendChild(container);
+            productCard.appendChild(stockInfo);
+            
+            return productCard;
+        }
+
+        function scrollToResults() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            if (resultsContainer.style.display === 'block') {
+                setTimeout(() => {
+                    resultsContainer.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 100);
+            }
+        }
+
+        function displayResults(results, query, searchMode) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = '';
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<div class="no-results">Товары не найдены</div>';
+                resultsContainer.style.display = 'block';
+                scrollToResults();
+                return;
+            }
+
+            const groupedResults = groupProductsByKey(results);
+            const totalCount = results.length;
+            const uniqueCount = groupedResults.length;
+
+            const countElement = document.createElement('div');
+            countElement.className = 'results-count';
+            countElement.textContent = `Найдено товаров: ${totalCount} (${uniqueCount} уникальных)`;
+            resultsContainer.appendChild(countElement);
+
+            const modeElement = document.createElement('div');
+            modeElement.className = 'search-mode';
+            modeElement.textContent = `Режим поиска: ${searchMode}`;
+            resultsContainer.appendChild(modeElement);
+
+            groupedResults.forEach(product => {
+                const productCard = createProductCard(product, query, searchMode);
+                resultsContainer.appendChild(productCard);
+            });
+
+            resultsContainer.style.display = 'block';
+            scrollToResults();
+        }
+
+        function searchProducts() {
+            const searchMode = getCurrentSearchMode();
+            
+            let results = [];
+            let query = '';
+            let displaySearchMode = getSearchModeDisplayName(searchMode);
+
+            if (searchMode === 'combined') {
+                const articlePart = articleInput.value.trim();
+                const namePart = nameInput.value.trim();
+                const barcodePart = barcodeInput.value.trim();
+                
+                query = {
+                    article: articlePart,
+                    name: namePart,
+                    barcode: barcodePart
+                };
+                
+                results = performCombinedSearch(articlePart, namePart, barcodePart);
+            } else {
+                query = searchInput.value.trim();
+                
+                if (!query) {
+                    resultsContainer.style.display = 'none';
+                    return;
+                }
+                
+                results = performSimpleSearch(query, searchMode);
+            }
+
+            displayResults(results, query, displaySearchMode);
+        }
+
+        function updateClearButton() {
+            const mode = getCurrentSearchMode();
+            let hasText = false;
+            
+            if (mode === 'combined') {
+                hasText = articleInput.value.trim() !== '' || 
+                          nameInput.value.trim() !== '' || 
+                          barcodeInput.value.trim() !== '';
+            } else {
+                hasText = searchInput.value.trim() !== '';
+            }
+            
+            if (hasText) {
+                clearSearchBtn.style.display = 'block';
+            } else {
+                clearSearchBtn.style.display = 'none';
+            }
+        }
+
+        function clearSearchFields() {
+            const mode = getCurrentSearchMode();
+            
+            if (mode === 'combined') {
+                articleInput.value = '';
+                nameInput.value = '';
+                barcodeInput.value = '';
+            } else {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+            
+            updateClearButton();
+            resultsContainer.style.display = 'none';
+        }
+
+        function showProductImage(product) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.id = 'imageModal';
+            modal.style.display = 'flex';
+            
+            let imageCode = product.imageCode || '';
+            let alternativeImageCode = product.alternativeImageCode || '';
+            
+            let imageUrl = '';
+            let errorMessage = '';
+            
+            if (imageCode) {
+                const cleanCode = imageCode.trim();
+                let fileName = cleanCode;
+                if (!fileName.includes('.jpg') && !fileName.includes('.jpeg') && 
+                    !fileName.includes('.png') && !fileName.includes('.gif')) {
+                    fileName += '.jpg';
+                }
+                imageUrl = `https://kubanstar.ru/images/virtuemart/product/${fileName}`;
+            }
+            
+            modal.innerHTML = `
+                <div class="modal-frame" style="max-width: 90%; max-height: 90%;">
+                    <div style="text-align: center; padding: 20px;">
+                        <h3 style="margin-bottom: 20px;">${product.article} - ${product.name}</h3>
+                        <div style="max-height: 70vh; overflow: auto; margin: 20px 0;" id="imageContainer">
+                            <img id="productImage" 
+                                 src="${imageUrl || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%25%22 y=%2250%25%22 font-size=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22>&#128247;</text></svg>'}" 
+                                 style="max-width: 100%; max-height: 60vh; border-radius: 8px; display: block; margin: 0 auto;"
+                                 onerror="handleImageError(this, '${alternativeImageCode.replace(/'/g, "\\'")}')"
+                                 alt="Изображение товара">
+                            <div id="imageError" style="display: none; padding: 40px; color: #999;">
+                                <div style="font-size: 48px; margin-bottom: 20px;">&#128247;</div>
+                                <div style="font-size: 18px; font-weight: bold; color: #666;">Изображение не найдено</div>
+                                <div style="font-size: 12px; margin-top: 10px; color: #999;">Пробуем альтернативный код...</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <button onclick="this.closest('.modal-overlay').style.display='none'" 
+                                    class="camera-btn" 
+                                    style="background-color: #f44336; min-width: 200px;">
+                                Закрыть
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const oldModal = document.getElementById('imageModal');
+            if (oldModal) {
+                oldModal.remove();
+            }
+            
+            document.body.appendChild(modal);
+            
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
+        function handleImageError(imgElement, alternativeImageCode) {
+            const errorDiv = document.getElementById('imageError');
+            const imageContainer = document.getElementById('imageContainer');
+            
+            if (alternativeImageCode && alternativeImageCode.trim() !== '') {
+                const cleanCode = alternativeImageCode.trim();
+                let fileName = cleanCode;
+                if (!fileName.includes('.jpg') && !fileName.includes('.jpeg') && 
+                    !fileName.includes('.png') && !fileName.includes('.gif')) {
+                    fileName += '.jpg';
+                }
+                const alternativeUrl = `https://kubanstar.ru/images/virtuemart/product/${fileName}`;
+                
+                if (errorDiv) {
+                    errorDiv.style.display = 'block';
+                    errorDiv.innerHTML = `
+                        <div style="font-size: 48px; margin-bottom: 20px;">&#128260;</div>
+                        <div style="font-size: 18px; font-weight: bold; color: #666;">Загружаем альтернативное изображение...</div>
+                        <div style="font-size: 12px; margin-top: 10px; color: #999;">Код: ${alternativeImageCode}</div>
+                    `;
+                }
+                
+                const newImg = new Image();
+                newImg.onload = function() {
+                    imgElement.src = alternativeUrl;
+                    imgElement.style.display = 'block';
+                    if (errorDiv) errorDiv.style.display = 'none';
+                };
+                newImg.onerror = function() {
+                    if (errorDiv) {
+                        errorDiv.style.display = 'block';
+                        errorDiv.innerHTML = `
+                            <div style="font-size: 48px; margin-bottom: 20px;">&#10060;</div>
+                            <div style="font-size: 18px; font-weight: bold; color: #666;">Изображение не найдено</div>
+                            <div style="font-size: 12px; margin-top: 10px; color: #999;">
+                                Основной код: ${imgElement.src.includes('kubanstar.ru') ? imgElement.src.split('/').pop() : 'не указан'}<br>
+                                Альтернативный код: ${alternativeImageCode || 'не указан'}
+                            </div>
+                        `;
+                    }
+                    imgElement.style.display = 'none';
+                };
+                newImg.src = alternativeUrl;
+            } else {
+                if (errorDiv) {
+                    errorDiv.style.display = 'block';
+                    errorDiv.innerHTML = `
+                        <div style="font-size: 48px; margin-bottom: 20px;">&#10060;</div>
+                        <div style="font-size: 18px; font-weight: bold; color: #666;">Изображение не найдено</div>
+                        <div style="font-size: 12px; margin-top: 10px; color: #999;">
+                            Код изображения: ${imgElement.src.includes('kubanstar.ru') ? imgElement.src.split('/').pop() : 'не указан'}
+                        </div>
+                    `;
+                }
+                imgElement.style.display = 'none';
+            }
+        }
+
+        // ===== ФУНКЦИИ ДЛЯ КНОПКИ "НАВЕРХ" =====
+        
         function initScrollToTopButton() {
             const scrollToTopBtn = document.getElementById('scrollToTopBtn');
             
@@ -22331,102 +22362,247 @@ function closeScanner() {
             });
         }
 
- // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
-searchButton.addEventListener('click', searchProducts);
-clearSearchBtn.addEventListener('click', clearSearchFields);
-scanButton.addEventListener('click', openScanner);
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const searchButton = document.getElementById('searchButton');
+        const scanButtonAndroid = document.getElementById('scanButtonAndroid');
+        const scanButtonIOS = document.getElementById('scanButtonIOS');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const searchModeRadios = document.querySelectorAll('input[name="searchMode"]');
+        const combinedSearchFields = document.getElementById('combinedSearchFields');
+        const articleInput = document.getElementById('articleInput');
+        const nameInput = document.getElementById('nameInput');
+        const barcodeInput = document.getElementById('barcodeInput');
+        
+        const cameraModal = document.getElementById('cameraModal');
+        const resultModal = document.getElementById('resultModal');
+        const printModal = document.getElementById('printModal');
+        const datesModal = document.getElementById('datesModal');
+        const closeCameraModal = document.getElementById('closeCameraModal');
+        const closePrintModalBtn = document.getElementById('closePrintModal');
+        const closeDatesModalBtn = document.getElementById('closeDatesModal');
+        
+        const cameraVideo = document.getElementById('cameraVideo');
+        const stopCameraBtn = document.getElementById('stopCamera');
+        
+        const resultCount = document.getElementById('resultCount');
+        const resultProducts = document.getElementById('resultProducts');
+        const continueScanBtn = document.getElementById('continueScanBtn');
+        const closeResultBtn = document.getElementById('closeResultBtn');
 
-searchInput.addEventListener('input', updateClearButton);
-articleInput.addEventListener('input', updateClearButton);
-nameInput.addEventListener('input', updateClearButton);
-barcodeInput.addEventListener('input', updateClearButton);
+        const printActionBtn = document.getElementById('printActionBtn');
 
-searchInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') searchProducts();
-});
+        const priceTagTypeSelector = document.getElementById('priceTagTypeSelector');
 
-articleInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') searchProducts();
-});
+        // Элементы iOS сканера
+        const closeIOSScannerBtn = document.getElementById('closeIOSScanner');
+        const switchIOSCameraBtn = document.getElementById('switchIOSCamera');
 
-nameInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') searchProducts();
-});
+        function updateSearchUI() {
+            const mode = getCurrentSearchMode();
+            
+            if (mode === 'combined') {
+                combinedSearchFields.style.display = 'flex';
+                searchInput.style.display = 'none';
+            } else {
+                combinedSearchFields.style.display = 'none';
+                searchInput.style.display = 'block';
+            }
+            
+            updateClearButton();
+        }
 
-barcodeInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') searchProducts();
-});
+        function setupPriceTagTypeSelector() {
+            const options = priceTagTypeSelector.querySelectorAll('.price-tag-type-option');
+            
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    
+                    this.classList.add('selected');
+                    
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    
+                    currentPriceTagType = this.getAttribute('data-type');
+                    
+                    if (currentProductForPrint) {
+                        updatePriceTagPreview(currentProductForPrint, currentPriceTagType);
+                    }
+                });
+            });
+            
+            const radios = priceTagTypeSelector.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        const option = this.closest('.price-tag-type-option');
+                        currentPriceTagType = option.getAttribute('data-type');
+                        
+                        if (currentProductForPrint) {
+                            updatePriceTagPreview(currentProductForPrint, currentPriceTagType);
+                        }
+                    }
+                });
+            });
+        }
 
-closeCameraModal.addEventListener('click', function() {
-    closeScanner();
-});
+        // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
 
-cameraModal.addEventListener('click', function(e) {
-    if (e.target === cameraModal) {
-        closeScanner();
-    }
-});
+        searchButton.addEventListener('click', searchProducts);
 
-stopCameraBtn.addEventListener('click', function() {
-    closeScanner();
-});
+        clearSearchBtn.addEventListener('click', clearSearchFields);
 
-closeIosScannerBtn.addEventListener('click', function() {
-    closeIosScanner();
-});
+        searchInput.addEventListener('input', updateClearButton);
+        articleInput.addEventListener('input', updateClearButton);
+        nameInput.addEventListener('input', updateClearButton);
+        barcodeInput.addEventListener('input', updateClearButton);
 
-continueScanBtn.addEventListener('click', function() {
-    resultModal.style.display = 'none';
-    // Увеличиваем задержку для полного закрытия модального окна
-    setTimeout(() => {
-        openScanner();
-    }, 200);
-});
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') searchProducts();
+        });
 
-closeResultBtn.addEventListener('click', function() {
-    resultModal.style.display = 'none';
-    // Убеждаемся что камера остановлена при закрытии
-    if (!isIOS) {
-        stopCameraStream();
-        cameraModal.style.display = 'none';
-    }
-});
+        articleInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') searchProducts();
+        });
 
-resultModal.addEventListener('click', function(e) {
-    if (e.target === resultModal) {
-        resultModal.style.display = 'none';
-        // Убеждаемся что камера остановлена при закрытии
-        if (!isIOS) {
+        nameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') searchProducts();
+        });
+
+        barcodeInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') searchProducts();
+        });
+
+        scanButtonAndroid.addEventListener('click', openCamera);
+        scanButtonIOS.addEventListener('click', openIOSScanner);
+
+        closeCameraModal.addEventListener('click', function() {
             stopCameraStream();
             cameraModal.style.display = 'none';
-        }
-    }
-});
+        });
 
-closePrintModalBtn.addEventListener('click', closePrintModal);
-printModal.addEventListener('click', function(e) {
-    if (e.target === printModal) closePrintModal();
-});
+        cameraModal.addEventListener('click', function(e) {
+            if (e.target === cameraModal) {
+                stopCameraStream();
+                cameraModal.style.display = 'none';
+            }
+        });
 
-closeDatesModalBtn.addEventListener('click', closeDatesModal);
-datesModal.addEventListener('click', function(e) {
-    if (e.target === datesModal) closeDatesModal();
-});
+        stopCameraBtn.addEventListener('click', function() {
+            stopCameraStream();
+            cameraModal.style.display = 'none';
+        });
 
-printActionBtn.addEventListener('click', handlePrint);
+        continueScanBtn.addEventListener('click', function() {
+            resultModal.style.display = 'none';
+            setTimeout(() => {
+                if (isIOS()) {
+                    openIOSScanner();
+                } else {
+                    openCamera();
+                }
+            }, 300);
+        });
 
-document.getElementById('current-date').addEventListener('click', openDatesModal);
+        closeResultBtn.addEventListener('click', function() {
+            resultModal.style.display = 'none';
+        });
 
-searchModeRadios.forEach(radio => {
-    radio.addEventListener('change', function() {
-        updateSearchUI();
-        if (searchInput.value.trim() || 
-            (getCurrentSearchMode() === 'combined' && 
-             (articleInput.value.trim() || nameInput.value.trim() || barcodeInput.value.trim()))) {
-            searchProducts();
-        }
-    });
-});
+        resultModal.addEventListener('click', function(e) {
+            if (e.target === resultModal) resultModal.style.display = 'none';
+        });
+
+        closePrintModalBtn.addEventListener('click', closePrintModal);
+
+        printModal.addEventListener('click', function(e) {
+            if (e.target === printModal) closePrintModal();
+        });
+
+        closeDatesModalBtn.addEventListener('click', closeDatesModal);
+
+        datesModal.addEventListener('click', function(e) {
+            if (e.target === datesModal) closeDatesModal();
+        });
+
+        printActionBtn.addEventListener('click', handlePrint);
+
+        document.getElementById('current-date').addEventListener('click', openDatesModal);
+
+        // Обработчики iOS сканера
+        closeIOSScannerBtn.addEventListener('click', closeIOSScanner);
+        
+        switchIOSCameraBtn.addEventListener('click', switchIOSCamera);
+
+        iosScannerModal.addEventListener('click', function(e) {
+            if (e.target === iosScannerModal) closeIOSScanner();
+        });
+
+        searchModeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                updateSearchUI();
+                if (searchInput.value.trim() || 
+                    (getCurrentSearchMode() === 'combined' && 
+                     (articleInput.value.trim() || nameInput.value.trim() || barcodeInput.value.trim()))) {
+                    searchProducts();
+                }
+            });
+        });
+
+        window.addEventListener('load', function() {
+            document.getElementById('modeArticle').checked = true;
+            updateSearchUI();
+            searchInput.focus();
+            setupPlatformUI();
+            initScrollToTopButton();
+            setupPriceTagTypeSelector();
+
+			if (DATA_UPDATE_DATE && DATA_UPDATE_DATE.trim() !== "") {
+                let displayDate = DATA_UPDATE_DATE;
+                if (DATA_UPDATE_DATE.includes(" ")) {
+                    displayDate = DATA_UPDATE_DATE.split(" ")[0];
+                }
+                document.getElementById('current-date').textContent = displayDate;
+            }
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') clearSearchFields();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                const mode = getCurrentSearchMode();
+                if (mode === 'combined') {
+                    articleInput.focus();
+                } else {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+            }
+        });
+
+        // Обработчик видимости страницы для iOS
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && iosIsScanning) {
+                closeIOSScanner();
+            }
+        });
+
+        // Обработчик ориентации для iOS
+        window.addEventListener('orientationchange', function() {
+            if (iosIsScanning) {
+                setTimeout(() => {
+                    if (iosIsScanning) {
+                        closeIOSScanner();
+                        setTimeout(openIOSScanner, 500);
+                    }
+                }, 300);
+            }
+        });
     </script>
 </body>
 </html>
